@@ -1,6 +1,6 @@
 import React from "react";
 import GridShape from "../../components/common/GridShape";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import ThemeTogglerTwo from "../../components/common/ThemeTogglerTwo";
 
 export default function AuthLayout({
@@ -16,19 +16,21 @@ export default function AuthLayout({
           <div className="relative flex items-center justify-center z-1">
             {/* <!-- ===== Common Grid Shape Start ===== --> */}
             <GridShape />
-            <div className="flex flex-col items-center max-w-xs">
-              <Link to="/" className="block mb-4">
-                <img
-                  width={231}
-                  height={48}
-                  src="/images/logo/auth-logo.svg"
-                  alt="Logo"
-                />
+
+      
+            <div className="flex flex-col items-center text-center px-4">
+              <Link
+                to="/"
+                className="mb-2 text-white text-3xl sm:text-4xl font-bold tracking-wide"
+              >
+                AutoSystem
               </Link>
-              <p className="text-center text-gray-400 dark:text-white/60">
-                Free and Open-Source Tailwind CSS Admin Dashboard Template
+              <p className="text-gray-300 dark:text-white/70 text-base sm:text-lg max-w-xs sm:max-w-md">
+                Register. Inspect. Manage.<br />
+                A complete portal for vehicle registration, inspections, and public safety.
               </p>
             </div>
+
           </div>
         </div>
         <div className="fixed z-50 hidden bottom-6 right-6 sm:block">
