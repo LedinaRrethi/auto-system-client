@@ -1,13 +1,18 @@
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [birthDate, setBirthDate] = useState<Date | null>(null);
+
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -29,6 +34,15 @@ export default function SignUpForm() {
               Enter your email and password to sign up!
             </p>
           </div>
+
+          {/**   
+           <div className="mb-6">
+            <div className="p-4 text-sm text-center text-gray-700 bg-gray-100 rounded-md dark:bg-white/5 dark:text-white/80">
+              Registration is available via email only. Please fill in the form below with accurate personal information.
+           </div>
+          </div> 
+          */}
+          
           <div>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
@@ -82,6 +96,7 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
+          
             <form>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -110,6 +125,21 @@ export default function SignUpForm() {
                     />
                   </div>
                 </div>
+
+                {/* <!-- Birthdate --> */}
+                <div>
+                  <Label>
+                    Birthdate<span className="text-error-500">*</span>
+                  </Label>
+                  <DatePicker
+                    selected={birthDate}
+                    onChange={(date) => setBirthDate(date)}
+                    dateFormat="dd/MM/yyyy"
+                    placeholderText="Select your birthdate"
+                    className="w-full px-4 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500"
+                  />
+                </div>
+     
                 {/* <!-- Email --> */}
                 <div>
                   <Label>
@@ -144,6 +174,31 @@ export default function SignUpForm() {
                     </span>
                   </div>
                 </div>
+
+                {/* <!-- Confirm Password --> */}
+                <div>
+                  <Label>
+                    Confirm Password
+                    <span className="text-error-500">*</span>
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      placeholder="Confirm your password"
+                      type={showPassword ? "text" : "password"}
+                    />
+                    <span
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                    >
+                      {showPassword ? (
+                        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                      ) : (
+                        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                      )}
+                    </span>
+                  </div>
+                </div>     
+
                 {/* <!-- Checkbox --> */}
                 <div className="flex items-center gap-3">
                   <Checkbox
