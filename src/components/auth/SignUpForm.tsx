@@ -14,27 +14,27 @@ export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const {
-  register,
-  handleSubmit,
-  control,
-  formState: { errors },
-  reset,
-} = useForm<SignUpFormData>({
-  resolver: zodResolver(signUpSchema),
-  mode: "onSubmit",
-  defaultValues: {
-    birthDate: undefined,
-    acceptedTerms: false, // user must check this
-  },
-});
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+    reset,
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    mode: "onSubmit",
+    defaultValues: {
+      birthDate: undefined,
+      acceptedTerms: false,
+    },
+  });
+  
 
-
-
-const onSubmit: SubmitHandler<SignUpFormData> = (data) => {
-  console.log("✅ Submitted data:", data);
-  reset(); // Optionally reset the form
-};
-
+  const onSubmit: SubmitHandler<SignUpFormData> = (data) => {
+    console.log(" Submitted data:", data);
+    
+    reset();
+  };
+  
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">

@@ -21,6 +21,7 @@
     "@react-jvectormap/world": "^1.1.2",
     "@types/react-router-dom": "^5.3.3",
     "apexcharts": "^4.1.0",
+    "auto-system-client": "file:",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "flatpickr": "^4.6.13",
