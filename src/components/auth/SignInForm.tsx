@@ -110,7 +110,7 @@ export default function SignInForm() {
 
             {/* Login Error */}
             {loginError && (
-              <div className="px-15 py-2 mt-2 text-sm text-red-700">
+              <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md dark:bg-red-900 dark:text-red-300 text-center">
                 {loginError}
               </div>
             )}
