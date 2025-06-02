@@ -18,6 +18,7 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import VehicleRegistrationPage from "./pages/VehicleRegistrationPage";
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
 
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
+            <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
