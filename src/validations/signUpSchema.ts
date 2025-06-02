@@ -3,7 +3,7 @@ import { z } from "zod";
 // Regex for password: min 9 chars, 1 uppercase, 1 number, 1 special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}$/;
 
-// Regex for names: only letters (allowing Albanian/accents) and spaces
+// Names: only letters + accents
 const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
 
 export const signUpSchema = z
@@ -25,15 +25,21 @@ export const signUpSchema = z
         "Password must include 1 uppercase letter, 1 number, and 1 special character"
       ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
-    birthDate: z.date({
-      required_error: "Birthdate is required",
-      invalid_type_error: "Birthdate must be a valid date",
-    }),
+    birthDate: z
+      .date({
+        required_error: "Birthdate is required",
+        invalid_type_error: "Birthdate must be a valid date",
+      })
+      .refine((val) => val <= new Date(), {
+        message: "Birthdate cannot be in the future",
+      }),
     acceptedTerms: z
       .boolean()
-      .refine(val => val === true, { message: "You must accept the terms." }),
+      .refine((val) => val === true, {
+        message: "You must accept the terms.",
+      }),
   })
-  .refine(data => data.password === data.confirmPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
