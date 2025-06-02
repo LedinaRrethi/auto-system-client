@@ -60,20 +60,25 @@ export default function VehicleTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [orderByAsc, setOrderByAsc] = useState(false);
   const itemsPerPage = 5;
 
   const filteredVehicles = useMemo(() => {
-    return vehicles
-      .filter((v) => {
-        const searchMatch =
-          v.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          v.chassisNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          v.color.toLowerCase().includes(searchTerm.toLowerCase());
-        const statusMatch = statusFilter ? v.status === statusFilter : true;
-        return searchMatch && statusMatch;
-      })
-      .sort((a, b) => new Date(b.registrationDate).getTime() - new Date(a.registrationDate).getTime());
-  }, [vehicles, searchTerm, statusFilter]);
+    const sorted = [...vehicles].sort((a, b) => {
+      const dateA = new Date(a.registrationDate).getTime();
+      const dateB = new Date(b.registrationDate).getTime();
+      return orderByAsc ? dateA - dateB : dateB - dateA;
+    });
+
+    return sorted.filter((v) => {
+      const searchMatch =
+        v.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.chassisNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        v.color.toLowerCase().includes(searchTerm.toLowerCase());
+      const statusMatch = statusFilter ? v.status === statusFilter : true;
+      return searchMatch && statusMatch;
+    });
+  }, [vehicles, searchTerm, statusFilter, orderByAsc]);
 
   const paginatedVehicles = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -98,7 +103,7 @@ export default function VehicleTable() {
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between ">
         <div className="relative w-full sm:w-80">
           <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
           <input
@@ -119,6 +124,9 @@ export default function VehicleTable() {
           <option value="Pending">Pending</option>
           <option value="Rejected">Rejected</option>
         </select>
+        <Button variant="outline" onClick={() => setOrderByAsc(!orderByAsc)}>
+          Order by Date {orderByAsc ? "↑" : "↓"}
+        </Button>
         <Button startIcon={<HiPlus />} onClick={handleAdd}>Add Vehicle</Button>
       </div>
       <div className="max-w-full overflow-x-auto">

@@ -12,16 +12,13 @@ interface PaginationProps {
 export default function Pagination({
   currentPage,
   totalPages,
-  startIndex,
-  endIndex,
-  totalItems,
   onPageChange,
 }: PaginationProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
       {/* Showing info */}
       <div className="text-sm text-gray-600 dark:text-gray-300">
-        Showing <span className="font-medium">{startIndex}</span> to <span className="font-medium">{endIndex}</span> of <span className="font-medium">{totalItems}</span> results
+        Showing <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span> pages
       </div>
 
       {/* Navigation buttons */}
