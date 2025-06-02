@@ -6,4 +6,5 @@ export interface Vehicle {
   doorCount: number;
   chassisNumber: string;
   status: "Pending" | "Approved" | "Rejected";
+  registrationDate: string; // ISO date string
 }
