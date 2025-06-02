@@ -1,4 +1,3 @@
-
 import {
   Table,
   TableBody,
@@ -7,9 +6,11 @@ import {
   TableRow,
 } from "../../components/ui/table";
 import Badge from "../../components/ui/badge/Badge";
-import { HiPencilAlt, HiTrash } from "react-icons/hi";
+import { HiPencilAlt, HiTrash, HiSearch, HiPlus } from "react-icons/hi";
 import { Vehicle } from "../../types/Vehicle";
 import { useState, useMemo } from "react";
+import Pagination from "../ui/pagination/Pagination";
+import Button from "../ui/button/Button";
 
 const vehicleData: Vehicle[] = [
   {
@@ -32,6 +33,26 @@ const vehicleData: Vehicle[] = [
     status: "Pending",
     registrationDate: "2025-02-15",
   },
+  {
+    id: "3",
+    plateNumber: "TR456XY",
+    color: "White",
+    seatCount: 5,
+    doorCount: 5,
+    chassisNumber: "JHGD456321A",
+    status: "Rejected",
+    registrationDate: "2023-11-20",
+  },
+  {
+    id: "4",
+    plateNumber: "AA111ZZ",
+    color: "Blue",
+    seatCount: 7,
+    doorCount: 4,
+    chassisNumber: "ZXC987456TY",
+    status: "Approved",
+    registrationDate: "2024-06-10",
+  }
 ];
 
 export default function VehicleTable() {
@@ -60,6 +81,8 @@ export default function VehicleTable() {
   }, [filteredVehicles, currentPage]);
 
   const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, filteredVehicles.length);
 
   const handleEdit = (id: string) => {
     console.log("Edit vehicle:", id);
@@ -69,16 +92,23 @@ export default function VehicleTable() {
     setVehicles((prev) => prev.filter((v) => v.id !== id));
   };
 
+  const handleAdd = () => {
+    console.log("Add vehicle");
+  };
+
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <input
-          type="text"
-          placeholder="Search by plate, color, chassis..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="dark:bg-dark-900 h-11 w-full sm:w-80 rounded-lg border border-gray-200 bg-transparent py-2.5 pl-4 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-        />
+        <div className="relative w-full sm:w-80">
+          <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+          <input
+            type="text"
+            placeholder="Search by plate, color, chassis..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+          />
+        </div>
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
@@ -89,6 +119,7 @@ export default function VehicleTable() {
           <option value="Pending">Pending</option>
           <option value="Rejected">Rejected</option>
         </select>
+        <Button startIcon={<HiPlus />} onClick={handleAdd}>Add Vehicle</Button>
       </div>
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
@@ -154,23 +185,14 @@ export default function VehicleTable() {
         </Table>
       </div>
 
-      <div className="flex justify-center mt-6">
-        <div className="inline-flex space-x-2">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => setCurrentPage(page)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium border ${
-                page === currentPage
-                  ? "bg-blue-600 text-white border-blue-600"
-                  : "bg-white text-gray-600 border-gray-300 hover:bg-gray-100"
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        startIndex={startIndex}
+        endIndex={endIndex}
+        totalItems={filteredVehicles.length}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }
