@@ -35,9 +35,7 @@ export default function SignUpForm() {
   return (
     <div className="w-full">
       <div className="mb-5 sm:mb-8">
-        <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-          Sign Up
-        </h1>
+        <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">Sign Up</h1>
         <p className="text-sm text-gray-500 dark:text-gray-400">
           Please fill in the form below with accurate personal information.
         </p>
@@ -140,28 +138,25 @@ export default function SignUpForm() {
               )}
             </span>
           </div>
-          {errors.confirmPassword && (
-            <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
-          )}
+          {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
         </div>
 
-        {/* Terms Checkbox */}
-        <div className="flex items-center gap-3">
-          <input
-            type="checkbox"
-            {...register("acceptedTerms")}
-            id="acceptedTerms"
-            className="w-5 h-5"
+{/* Terms Checkbox */}
+        <div className="flex flex-wrap items-start gap-3">
+          <input 
+            type="checkbox" 
+            {...register("acceptedTerms")} 
+            id="acceptedTerms" 
+            className="w-5 h-5 mt-1 ml-1" 
           />
-          <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
-            By creating an account, you agree to the{" "}
+          <label htmlFor="acceptedTerms" className="text-sm text-gray-500 mt-1">
+            By creating an account, you agree to the 
             <span className="font-semibold text-brand-500">Terms</span> and{" "}
             <span className="font-semibold text-brand-500">Privacy Policy</span>.
           </label>
         </div>
-        {errors.acceptedTerms && (
-          <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>
-        )}
+        {errors.acceptedTerms && 
+        <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>}
 
         {/* Submit */}
         <div>
@@ -175,16 +170,16 @@ export default function SignUpForm() {
       </form>
 
       <div className="mt-4">
-  <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-    Already have an account?{" "}
-    <Link
-      to="/signin"
-      className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-    >
-      Sign In
-    </Link>
-  </p>
-</div>
+        <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 ">
+          Already have an account?{" "}
+          <Link 
+            to="/signin"
+            className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >
+            Sign In
+          </Link>
+        </p>
+      </div>
 
     </div>
   );
