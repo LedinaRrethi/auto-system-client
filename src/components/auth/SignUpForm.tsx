@@ -3,12 +3,11 @@ import { Link } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
 import { SubmitHandler } from "react-hook-form";
+import DatePicker from "../form/date-picker";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -50,54 +49,84 @@ export default function SignUpForm() {
             {/* First and Last Name */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <Label>First Name<span className="text-error-500">*</span></Label>
-                <Input {...register("fname")} placeholder="Enter your first name" />
-                {errors.fname && <p className="text-sm text-red-500">{errors.fname.message}</p>}
+                <Label>
+                  First Name<span className="text-error-500">*</span>
+                </Label>
+                <Input
+                  {...register("fname")}
+                  placeholder="Enter your first name"
+                />
+                {errors.fname && (
+                  <p className="text-sm text-red-500">{errors.fname.message}</p>
+                )}
               </div>
               <div>
-                <Label>Last Name<span className="text-error-500">*</span></Label>
-                <Input {...register("lname")} placeholder="Enter your last name" />
-                {errors.lname && <p className="text-sm text-red-500">{errors.lname.message}</p>}
+                <Label>
+                  Last Name<span className="text-error-500">*</span>
+                </Label>
+                <Input
+                  {...register("lname")}
+                  placeholder="Enter your last name"
+                />
+                {errors.lname && (
+                  <p className="text-sm text-red-500">{errors.lname.message}</p>
+                )}
               </div>
             </div>
 
             {/* Birthdate */}
             <div>
-              <Label>Birthdate<span className="text-error-500">*</span></Label>
+              <Label>
+                Birthdate<span className="text-error-500">*</span>
+              </Label>
               <Controller
                 name="birthDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    selected={field.value ?? null}
-                    onChange={field.onChange}
-                    dateFormat="dd/MM/yyyy"
-                    maxDate={new Date()}
-                    placeholderText="dd/MM/yyyy"
-                    showPopperArrow={false}
-                    className="w-full px-4 py-2 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500 dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-                    calendarClassName="!bg-white dark:!bg-gray-800 !shadow-lg !rounded-lg !border !border-gray-200 dark:!border-gray-700"
-                    dayClassName={() =>
-                      "text-sm px-2 py-1 rounded-md hover:bg-brand-100 dark:hover:bg-gray-700"
-                    }
+                    id="birthDate"
+                    mode="single"
+                    placeholder="dd/MM/yyyy"
+                    defaultDate={field.value ?? undefined}
+                    onChange={([date]) => field.onChange(date)}
+                    maxDate={new Date()} // ✅ restrict future dates
                   />
                 )}
               />
+
               {errors.birthDate && (
-                <p className="text-sm text-red-500">{errors.birthDate.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.birthDate.message}
+                </p>
+              )}
+
+              {errors.birthDate && (
+                <p className="text-sm text-red-500">
+                  {errors.birthDate.message}
+                </p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <Label>Email<span className="text-error-500">*</span></Label>
-              <Input {...register("email")} type="email" placeholder="Enter your email" />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              <Label>
+                Email<span className="text-error-500">*</span>
+              </Label>
+              <Input
+                {...register("email")}
+                type="email"
+                placeholder="Enter your email"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
             </div>
 
             {/* Password */}
             <div>
-              <Label>Password<span className="text-error-500">*</span></Label>
+              <Label>
+                Password<span className="text-error-500">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   {...register("password")}
@@ -115,12 +144,18 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
             <div>
-              <Label>Confirm Password<span className="text-error-500">*</span></Label>
+              <Label>
+                Confirm Password<span className="text-error-500">*</span>
+              </Label>
               <div className="relative">
                 <Input
                   {...register("confirmPassword")}
@@ -139,7 +174,9 @@ export default function SignUpForm() {
                 </span>
               </div>
               {errors.confirmPassword && (
-                <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
               )}
             </div>
 
@@ -154,11 +191,16 @@ export default function SignUpForm() {
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
                 <span className="font-semibold text-brand-500">Terms</span> and{" "}
-                <span className="font-semibold text-brand-500">Privacy Policy</span>.
+                <span className="font-semibold text-brand-500">
+                  Privacy Policy
+                </span>
+                .
               </label>
             </div>
             {errors.acceptedTerms && (
-              <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>
+              <p className="text-sm text-red-500">
+                {errors.acceptedTerms.message}
+              </p>
             )}
 
             {/* Submit */}

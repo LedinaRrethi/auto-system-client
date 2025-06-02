@@ -9,17 +9,15 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative w-full h-screen bg-white dark:bg-gray-900">
-      <div className="flex h-full flex-col lg:flex-row">
-        {/* Left Side: Form Section (scrolls internally if needed, but fits screen) */}
-        <div className="flex flex-col justify-center w-full lg:w-1/2 p-6 sm:p-10">
-          <div className="w-full max-w-xl mx-auto overflow-y-auto max-h-[calc(100vh-40px)]">
-            {children}
-          </div>
+    <div className="w-full h-screen bg-white dark:bg-gray-900">
+      <div className="flex h-full w-full flex-col lg:flex-row">
+        {/* Left Side: Form Section */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center px-6 sm:px-8 overflow-y-auto no-scrollbar">
+          <div className="w-full max-w-xl py-10">{children}</div>
         </div>
 
         {/* Right Side: Logo + Illustration */}
-        <div className="hidden lg:flex items-center justify-center w-1/2 bg-brand-950 dark:bg-white/5 relative">
+        <div className="hidden lg:flex w-1/2 items-center justify-center bg-brand-950 dark:bg-white/5 relative">
           <div className="text-center px-6 z-10">
             <GridShape />
             <Link
@@ -36,6 +34,7 @@ export default function AuthLayout({
           </div>
         </div>
 
+        {/* Theme Toggler */}
         <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
           <ThemeTogglerTwo />
         </div>
