@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema, SignInFormData } from "../../validations/signInSchema";
+
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
-
-type LoginFormData = {
-  email: string;
-  password: string;
-};
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -21,19 +19,15 @@ export default function SignInForm() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isSubmitted },
-  } = useForm<LoginFormData>({
+    formState: { errors },
+  } = useForm<SignInFormData>({
+    resolver: zodResolver(signInSchema),
     mode: "onSubmit",
   });
 
-  // Clear loginError as soon as user types again
-  const handleFieldChange = () => {
-    if (loginError) setLoginError("");
-  };
-
-  const onSubmit = (data: LoginFormData) => {
+  const onSubmit = (data: SignInFormData) => {
     const demoEmail = "demo@gmail.com";
-    const demoPassword = "Demo123!";
+    const demoPassword = "Demo1234!";
 
     if (
       data.email.toLowerCase() !== demoEmail ||
@@ -43,9 +37,14 @@ export default function SignInForm() {
     } else {
       setLoginError("");
       console.log("Login successful:", data);
-      reset(); 
+      reset();
     }
   };
+
+  const handleFieldChange = () => {
+  if (loginError) setLoginError("");
+};
+
 
   return (
     <div className="flex flex-col flex-1">
@@ -61,7 +60,6 @@ export default function SignInForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-6">
-
             {/* Email */}
             <div>
               <Label>
@@ -70,17 +68,13 @@ export default function SignInForm() {
               <Input
                 type="email"
                 placeholder="info@gmail.com"
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Enter a valid email address",
-                  },
-                  onChange: handleFieldChange,
-                })}
+                {...register("email")}
+                 onChange={handleFieldChange}
               />
-              {isSubmitted && errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+              {errors.email && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
@@ -93,10 +87,8 @@ export default function SignInForm() {
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  {...register("password", {
-                    required: "Password is required",
-                    onChange: handleFieldChange,
-                  })}
+                  {...register("password")}
+                   onChange={handleFieldChange}
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
@@ -109,14 +101,16 @@ export default function SignInForm() {
                   )}
                 </span>
               </div>
-              {isSubmitted && errors.password && (
-                <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+              {errors.password && (
+                <p className="mt-1 text-sm text-red-500">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
-            {/* Login Error Message */}
+            {/* Login Error */}
             {loginError && (
-              <div className="px-4 py-2 mt-2 text-sm text-red-700 bg-red-100 border border-red-300 rounded-md">
+              <div className="px-15 py-2 mt-2 text-sm text-red-700">
                 {loginError}
               </div>
             )}

@@ -21,20 +21,17 @@ export default function SignUpForm() {
     reset,
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    mode: "onSubmit",
+    mode: "onSubmit", 
     defaultValues: {
       birthDate: undefined,
       acceptedTerms: false,
     },
   });
-  
 
   const onSubmit: SubmitHandler<SignUpFormData> = (data) => {
-    console.log(" Submitted data:", data);
-    
+    console.log("Submitted data:", data);
     reset();
   };
-  
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -49,9 +46,7 @@ export default function SignUpForm() {
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-
           <div className="space-y-5">
-
             {/* First and Last Name */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
@@ -103,11 +98,7 @@ export default function SignUpForm() {
               <Label>
                 Email<span className="text-error-500">*</span>
               </Label>
-              <Input
-                {...register("email")}
-                type="email"
-                placeholder="Enter your email"
-              />
+              <Input {...register("email")} type="email" placeholder="Enter your email" />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
@@ -133,7 +124,9 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">{errors.password.message}</p>
+              )}
             </div>
 
             {/* Confirm Password */}
