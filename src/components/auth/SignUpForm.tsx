@@ -9,9 +9,16 @@ import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
 import { SubmitHandler } from "react-hook-form";
 import DatePicker from "../form/date-picker";
 import api from "../../lib/api";
+import Alert from "../ui/alert/Alert";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
+
+  const [alertData, setAlertData] = useState<{
+  variant: "success" | "error" | "warning" | "info";
+  title: string;
+  message: string;
+} | null>(null);
 
   const {
     register,
@@ -32,24 +39,51 @@ export default function SignUpForm() {
   try {
     await api.post("/Account/register", {
       firstName: data.fname,
-      fatherName: data.fathername, 
+      fatherName: data.fathername,
       lastName: data.lname,
       birthDate: data.birthDate,
       email: data.email,
       password: data.password,
     });
 
-    alert("Registration successful! You can now log in.");
+    setAlertData({
+      variant: "success",
+      title: "Success",
+      message: "Registration successful! You can now log in.",
+    });
+
     reset();
-    window.location.href = "/signin";
+
+    setTimeout(() => {
+      window.location.href = "/signin";
+    }, 1500);
   } catch (err: unknown) {
-    if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "error" in err.response.data) {
-      alert((err as { response: { data: { error: string } } }).response.data.error);
+    if (
+      err &&
+      typeof err === "object" &&
+      "response" in err &&
+      err.response &&
+      typeof err.response === "object" &&
+      "data" in err.response &&
+      err.response.data &&
+      typeof err.response.data === "object" &&
+      "error" in err.response.data
+    ) {
+      setAlertData({
+        variant: "error",
+        title: "Registration Error",
+        message: (err as { response: { data: { error: string } } }).response.data.error,
+      });
     } else {
-      alert("Registration failed");
+      setAlertData({
+        variant: "error",
+        title: "Registration Error",
+        message: "Registration failed. Please try again.",
+      });
     }
   }
 };
+
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -62,6 +96,16 @@ export default function SignUpForm() {
             Please fill in the form below with accurate personal information.
           </p>
         </div>
+
+{alertData && (
+  <div className="mb-4">
+    <Alert
+      variant={alertData.variant}
+      title={alertData.title}
+      message={alertData.message}
+    />
+  </div>
+)}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-5">
