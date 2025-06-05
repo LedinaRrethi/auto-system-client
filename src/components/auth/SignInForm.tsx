@@ -9,6 +9,7 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import api from "../../lib/api";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,28 +19,35 @@ export default function SignInForm() {
   const {
     register,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     mode: "onSubmit",
   });
 
-  const onSubmit = (data: SignInFormData) => {
-    const demoEmail = "demo@gmail.com";
-    const demoPassword = "Demo1234!";
+  const onSubmit = async (data: SignInFormData) => {
+  try {
+    const res = await api.post("/Account/login", {
+      email: data.email,
+      password: data.password,
+    });
 
-    if (
-      data.email.toLowerCase() !== demoEmail ||
-      data.password !== demoPassword
-    ) {
-      setLoginError("User with this email and password does not exist.");
+    const token = res.data.token;
+    localStorage.setItem("token", token); // ose cookies
+
+    // redirect 
+    window.location.href = "/";
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "error" in err.response.data) {
+      setLoginError(
+        // @ts-expect-error: TypeScript can't infer error shape from axios
+        err.response.data.error || "Login failed. Please try again."
+      );
     } else {
-      setLoginError("");
-      console.log("Login successful:", data);
-      reset();
+      setLoginError("Login failed. Please try again.");
     }
-  };
+  }
+};
 
   const handleFieldChange = () => {
   if (loginError) setLoginError("");

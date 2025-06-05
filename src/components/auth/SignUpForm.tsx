@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
 import { SubmitHandler } from "react-hook-form";
 import DatePicker from "../form/date-picker";
+import api from "../../lib/api";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -27,10 +28,28 @@ export default function SignUpForm() {
     },
   });
 
-  const onSubmit: SubmitHandler<SignUpFormData> = (data) => {
-    console.log("Submitted data:", data);
+  const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
+  try {
+    await api.post("/Account/register", {
+      firstName: data.fname,
+      fatherName: data.fathername, 
+      lastName: data.lname,
+      birthDate: data.birthDate,
+      email: data.email,
+      password: data.password,
+    });
+
+    alert("Registration successful! You can now log in.");
     reset();
-  };
+    window.location.href = "/signin";
+  } catch (err: unknown) {
+    if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "error" in err.response.data) {
+      alert((err as { response: { data: { error: string } } }).response.data.error);
+    } else {
+      alert("Registration failed");
+    }
+  }
+};
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -46,7 +65,7 @@ export default function SignUpForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-5">
-            {/* First and Last Name */}
+            {/* First Name , Father Name and Last Name */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
                 <Label>
@@ -58,6 +77,18 @@ export default function SignUpForm() {
                 />
                 {errors.fname && (
                   <p className="text-sm text-red-500">{errors.fname.message}</p>
+                )}
+              </div>
+              <div>
+                <Label>
+                  Father Name<span className="text-error-500">*</span>
+                </Label>
+                <Input
+                  {...register("fathername")}
+                  placeholder="Enter your father name"
+                />
+                {errors.lname && (
+                  <p className="text-sm text-red-500">{errors.lname.message}</p>
                 )}
               </div>
               <div>

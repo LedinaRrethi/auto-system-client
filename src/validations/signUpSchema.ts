@@ -12,6 +12,10 @@ export const signUpSchema = z
       .string()
       .min(1, "First name is required")
       .regex(nameRegex, "First name must only contain letters"),
+    fathername: z
+      .string()
+      .min(1, "Father name is required")
+      .regex(nameRegex, "Father name must only contain letters"),
     lname: z
       .string()
       .min(1, "Last name is required")
