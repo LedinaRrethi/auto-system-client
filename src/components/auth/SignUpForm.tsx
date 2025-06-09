@@ -8,8 +8,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
 import { SubmitHandler } from "react-hook-form";
 import DatePicker from "../form/date-picker";
-import api from "../../lib/api";
 import Alert from "../ui/alert/Alert";
+import { registerUser } from "../../utils/auth";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +37,7 @@ export default function SignUpForm() {
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
   try {
-    await api.post("/Account/register", {
+    await registerUser({
       firstName: data.fname,
       fatherName: data.fathername,
       lastName: data.lname,
@@ -54,9 +54,11 @@ export default function SignUpForm() {
 
     reset();
 
-    setTimeout(() => {
-      window.location.href = "/signin";
-    }, 1500);
+    console.log("Submitted, redirecting to Sign In...");
+setTimeout(() => {
+  window.location.href = "/signin";
+}, 1500);
+
   } catch (err: unknown) {
     if (
       err &&

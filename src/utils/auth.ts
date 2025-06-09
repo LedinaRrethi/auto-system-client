@@ -18,7 +18,7 @@ export function removeToken() {
 
 // Auth API
 
-export async function register(user: {
+export async function registerUser(user: {
   firstName: string;
   fatherName: string;
   lastName: string;
@@ -26,9 +26,11 @@ export async function register(user: {
   email: string;
   password: string;
 }) {
-  const response = await api.post(`${API_URL}/register`, user);
+  console.log("REGISTER payload:", user); 
+  const response = await api.post( `${API_URL}/register`, user);
   return response.data;
 }
+
 
 export async function login(email: string, password: string) {
   const response = await axios.post(
