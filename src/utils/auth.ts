@@ -45,13 +45,21 @@ export async function login(email: string, password: string) {
 
 export async function logout() {
   try {
-    await axios.post(`${API_URL}/logout`, {}, { withCredentials: true });
+    console.log("Logging out...");
+    const response = await api.get(`${API_URL}/logout`, { withCredentials: true });
+
+    console.log("Logout response:", response.data);
+
     removeToken();
+
+    await new Promise((res) => setTimeout(res, 1500));
+
     window.location.href = "/signin";
   } catch (error) {
     console.error("Logout failed:", error);
   }
 }
+
 
 // Axios instance with interceptors
 const api = axios.create({
