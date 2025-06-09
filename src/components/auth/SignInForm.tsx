@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema, SignInFormData } from "../../validations/signInSchema";
 
@@ -9,12 +9,15 @@ import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
-import api from "../../lib/api";
+import { login } from "../../utils/auth";
+import { AxiosError } from "axios";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [loginError, setLoginError] = useState("");
+
+  const navigate = useNavigate();
 
   const {
     register,
@@ -25,34 +28,20 @@ export default function SignInForm() {
     mode: "onSubmit",
   });
 
-  const onSubmit = async (data: SignInFormData) => {
-  try {
-    const res = await api.post("/Account/login", {
-      email: data.email,
-      password: data.password,
-    });
-
-    const token = res.data.token;
-    localStorage.setItem("token", token); // ose cookies
-
-    // redirect 
-    window.location.href = "/";
-  } catch (err: unknown) {
-    if (err && typeof err === "object" && "response" in err && err.response && typeof err.response === "object" && "data" in err.response && err.response.data && typeof err.response.data === "object" && "error" in err.response.data) {
-      setLoginError(
-        // @ts-expect-error: TypeScript can't infer error shape from axios
-        err.response.data.error || "Login failed. Please try again."
-      );
-    } else {
-      setLoginError("Login failed. Please try again.");
-    }
-  }
-};
+  const onSubmit = async (data: SignInFormData): Promise<void> => {
+    try {
+      await login(data.email, data.password);
+      navigate("/");
+    } catch (err: unknown) {
+  const error = err as AxiosError<{ error: string }>;
+  const message = error.response?.data?.error || "Login failed. Please try again.";
+  setLoginError(message);
+}
+  };
 
   const handleFieldChange = () => {
-  if (loginError) setLoginError("");
-};
-
+    if (loginError) setLoginError("");
+  };
 
   return (
     <div className="flex flex-col flex-1">
@@ -77,7 +66,7 @@ export default function SignInForm() {
                 type="email"
                 placeholder="info@gmail.com"
                 {...register("email")}
-                 onChange={handleFieldChange}
+                onChange={handleFieldChange}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500">
@@ -96,7 +85,7 @@ export default function SignInForm() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
                   {...register("password")}
-                   onChange={handleFieldChange}
+                  onChange={handleFieldChange}
                 />
                 <span
                   onClick={() => setShowPassword(!showPassword)}
@@ -123,11 +112,11 @@ export default function SignInForm() {
               </div>
             )}
 
-            {/* Checkbox + Forgot */}
+            {/* Remember Me + Forgot */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Checkbox checked={isChecked} onChange={setIsChecked} />
-                <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
+                <span className="text-sm text-gray-700 dark:text-gray-400">
                   Keep me logged in
                 </span>
               </div>
@@ -140,25 +129,21 @@ export default function SignInForm() {
             </div>
 
             {/* Submit Button */}
-            <div>
-              <Button className="w-full" size="sm" type="submit">
-                Sign in
-              </Button>
-            </div>
+            <Button className="w-full" size="sm" type="submit">
+              Sign in
+            </Button>
           </div>
         </form>
 
         {/* Bottom Link */}
-        <div className="mt-5">
-          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
-            Don&apos;t have an account?{" "}
-            <Link
-              to="/signup"
-              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-            >
-              Sign Up
-            </Link>
-          </p>
+        <div className="mt-5 text-sm text-center text-gray-700 dark:text-gray-400">
+          Don&apos;t have an account?{" "}
+          <Link
+            to="/signup"
+            className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+          >
+            Sign Up
+          </Link>
         </div>
       </div>
     </div>
