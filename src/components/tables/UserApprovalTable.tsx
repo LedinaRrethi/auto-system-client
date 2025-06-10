@@ -6,7 +6,7 @@ import {
   TableRow,
 } from "../ui/table";
 import Badge from "../ui/badge/Badge";
-import {  HiTrash, HiSearch, HiCheck, HiX } from "react-icons/hi";
+import {  HiSearch, HiCheck, HiX } from "react-icons/hi";
 import { User } from "../../types/User";
 import { useState, useMemo } from "react";
 import Pagination from "../ui/pagination/Pagination";
@@ -258,45 +258,65 @@ export default function UserApprovalTable() {
   };
 
   const getActionButtons = (user: User) => {
+    const baseButtonClass = "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105";
+    
     switch (user.status) {
       case "Pending":
         return (
           <>
             <button
-              title="Approve"
+              title="Approve User"
               onClick={() => openModal(user.id, "approve")}
-              className="text-green-600 hover:text-green-800 text-xl p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
+              className={`${baseButtonClass} bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-800/50`}
             >
-              <HiCheck />
+              <HiCheck className="w-4 h-4" />
             </button>
             <button
-              title="Reject"
+              title="Reject User"
               onClick={() => openModal(user.id, "reject")}
-              className="text-red-600 hover:text-red-800 text-xl p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+              className={`${baseButtonClass} bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-800/50`}
             >
-              <HiX />
+              <HiX className="w-4 h-4" />
             </button>
           </>
         );
       case "Approved":
         return (
-          <button
-            title="Deactivate"
-            onClick={() => openModal(user.id, "deactivate")}
-            className="text-red-600 hover:text-red-800 text-xl p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
-          >
-            <HiTrash />
-          </button>
+          <>
+            <button
+              title="User is Active"
+              disabled
+              className={`${baseButtonClass} bg-green-50 text-green-400 cursor-not-allowed dark:bg-green-900/20 dark:text-green-600`}
+            >
+              <HiCheck className="w-4 h-4" />
+            </button>
+            <button
+              title="Deactivate User"
+              onClick={() => openModal(user.id, "deactivate")}
+              className={`${baseButtonClass} bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-800/50`}
+            >
+              <HiX className="w-4 h-4" />
+            </button>
+          </>
         );
       case "Rejected":
         return (
-          <button
-            title="Approve"
-            onClick={() => openModal(user.id, "approve")}
-            className="text-green-600 hover:text-green-800 text-xl p-1 rounded hover:bg-green-50 dark:hover:bg-green-900/20"
-          >
-            <HiCheck />
-          </button>
+          <>
+            <button
+              title="Approve User"
+              onClick={() => openModal(user.id, "approve")}
+              className={`${baseButtonClass} bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-800/50`}
+            >
+              <HiCheck className="w-4 h-4" />
+            </button>
+            <button
+              title="User is Rejected"
+              disabled
+              className={`${baseButtonClass} bg-red-50 text-red-400 cursor-not-allowed dark:bg-red-900/20 dark:text-red-600`}
+            >
+              <HiX className="w-4 h-4" />
+            </button>
+          </>
         );
       default:
         return null;
@@ -440,7 +460,7 @@ export default function UserApprovalTable() {
                     {new Date(user.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="px-5 py-4 text-sm text-left">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       {getActionButtons(user)}
                     </div>
                   </TableCell>
