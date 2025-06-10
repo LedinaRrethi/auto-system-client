@@ -1,7 +1,7 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import ComponentCard from "../components/common/ComponentCard";
 import PageMeta from "../components/common/PageMeta";
-import VehicleTable from "../components/tables/VehicleRegistration"; 
+import VehicleRegistrationTable from "../components/tables/VehicleRegistrationTable";
 
 export default function VehicleRegistrationPage() {
   return (
@@ -16,7 +16,7 @@ export default function VehicleRegistrationPage() {
           title="Registered Vehicles"
           desc="Here you can view, edit, or delete your registered vehicles. Only approved vehicles are considered valid."
         >
-          <VehicleTable />
+          <VehicleRegistrationTable />
         </ComponentCard>
       </div>
     </>

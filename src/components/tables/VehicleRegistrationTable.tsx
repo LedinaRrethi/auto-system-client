@@ -4,8 +4,8 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "../../components/ui/table";
-import Badge from "../../components/ui/badge/Badge";
+} from "../ui/table";
+import Badge from "../ui/badge/Badge";
 import { HiPencilAlt, HiTrash, HiSearch, HiPlus } from "react-icons/hi";
 import { Vehicle } from "../../types/Vehicle";
 import { useState, useMemo } from "react";
@@ -57,7 +57,7 @@ const vehicleData: Vehicle[] = [
   }
 ];
 
-export default function VehicleTable() {
+export default function VehicleRegistrationTable() {
   const [vehicles, setVehicles] = useState<Vehicle[]>(vehicleData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
