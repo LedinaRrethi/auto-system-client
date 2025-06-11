@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "https://localhost:7134/api/account";
+const API_URL = "https://localhost:7134/api";
 
 // Token helpers
 export function saveToken(token: string) {
@@ -30,14 +30,14 @@ export async function registerUser(user: {
   directorate?: string,
 }) {
   console.log("REGISTER payload:", user); 
-  const response = await api.post( `${API_URL}/register`, user);
+  const response = await api.post( `${API_URL}/account/register`, user);
   return response.data;
 }
 
 
 export async function login(email: string, password: string) {
   const response = await axios.post(
-    `${API_URL}/login`,
+    `${API_URL}/account/login`,
     { email, password },
     { withCredentials: true }
   );
@@ -49,7 +49,7 @@ export async function login(email: string, password: string) {
 export async function logout() {
   try {
     console.log("Logging out...");
-    const response = await axios.post( `${API_URL}/logout`, {}, {
+    const response = await axios.post( `${API_URL}/account/logout`, {}, {
   headers: {
     Authorization: `Bearer ${getToken()}`,
   },
@@ -67,6 +67,13 @@ export async function logout() {
     console.error("Logout failed:", error);
   }
 }
+
+
+export async function getDirectorates() {
+  const response = await axios.get(`${API_URL}/Directorate`);
+  return response.data;
+}
+
 
 
 // Axios instance with interceptors

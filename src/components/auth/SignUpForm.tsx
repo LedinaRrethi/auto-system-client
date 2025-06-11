@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
@@ -9,8 +9,9 @@ import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
 import { SubmitHandler } from "react-hook-form";
 import DatePicker from "../form/date-picker";
 import Alert from "../ui/alert/Alert";
-import { registerUser } from "../../utils/auth";
+import { getDirectorates, registerUser } from "../../utils/auth";
 import Select from "../form/Select";
+import { Directorate } from "../../types/Directorate";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -20,6 +21,11 @@ export default function SignUpForm() {
     title: string;
     message: string;
   } | null>(null);
+
+ const [directorateOptions, setDirectorateOptions] = useState<
+  { label: string; value: string }[]
+>([]);
+
 
   const {
     register,
@@ -90,6 +96,24 @@ export default function SignUpForm() {
       }
     }
   };
+
+  useEffect(() => {
+  const fetchDirectorates = async () => {
+    try {
+      const data: Directorate[] = await getDirectorates();
+      const options = data.map((d) => ({
+        label: d.directoryName,
+        value: d.id,
+      }));
+      setDirectorateOptions(options);
+    } catch (error) {
+      console.error("Error fetching directorates:", error);
+    }
+  };
+
+  fetchDirectorates();
+}, []);
+
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -239,33 +263,32 @@ export default function SignUpForm() {
 
             {/* Directorate Dropdown */}
             {watch("role") === "Specialist" && (
-              <Controller
-                name="directorate"
-                control={control}
-                render={({ field }) => (
-                  <div>
-                    <Label>
-                      Directorate<span className="text-error-500">*</span>
-                    </Label>
-                    <Select
-                      options={[
-                        { label: "Tirana", value: "Tirana" },
-                        { label: "Durres", value: "Durres" },
-                        { label: "Shkoder", value: "Shkoder" },
-                      ]}
-                      placeholder="Select directorate"
-                      onChange={(value) => field.onChange(value)}
-                      defaultValue={field.value}
-                    />
-                    {errors.directorate && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.directorate.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
-            )}
+  <Controller
+  name="directorate"
+  control={control}
+  rules={{ required: "Directorate is required" }}
+  render={({ field }) => (
+    <div>
+      <Label>
+        Directorate<span className="text-error-500">*</span>
+      </Label>
+      <Select
+        options={directorateOptions}
+        placeholder="Select directorate"
+        onChange={field.onChange}
+        value={field.value} // ✅ tani kjo punon
+      />
+
+      {errors.directorate && (
+        <p className="text-sm text-red-500 mt-1">
+          {errors.directorate.message}
+        </p>
+      )}
+    </div>
+  )}
+/>
+
+)}
 
             {/* Email */}
             <div>

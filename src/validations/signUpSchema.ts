@@ -72,3 +72,6 @@ export const signUpSchema = z
   });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+
+
+//TODO : Specialist number te mos kete hapesira , as first naem , father name , last name 
