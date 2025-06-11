@@ -42,6 +42,29 @@ export const signUpSchema = z
       .refine((val) => val === true, {
         message: "You must accept the terms.",
       }),
+      role: z.enum(["Individ", "Polic", "Specialist"], {
+      required_error: "Role is required",
+    }),
+    specialistNumber: z.string().optional(),
+    directorate: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.role === "Specialist") {
+      if (!data.specialistNumber?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Specialist number is required for specialists",
+          path: ["specialistNumber"],
+        });
+      }
+      if (!data.directorate?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Directorate is required for specialists",
+          path: ["directorate"],
+        });
+      }
+    }
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",

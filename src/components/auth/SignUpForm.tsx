@@ -10,20 +10,22 @@ import { SubmitHandler } from "react-hook-form";
 import DatePicker from "../form/date-picker";
 import Alert from "../ui/alert/Alert";
 import { registerUser } from "../../utils/auth";
+import Select from "../form/Select";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [alertData, setAlertData] = useState<{
-  variant: "success" | "error" | "warning" | "info";
-  title: string;
-  message: string;
-} | null>(null);
+    variant: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
 
   const {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
     reset,
   } = useForm<SignUpFormData>({
@@ -36,56 +38,58 @@ export default function SignUpForm() {
   });
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
-  try {
-    await registerUser({
-      firstName: data.fname,
-      fatherName: data.fathername,
-      lastName: data.lname,
-      birthDate: data.birthDate,
-      email: data.email,
-      password: data.password,
-    });
-
-    setAlertData({
-      variant: "success",
-      title: "Success",
-      message: "Registration successful! You can now log in.",
-    });
-
-    reset();
-
-    console.log("Submitted, redirecting to Sign In...");
-setTimeout(() => {
-  window.location.href = "/signin";
-}, 1500);
-
-  } catch (err: unknown) {
-    if (
-      err &&
-      typeof err === "object" &&
-      "response" in err &&
-      err.response &&
-      typeof err.response === "object" &&
-      "data" in err.response &&
-      err.response.data &&
-      typeof err.response.data === "object" &&
-      "error" in err.response.data
-    ) {
-      setAlertData({
-        variant: "error",
-        title: "Registration Error",
-        message: (err as { response: { data: { error: string } } }).response.data.error,
+    try {
+      await registerUser({
+        firstName: data.fname,
+        fatherName: data.fathername,
+        lastName: data.lname,
+        birthDate: data.birthDate,
+        email: data.email,
+        password: data.password,
+        role: data.role,
+        specialistNumber: data.specialistNumber,
+        directorate: data.directorate,
       });
-    } else {
+
       setAlertData({
-        variant: "error",
-        title: "Registration Error",
-        message: "Registration failed. Please try again.",
+        variant: "success",
+        title: "Success",
+        message: "Registration successful! You can now log in.",
       });
+
+      reset();
+
+      console.log("Submitted, redirecting to Sign In...");
+      setTimeout(() => {
+        window.location.href = "/signin";
+      }, 1500);
+    } catch (err: unknown) {
+      if (
+        err &&
+        typeof err === "object" &&
+        "response" in err &&
+        err.response &&
+        typeof err.response === "object" &&
+        "data" in err.response &&
+        err.response.data &&
+        typeof err.response.data === "object" &&
+        "error" in err.response.data
+      ) {
+        setAlertData({
+          variant: "error",
+          title: "Registration Error",
+          message: (err as { response: { data: { error: string } } }).response
+            .data.error,
+        });
+      } else {
+        setAlertData({
+          variant: "error",
+          title: "Registration Error",
+          message: "Registration failed. Please try again.",
+        });
+      }
     }
-  }
-};
-
+  };
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -99,20 +103,20 @@ setTimeout(() => {
           </p>
         </div>
 
-{alertData && (
-  <div className="mb-4">
-    <Alert
-      variant={alertData.variant}
-      title={alertData.title}
-      message={alertData.message}
-    />
-  </div>
-)}
+        {alertData && (
+          <div className="mb-4">
+            <Alert
+              variant={alertData.variant}
+              title={alertData.title}
+              message={alertData.message}
+            />
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-5">
-            {/* First Name , Father Name and Last Name */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {/* First Name */}
               <div>
                 <Label>
                   First Name<span className="text-error-500">*</span>
@@ -125,6 +129,8 @@ setTimeout(() => {
                   <p className="text-sm text-red-500">{errors.fname.message}</p>
                 )}
               </div>
+
+              {/* Father Name */}
               <div>
                 <Label>
                   Father Name<span className="text-error-500">*</span>
@@ -133,10 +139,17 @@ setTimeout(() => {
                   {...register("fathername")}
                   placeholder="Enter your father name"
                 />
-                {errors.lname && (
-                  <p className="text-sm text-red-500">{errors.lname.message}</p>
+                {errors.fathername && (
+                  <p className="text-sm text-red-500">
+                    {errors.fathername.message}
+                  </p>
                 )}
               </div>
+            </div>
+
+            {/* Last Name + Birthdate */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {/* Last Name */}
               <div>
                 <Label>
                   Last Name<span className="text-error-500">*</span>
@@ -149,40 +162,110 @@ setTimeout(() => {
                   <p className="text-sm text-red-500">{errors.lname.message}</p>
                 )}
               </div>
+
+              {/* Birthdate */}
+              <div>
+                <Label>
+                  Birthdate<span className="text-error-500">*</span>
+                </Label>
+                <Controller
+                  name="birthDate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      id="birthDate"
+                      mode="single"
+                      placeholder="dd/MM/yyyy"
+                      defaultDate={field.value ?? undefined}
+                      onChange={([date]) => field.onChange(date)}
+                      maxDate={new Date()}
+                    />
+                  )}
+                />
+                {errors.birthDate && (
+                  <p className="text-sm text-red-500">
+                    {errors.birthDate.message}
+                  </p>
+                )}
+              </div>
             </div>
 
-            {/* Birthdate */}
-            <div>
-              <Label>
-                Birthdate<span className="text-error-500">*</span>
-              </Label>
+            {/* Role Dropdown */}
+            <Controller
+              name="role"
+              control={control}
+              rules={{ required: "Role is required" }}
+              render={({ field }) => (
+                <div>
+                  <Label>
+                    Role<span className="text-error-500">*</span>
+                  </Label>
+                  <Select
+                    options={[
+                      { label: "Individ", value: "Individ" },
+                      { label: "Polic", value: "Polic" },
+                      { label: "Specialist", value: "Specialist" },
+                    ]}
+                    placeholder="Select role"
+                    onChange={(value) => field.onChange(value)}
+                    defaultValue={field.value}
+                  />
+                  {errors.role && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.role.message}
+                    </p>
+                  )}
+                </div>
+              )}
+            />
+
+            {/* Specialist Number */}
+            {watch("role") === "Specialist" && (
+              <div>
+                <Label>
+                  Specialist Number<span className="text-error-500">*</span>
+                </Label>
+                <Input
+                  {...register("specialistNumber")}
+                  placeholder="Enter specialist number"
+                />
+                {errors.specialistNumber && (
+                  <p className="text-sm text-red-500">
+                    {errors.specialistNumber.message}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Directorate Dropdown */}
+            {watch("role") === "Specialist" && (
               <Controller
-                name="birthDate"
+                name="directorate"
                 control={control}
                 render={({ field }) => (
-                  <DatePicker
-                    id="birthDate"
-                    mode="single"
-                    placeholder="dd/MM/yyyy"
-                    defaultDate={field.value ?? undefined}
-                    onChange={([date]) => field.onChange(date)}
-                    maxDate={new Date()} // ✅ restrict future dates
-                  />
+                  <div>
+                    <Label>
+                      Directorate<span className="text-error-500">*</span>
+                    </Label>
+                    <Select
+                      options={[
+                        { label: "Tirana", value: "Tirana" },
+                        { label: "Durres", value: "Durres" },
+                        { label: "Shkoder", value: "Shkoder" },
+                      ]}
+                      placeholder="Select directorate"
+                      onChange={(value) => field.onChange(value)}
+                      defaultValue={field.value}
+                    />
+                    {errors.directorate && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.directorate.message}
+                      </p>
+                    )}
+                  </div>
                 )}
               />
-
-              {errors.birthDate && (
-                <p className="text-sm text-red-500">
-                  {errors.birthDate.message}
-                </p>
-              )}
-
-              {errors.birthDate && (
-                <p className="text-sm text-red-500">
-                  {errors.birthDate.message}
-                </p>
-              )}
-            </div>
+            )}
 
             {/* Email */}
             <div>

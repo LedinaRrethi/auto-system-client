@@ -25,6 +25,9 @@ export async function registerUser(user: {
   birthDate: Date;
   email: string;
   password: string;
+  role: string,
+  specialistNumber?: string,
+  directorate?: string,
 }) {
   console.log("REGISTER payload:", user); 
   const response = await api.post( `${API_URL}/register`, user);
