@@ -7,3 +7,16 @@ export interface User {
   createdAt: string; 
 
 }
+
+/*
+export interface User {
+  id: string;
+  firstName: string;
+  fatherName: string;
+  lastName: string;
+  email: string;
+  role: string;
+  status: string;
+  createdOn: string;
+}
+*/
