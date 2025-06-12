@@ -8,41 +8,15 @@ import {
 import Badge from "../ui/badge/Badge";
 import { HiSearch, HiCheck, HiX } from "react-icons/hi";
 import { User } from "../../types/User";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Pagination from "../ui/pagination/Pagination";
 import Button from "../ui/button/Button";
 import Alert from "../ui/alert/Alert";
 import UserApprovalModal from "./UserApprovalModal";
-
-const userData: User[] = [
-  {
-    id: "1",
-    name: "Ledina Rrethi",
-    role: "Police",
-    email: "ledinarrethi@gmail.com",
-    status: "Approved",
-    createdAt: "2024-12-01",
-  },
-  {
-    id: "2",
-    name: "Kristian Rrethi",
-    role: "Police",
-    email: "kristianrrethi@gmail.com",
-    status: "Pending",
-    createdAt: "2024-12-10",
-  },
-  {
-    id: "3",
-    name: "Anxhela Rrethi",
-    role: "Specialist",
-    email: "anxhelarrethi@gmail.com",
-    status: "Rejected",
-    createdAt: "2024-12-01",
-  },
-];
+import { fetchUsers, updateUserStatus } from "../../api/adminApi";
 
 export default function UserApprovalTable() {
-  const [users, setUsers] = useState<User[]>(userData);
+  const [users, setUsers] = useState<User[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -50,62 +24,101 @@ export default function UserApprovalTable() {
   const itemsPerPage = 5;
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
+  const [modalAction, setModalAction] = useState<
+    "approve" | "reject" | "deactivate" | null
+  >(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    const loadUsers = async () => {
+      try {
+        const result = await fetchUsers(currentPage, itemsPerPage);
+        const mapped = result.users.map((u: User) => ({
+          id: u.id,
+          firstName: u.firstName,
+          fatherName: u.fatherName,
+          lastName: u.lastName,
+          email: u.email,
+          role: u.role,
+          status: u.status,
+          createdOn: u.createdOn,
+        }));
+
+        setUsers(mapped);
+      } catch (err) {
+        console.error("Failed to fetch users:", err);
+      }
+    };
+
+    loadUsers();
+  }, [currentPage]);
+
   const [alert, setAlert] = useState<{
     variant: "success" | "error";
     title: string;
     message: string;
   } | null>(null);
 
-  const openModal = (id: string, action: "approve" | "reject" | "deactivate") => {
-    const user = users.find(u => u.id === id);
+  const openModal = (
+    id: string,
+    action: "approve" | "reject" | "deactivate"
+  ) => {
+    const user = users.find((u) => u.id === id);
     setSelectedUserId(id);
     setSelectedUser(user || null);
     setModalAction(action);
     setModalOpen(true);
   };
 
-  const handleModalConfirm = () => {
-    if (!selectedUserId || !modalAction) return;
+  const handleModalConfirm = async () => {
+  if (!selectedUserId || !modalAction) return;
+
+  let newStatus: "Approved" | "Rejected";
+
+  if (modalAction === "approve") {
+    newStatus = "Approved";
+  } else {
+    // për "reject" dhe "deactivate", vendosim "Rejected"
+    newStatus = "Rejected";
+  }
+
+  try {
+    await updateUserStatus(selectedUserId, newStatus); 
 
     setUsers((prev) =>
       prev.map((user) =>
         user.id === selectedUserId
           ? {
               ...user,
-              status:
-                modalAction === "approve"
-                  ? "Approved"
-                  : modalAction === "reject" || modalAction === "deactivate"
-                  ? "Rejected"
-                  : user.status,
+              status: newStatus,
             }
           : user
       )
     );
 
-    const actionText =
-      modalAction === "approve"
-        ? "approved"
-        : modalAction === "deactivate"
-        ? "deactivated"
-        : "rejected";
-
     setAlert({
       variant: "success",
       title: "Success",
-      message: `User successfully ${actionText}.`,
+      message: `User successfully ${newStatus.toLowerCase()}.`,
     });
 
     setTimeout(() => setAlert(null), 3000);
-
+  } catch (error) {
+    console.error("Failed to update user status:", error);
+    setAlert({
+      variant: "error",
+      title: "Error",
+      message: `Failed to ${modalAction} user.`,
+    });
+    setTimeout(() => setAlert(null), 3000);
+  } finally {
     setModalOpen(false);
     setSelectedUserId(null);
     setSelectedUser(null);
     setModalAction(null);
-  };
+  }
+};
 
   const handleModalCancel = () => {
     setModalOpen(false);
@@ -116,14 +129,15 @@ export default function UserApprovalTable() {
 
   const filteredUsers = useMemo(() => {
     const sorted = [...users].sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
+      const dateA = new Date(a.createdOn).getTime();
+      const dateB = new Date(b.createdOn).getTime();
       return orderByAsc ? dateA - dateB : dateB - dateA;
     });
 
     return sorted.filter((v) => {
+      const fullName = `${v.firstName} ${v.fatherName} ${v.lastName}`;
       const searchMatch =
-        v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.email.toLowerCase().includes(searchTerm.toLowerCase());
       const statusMatch = statusFilter ? v.status === statusFilter : true;
@@ -141,7 +155,8 @@ export default function UserApprovalTable() {
   const endIndex = Math.min(currentPage * itemsPerPage, filteredUsers.length);
 
   const getActionButtons = (user: User) => {
-    const baseButtonClass = "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105";
+    const baseButtonClass =
+      "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200 hover:scale-105";
 
     switch (user.status) {
       case "Pending":
@@ -210,7 +225,11 @@ export default function UserApprovalTable() {
     <>
       {alert && (
         <div className="fixed top-4 right-4 z-50 w-96">
-          <Alert variant={alert.variant} title={alert.title} message={alert.message} />
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
         </div>
       )}
 
@@ -237,7 +256,10 @@ export default function UserApprovalTable() {
               <option value="Pending">Pending</option>
               <option value="Rejected">Rejected</option>
             </select>
-            <Button variant="outline" onClick={() => setOrderByAsc(!orderByAsc)}>
+            <Button
+              variant="outline"
+              onClick={() => setOrderByAsc(!orderByAsc)}
+            >
               Order by Date {orderByAsc ? "↑" : "↓"}
             </Button>
           </div>
@@ -247,20 +269,36 @@ export default function UserApprovalTable() {
           <Table className="w-full min-w-[1000px]">
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Name</TableCell>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Role</TableCell>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Email</TableCell>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableCell>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Registered</TableCell>
-                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Actions</TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Name
+                </TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Role
+                </TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Email
+                </TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Status
+                </TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Registered
+                </TableCell>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Actions
+                </TableCell>
               </TableRow>
             </TableHeader>
             <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
               {paginatedUsers.map((user) => (
                 <TableRow key={user.id}>
-                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{user.name}</TableCell>
-                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{user.role}</TableCell>
-                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{user.email}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white"> {`${user.firstName} ${user.fatherName} ${user.lastName}`}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {user.role}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {user.email}
+                  </TableCell>
                   <TableCell className="px-5 py-4 text-sm">
                     <Badge
                       size="sm"
@@ -276,7 +314,7 @@ export default function UserApprovalTable() {
                     </Badge>
                   </TableCell>
                   <TableCell className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                    {new Date(user.createdOn).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="px-5 py-4 text-sm text-left">
                     <div className="flex items-center gap-3">

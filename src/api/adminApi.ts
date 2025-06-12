@@ -16,7 +16,9 @@ export async function fetchUsers(page = 1, pageSize = 10) {
 }
 
 export async function updateUserStatus(userId: string, newStatus: string) {
-  const response = await axios.post(`${BASE_URL}/users/${userId}/status`, newStatus, {
+  const response = await axios.post(
+    `${BASE_URL}/users/${userId}/status`, 
+    JSON.stringify(newStatus), {
     headers: {
       "Content-Type": "application/json",
     },

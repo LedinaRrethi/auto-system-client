@@ -52,7 +52,7 @@ export default function UserApprovalModal({ isOpen, action, user, onConfirm, onC
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="font-medium text-gray-700 dark:text-gray-300">Name:</span>
-                <span className="text-gray-900 dark:text-white">{user.name}</span>
+                <span className="text-gray-900 dark:text-white">{`${user.firstName} ${user.fatherName} ${user.lastName}`}</span>
               </div>
               <div className="flex justify-between">
                 <span className="font-medium text-gray-700 dark:text-gray-300">Email:</span>
