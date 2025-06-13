@@ -22,6 +22,7 @@ import SignUp from "./features/auth/view/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
 
 import { Toaster } from "react-hot-toast";
+import VehicleRequestApproval from "./features/admin/view/VehicleRequestApproval";
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
             <Route path="/user-approval" element={<UserApprovalPage />} />
+            <Route path="/vehicle-request-approval" element={<VehicleRequestApproval />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
