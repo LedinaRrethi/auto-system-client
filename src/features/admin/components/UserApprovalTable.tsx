@@ -1,19 +1,13 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
+import Badge from "../../../components/ui/badge/Badge";
 import { HiSearch } from "react-icons/hi";
-import { User } from "../../types/User";
+import { User } from "../../../types/User";
 import { useState, useMemo, useEffect } from "react";
-import Pagination from "../ui/pagination/Pagination";
-import Button from "../ui/button/Button";
-import Alert from "../ui/alert/Alert";
+import Pagination from "../../../components/ui/pagination/Pagination";
+import Button from "../../../components/ui/button/Button";
+import Alert from "../../../components/ui/alert/Alert";
 import UserApprovalModal from "./UserApprovalModal";
-import { fetchUsers, updateUserStatus } from "../../api/adminApi";
+import { fetchUsers, updateUserStatus } from "../../../api/adminApi";
 import UserActionButtons from "./UserActionButtons";
 
 export default function UserApprovalTable() {
@@ -25,9 +19,7 @@ export default function UserApprovalTable() {
   const itemsPerPage = 5;
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<
-    "approve" | "reject" | "deactivate" | null
-  >(null);
+  const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
@@ -61,10 +53,7 @@ export default function UserApprovalTable() {
     message: string;
   } | null>(null);
 
-  const openModal = (
-    id: string,
-    action: "approve" | "reject" | "deactivate"
-  ) => {
+  const openModal = (id: string, action: "approve" | "reject" | "deactivate") => {
     const user = users.find((u) => u.id === id);
     setSelectedUserId(id);
     setSelectedUser(user || null);
@@ -158,11 +147,7 @@ export default function UserApprovalTable() {
     <>
       {alert && (
         <div className="fixed top-4 right-4 z-50 w-96">
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
+          <Alert variant={alert.variant} title={alert.title} message={alert.message} />
         </div>
       )}
 
@@ -189,10 +174,7 @@ export default function UserApprovalTable() {
               <option value="Pending">Pending</option>
               <option value="Rejected">Rejected</option>
             </select>
-            <Button
-              variant="outline"
-              onClick={() => setOrderByAsc(!orderByAsc)}
-            >
+            <Button variant="outline" onClick={() => setOrderByAsc(!orderByAsc)}>
               Order by Date {orderByAsc ? "↑" : "↓"}
             </Button>
           </div>
@@ -228,22 +210,12 @@ export default function UserApprovalTable() {
                   <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                     {`${user.firstName} ${user.fatherName} ${user.lastName}`}
                   </TableCell>
-                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                    {user.role}
-                  </TableCell>
-                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                    {user.email}
-                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{user.role}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{user.email}</TableCell>
                   <TableCell className="px-5 py-4 text-sm">
                     <Badge
                       size="sm"
-                      color={
-                        user.status === "Approved"
-                          ? "success"
-                          : user.status === "Rejected"
-                          ? "error"
-                          : "warning"
-                      }
+                      color={user.status === "Approved" ? "success" : user.status === "Rejected" ? "error" : "warning"}
                     >
                       {user.status}
                     </Badge>

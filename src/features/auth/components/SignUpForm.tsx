@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import { useForm, Controller } from "react-hook-form";
+import { SignUpFormData, signUpSchema } from "../../../utils/validations/signUpSchema";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signUpSchema, SignUpFormData } from "../../validations/signUpSchema";
-import { SubmitHandler } from "react-hook-form";
-import DatePicker from "../form/date-picker";
-import Alert from "../ui/alert/Alert";
-import { getDirectorates, registerUser } from "../../utils/auth";
-import Select from "../form/Select";
-import { Directorate } from "../../types/Directorate";
+import { Directorate } from "../../../types/Directorate";
+import Alert from "../../../components/ui/alert/Alert";
+import Label from "../../../components/form/Label";
+import Input from "../../../components/form/input/InputField";
+import DatePicker from "../../../components/form/date-picker";
+import Select from "../../../components/form/Select";
+import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
+import { registerUser } from "../../../services/authService";
+import { getDirectorates } from "../../../services/directoryService";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,10 +22,7 @@ export default function SignUpForm() {
     message: string;
   } | null>(null);
 
- const [directorateOptions, setDirectorateOptions] = useState<
-  { label: string; value: string }[]
->([]);
-
+  const [directorateOptions, setDirectorateOptions] = useState<{ label: string; value: string }[]>([]);
 
   const {
     register,
@@ -84,8 +81,7 @@ export default function SignUpForm() {
         setAlertData({
           variant: "error",
           title: "Registration Error",
-          message: (err as { response: { data: { error: string } } }).response
-            .data.error,
+          message: (err as { response: { data: { error: string } } }).response.data.error,
         });
       } else {
         setAlertData({
@@ -98,22 +94,21 @@ export default function SignUpForm() {
   };
 
   useEffect(() => {
-  const fetchDirectorates = async () => {
-    try {
-      const data: Directorate[] = await getDirectorates();
-      const options = data.map((d) => ({
-        label: d.directoryName,
-        value: d.id,
-      }));
-      setDirectorateOptions(options);
-    } catch (error) {
-      console.error("Error fetching directorates:", error);
-    }
-  };
+    const fetchDirectorates = async () => {
+      try {
+        const data: Directorate[] = await getDirectorates();
+        const options = data.map((d) => ({
+          label: d.directoryName,
+          value: d.id,
+        }));
+        setDirectorateOptions(options);
+      } catch (error) {
+        console.error("Error fetching directorates:", error);
+      }
+    };
 
-  fetchDirectorates();
-}, []);
-
+    fetchDirectorates();
+  }, []);
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
@@ -129,11 +124,7 @@ export default function SignUpForm() {
 
         {alertData && (
           <div className="mb-4">
-            <Alert
-              variant={alertData.variant}
-              title={alertData.title}
-              message={alertData.message}
-            />
+            <Alert variant={alertData.variant} title={alertData.title} message={alertData.message} />
           </div>
         )}
 
@@ -145,13 +136,8 @@ export default function SignUpForm() {
                 <Label>
                   First Name<span className="text-error-500">*</span>
                 </Label>
-                <Input
-                  {...register("fname")}
-                  placeholder="Enter your first name"
-                />
-                {errors.fname && (
-                  <p className="text-sm text-red-500">{errors.fname.message}</p>
-                )}
+                <Input {...register("fname")} placeholder="Enter your first name" />
+                {errors.fname && <p className="text-sm text-red-500">{errors.fname.message}</p>}
               </div>
 
               {/* Father Name */}
@@ -159,15 +145,8 @@ export default function SignUpForm() {
                 <Label>
                   Father Name<span className="text-error-500">*</span>
                 </Label>
-                <Input
-                  {...register("fathername")}
-                  placeholder="Enter your father name"
-                />
-                {errors.fathername && (
-                  <p className="text-sm text-red-500">
-                    {errors.fathername.message}
-                  </p>
-                )}
+                <Input {...register("fathername")} placeholder="Enter your father name" />
+                {errors.fathername && <p className="text-sm text-red-500">{errors.fathername.message}</p>}
               </div>
             </div>
 
@@ -178,13 +157,8 @@ export default function SignUpForm() {
                 <Label>
                   Last Name<span className="text-error-500">*</span>
                 </Label>
-                <Input
-                  {...register("lname")}
-                  placeholder="Enter your last name"
-                />
-                {errors.lname && (
-                  <p className="text-sm text-red-500">{errors.lname.message}</p>
-                )}
+                <Input {...register("lname")} placeholder="Enter your last name" />
+                {errors.lname && <p className="text-sm text-red-500">{errors.lname.message}</p>}
               </div>
 
               {/* Birthdate */}
@@ -206,11 +180,7 @@ export default function SignUpForm() {
                     />
                   )}
                 />
-                {errors.birthDate && (
-                  <p className="text-sm text-red-500">
-                    {errors.birthDate.message}
-                  </p>
-                )}
+                {errors.birthDate && <p className="text-sm text-red-500">{errors.birthDate.message}</p>}
               </div>
             </div>
 
@@ -234,11 +204,7 @@ export default function SignUpForm() {
                     onChange={(value) => field.onChange(value)}
                     defaultValue={field.value}
                   />
-                  {errors.role && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.role.message}
-                    </p>
-                  )}
+                  {errors.role && <p className="text-sm text-red-500 mt-1">{errors.role.message}</p>}
                 </div>
               )}
             />
@@ -249,60 +215,42 @@ export default function SignUpForm() {
                 <Label>
                   Specialist Number<span className="text-error-500">*</span>
                 </Label>
-                <Input
-                  {...register("specialistNumber")}
-                  placeholder="Enter specialist number"
-                />
-                {errors.specialistNumber && (
-                  <p className="text-sm text-red-500">
-                    {errors.specialistNumber.message}
-                  </p>
-                )}
+                <Input {...register("specialistNumber")} placeholder="Enter specialist number" />
+                {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
               </div>
             )}
 
             {/* Directorate Dropdown */}
             {watch("role") === "Specialist" && (
-  <Controller
-  name="directorate"
-  control={control}
-  rules={{ required: "Directorate is required" }}
-  render={({ field }) => (
-    <div>
-      <Label>
-        Directorate<span className="text-error-500">*</span>
-      </Label>
-      <Select
-        options={directorateOptions}
-        placeholder="Select directorate"
-        onChange={field.onChange}
-        value={field.value} // ✅ tani kjo punon
-      />
+              <Controller
+                name="directorate"
+                control={control}
+                rules={{ required: "Directorate is required" }}
+                render={({ field }) => (
+                  <div>
+                    <Label>
+                      Directorate<span className="text-error-500">*</span>
+                    </Label>
+                    <Select
+                      options={directorateOptions}
+                      placeholder="Select directorate"
+                      onChange={field.onChange}
+                      value={field.value} // ✅ tani kjo punon
+                    />
 
-      {errors.directorate && (
-        <p className="text-sm text-red-500 mt-1">
-          {errors.directorate.message}
-        </p>
-      )}
-    </div>
-  )}
-/>
-
-)}
+                    {errors.directorate && <p className="text-sm text-red-500 mt-1">{errors.directorate.message}</p>}
+                  </div>
+                )}
+              />
+            )}
 
             {/* Email */}
             <div>
               <Label>
                 Email<span className="text-error-500">*</span>
               </Label>
-              <Input
-                {...register("email")}
-                type="email"
-                placeholder="Enter your email"
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
+              <Input {...register("email")} type="email" placeholder="Enter your email" />
+              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* Password */}
@@ -327,11 +275,7 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
             </div>
 
             {/* Confirm Password */}
@@ -356,35 +300,18 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
+              {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
             </div>
 
             {/* Terms Checkbox */}
             <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                {...register("acceptedTerms")}
-                id="acceptedTerms"
-                className="w-5 h-5"
-              />
+              <input type="checkbox" {...register("acceptedTerms")} id="acceptedTerms" className="w-5 h-5" />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
-                By creating an account, you agree to the{" "}
-                <span className="font-semibold text-brand-500">Terms</span> and{" "}
-                <span className="font-semibold text-brand-500">
-                  Privacy Policy
-                </span>
-                .
+                By creating an account, you agree to the <span className="font-semibold text-brand-500">Terms</span> and{" "}
+                <span className="font-semibold text-brand-500">Privacy Policy</span>.
               </label>
             </div>
-            {errors.acceptedTerms && (
-              <p className="text-sm text-red-500">
-                {errors.acceptedTerms.message}
-              </p>
-            )}
+            {errors.acceptedTerms && <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>}
 
             {/* Submit */}
             <div>
@@ -401,10 +328,7 @@ export default function SignUpForm() {
         <div className="mt-5">
           <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
             Already have an account?{" "}
-            <Link
-              to="/signin"
-              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-            >
+            <Link to="/signin" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
               Sign In
             </Link>
           </p>

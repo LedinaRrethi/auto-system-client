@@ -1,7 +1,7 @@
-import PageBreadcrumb from "../components/common/PageBreadCrumb";
-import ComponentCard from "../components/common/ComponentCard";
-import PageMeta from "../components/common/PageMeta";
-import UserApprovalTable from "../components/users/UserApprovalTable";
+import ComponentCard from "../../../components/common/ComponentCard";
+import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
+import PageMeta from "../../../components/common/PageMeta";
+import UserApprovalTable from "../components/UserApprovalTable";
 
 export default function UserApprovalPage() {
   return (

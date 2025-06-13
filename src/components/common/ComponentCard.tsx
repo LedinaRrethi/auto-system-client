@@ -1,38 +1,34 @@
+// src/components/common/ComponentCard.tsx
+import React from "react";
+
 interface ComponentCardProps {
   title: string;
+  desc?: string;
   children: React.ReactNode;
-  className?: string; // Additional custom classes for styling
-  desc?: string; // Description text
+  actionButton?: {
+    text: string;
+    onClick: () => void;
+  };
 }
 
-const ComponentCard: React.FC<ComponentCardProps> = ({
-  title,
-  children,
-  className = "",
-  desc = "",
-}) => {
+export default function ComponentCard({ title, desc, children, actionButton }: ComponentCardProps) {
   return (
-    <div
-      className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] ${className}`}
-    >
-      {/* Card Header */}
-      <div className="px-6 py-5">
-        <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
-          {title}
-        </h3>
-        {desc && (
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-            {desc}
-          </p>
+    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 space-y-4">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">{title}</h3>
+          {desc && <p className="text-sm text-gray-500 dark:text-gray-300">{desc}</p>}
+        </div>
+        {actionButton && (
+          <button
+            onClick={actionButton.onClick}
+            className="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+          >
+            {actionButton.text}
+          </button>
         )}
       </div>
-
-      {/* Card Body */}
-      <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-        <div className="space-y-6">{children}</div>
-      </div>
+      <div>{children}</div>
     </div>
   );
-};
-
-export default ComponentCard;
+}

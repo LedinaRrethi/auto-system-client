@@ -2,15 +2,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { signInSchema, SignInFormData } from "../../validations/signInSchema";
 
-import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
-import Button from "../ui/button/Button";
-import { login } from "../../utils/auth";
 import { AxiosError } from "axios";
+import { SignInFormData, signInSchema } from "../../../utils/validations/signInSchema";
+import Input from "../../../components/form/input/InputField";
+import Label from "../../../components/form/Label";
+import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
+import Checkbox from "../../../components/form/input/Checkbox";
+import Button from "../../../components/ui/button/Button";
+import { login } from "../../../services/authService";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,10 +33,10 @@ export default function SignInForm() {
       await login(data.email, data.password);
       navigate("/");
     } catch (err: unknown) {
-  const error = err as AxiosError<{ error: string }>;
-  const message = error.response?.data?.error || "Login failed. Please try again.";
-  setLoginError(message);
-}
+      const error = err as AxiosError<{ error: string }>;
+      const message = error.response?.data?.error || "Login failed. Please try again.";
+      setLoginError(message);
+    }
   };
 
   const handleFieldChange = () => {
@@ -50,9 +50,7 @@ export default function SignInForm() {
           <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
             Sign In
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Enter your email and password to sign in!
-          </p>
+          <p className="text-sm text-gray-500 dark:text-gray-400">Enter your email and password to sign in!</p>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
@@ -62,17 +60,8 @@ export default function SignInForm() {
               <Label>
                 Email <span className="text-error-500">*</span>
               </Label>
-              <Input
-                type="email"
-                placeholder="info@gmail.com"
-                {...register("email")}
-                onChange={handleFieldChange}
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.email.message}
-                </p>
-              )}
+              <Input type="email" placeholder="info@gmail.com" {...register("email")} onChange={handleFieldChange} />
+              {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             {/* Password */}
@@ -98,11 +87,7 @@ export default function SignInForm() {
                   )}
                 </span>
               </div>
-              {errors.password && (
-                <p className="mt-1 text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+              {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
             </div>
 
             {/* Login Error */}
@@ -116,14 +101,9 @@ export default function SignInForm() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Checkbox checked={isChecked} onChange={setIsChecked} />
-                <span className="text-sm text-gray-700 dark:text-gray-400">
-                  Keep me logged in
-                </span>
+                <span className="text-sm text-gray-700 dark:text-gray-400">Keep me logged in</span>
               </div>
-              <Link
-                to="/reset-password"
-                className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
-              >
+              <Link to="/reset-password" className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">
                 Forgot password?
               </Link>
             </div>
@@ -138,10 +118,7 @@ export default function SignInForm() {
         {/* Bottom Link */}
         <div className="mt-5 text-sm text-center text-gray-700 dark:text-gray-400">
           Don&apos;t have an account?{" "}
-          <Link
-            to="/signup"
-            className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
-          >
+          <Link to="/signup" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
             Sign Up
           </Link>
         </div>

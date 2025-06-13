@@ -1,18 +1,18 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../ui/table";
-import Badge from "../ui/badge/Badge";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
+import Badge from "../../../components/ui/badge/Badge";
 import { HiPencilAlt, HiTrash, HiSearch, HiPlus } from "react-icons/hi";
-import { Vehicle } from "../../types/Vehicle";
+import Pagination from "../../../components/ui/pagination/Pagination";
+import Button from "../../../components/ui/button/Button";
+import { Dropdown } from "../../../components/ui/dropdown/Dropdown";
+import { DropdownItem } from "../../../components/ui/dropdown/DropdownItem";
 import { useState, useMemo } from "react";
-import Pagination from "../ui/pagination/Pagination";
-import Button from "../ui/button/Button";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { Vehicle } from "../../../types/Vehicle";
+import { VehicleInput } from "../../../utils/validations/vehicleSchema";
+
+interface Props {
+  onAdd: () => void;
+  onEdit: (vehicle: VehicleInput) => void;
+}
 
 const vehicleData: Vehicle[] = [
   {
@@ -35,29 +35,9 @@ const vehicleData: Vehicle[] = [
     status: "Pending",
     registrationDate: "2025-02-15",
   },
-  {
-    id: "3",
-    plateNumber: "TR456XY",
-    color: "White",
-    seatCount: 5,
-    doorCount: 5,
-    chassisNumber: "JHGD456321A",
-    status: "Rejected",
-    registrationDate: "2023-11-20",
-  },
-  {
-    id: "4",
-    plateNumber: "AA111ZZ",
-    color: "Blue",
-    seatCount: 7,
-    doorCount: 4,
-    chassisNumber: "ZXC987456TY",
-    status: "Approved",
-    registrationDate: "2024-06-10",
-  }
 ];
 
-export default function VehicleRegistrationTable() {
+export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
   const [vehicles, setVehicles] = useState<Vehicle[]>(vehicleData);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -93,15 +73,15 @@ export default function VehicleRegistrationTable() {
   const endIndex = Math.min(currentPage * itemsPerPage, filteredVehicles.length);
 
   const handleEdit = (id: string) => {
-    console.log("Edit vehicle:", id);
+    const vehicle = vehicles.find((v) => v.id === id);
+    if (vehicle) {
+      const { plateNumber, color, seatCount, doorCount, chassisNumber } = vehicle;
+      onEdit({ plateNumber, color, seatCount, doorCount, chassisNumber });
+    }
   };
 
   const handleDelete = (id: string) => {
     setVehicles((prev) => prev.filter((v) => v.id !== id));
-  };
-
-  const handleAdd = () => {
-    console.log("Add vehicle");
   };
 
   return (
@@ -118,55 +98,75 @@ export default function VehicleRegistrationTable() {
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
             />
           </div>
+
           <select
-  value={statusFilter}
-  onChange={(e) => setStatusFilter(e.target.value)}
-  className="h-11 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-white px-4"
->
-  <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="">
-    All Statuses
-  </option>
-  <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Approved">
-    Approved
-  </option>
-  <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Pending">
-    Pending
-  </option>
-  <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Rejected">
-    Rejected
-  </option>
-</select>
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="h-11 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-white px-4"
+          >
+            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="">
+              All Statuses
+            </option>
+            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Approved">
+              Approved
+            </option>
+            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Pending">
+              Pending
+            </option>
+            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Rejected">
+              Rejected
+            </option>
+          </select>
 
           <Button variant="outline" onClick={() => setOrderByAsc(!orderByAsc)}>
             Order by Date {orderByAsc ? "↑" : "↓"}
           </Button>
         </div>
+
         <div className="relative">
           <Button
-  startIcon={<HiPlus />}
-  onClick={handleAdd}
-  className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
->
-  Add Vehicle
-</Button>
+            startIcon={<HiPlus />}
+            onClick={onAdd}
+            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Add Vehicle
+          </Button>
+
           <Dropdown isOpen={dropdownOpen} onClose={() => setDropdownOpen(false)}>
             <DropdownItem onClick={() => alert("Coming soon")}>Settings</DropdownItem>
             <DropdownItem onClick={() => alert("Coming soon")}>Export</DropdownItem>
           </Dropdown>
         </div>
       </div>
+
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Plate</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Color</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Seats</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Doors</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Chassis</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Status</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Registered</TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Actions</TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Plate
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Color
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Seats
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Doors
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Chassis
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Status
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Registered
+              </TableCell>
+              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Actions
+              </TableCell>
             </TableRow>
           </TableHeader>
 
@@ -177,24 +177,18 @@ export default function VehicleRegistrationTable() {
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.color}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.seatCount}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.doorCount}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.chassisNumber}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.chassisNumber}
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm">
                   <Badge
-  size="sm"
-  color={
-    vehicle.status === "Approved"
-      ? "success"
-      : vehicle.status === "Rejected"
-      ? "error"
-      : "warning"
-  }
->
-  {vehicle.status === "Approved"
-    ? "Approved"
-    : vehicle.status === "Pending"
-    ? "Pending"
-    : "Rejected"}
-</Badge>
+                    size="sm"
+                    color={
+                      vehicle.status === "Approved" ? "success" : vehicle.status === "Rejected" ? "error" : "warning"
+                    }
+                  >
+                    {vehicle.status === "Approved" ? "Approved" : vehicle.status === "Pending" ? "Pending" : "Rejected"}
+                  </Badge>
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300">
                   {new Date(vehicle.registrationDate).toLocaleDateString()}
