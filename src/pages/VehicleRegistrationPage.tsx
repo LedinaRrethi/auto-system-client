@@ -1,7 +1,7 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import ComponentCard from "../components/common/ComponentCard";
 import PageMeta from "../components/common/PageMeta";
-import VehicleRegistrationTable from "../components/tables/VehicleRegistrationTable";
+import VehicleRegistrationTable from "../components/Vehicle/VehicleRegistrationTable";
 
 export default function VehicleRegistrationPage() {
   return (
