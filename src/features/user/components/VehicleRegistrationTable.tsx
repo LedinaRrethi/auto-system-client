@@ -5,9 +5,10 @@ import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
 import { Dropdown } from "../../../components/ui/dropdown/Dropdown";
 import { DropdownItem } from "../../../components/ui/dropdown/DropdownItem";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Vehicle } from "../../../types/Vehicle";
 import { VehicleInput } from "../../../utils/validations/vehicleSchema";
+import { deleteVehicle, fetchVehicles } from "../../../services/vehicleService";
 
 interface Props {
   onAdd: () => void;
@@ -15,31 +16,9 @@ interface Props {
   onDelete: (vehicleId: string) => Promise<void>;
 }
 
-const vehicleData: Vehicle[] = [
-  {
-    id: "1",
-    plateNumber: "AC630BM",
-    color: "Black",
-    seatCount: 8,
-    doorCount: 4,
-    chassisNumber: "SHS123456789",
-    status: "Approved",
-    registrationDate: "2024-12-01",
-  },
-  {
-    id: "2",
-    plateNumber: "BB321CC",
-    color: "Red",
-    seatCount: 4,
-    doorCount: 4,
-    chassisNumber: "XYZ987654321",
-    status: "Pending",
-    registrationDate: "2025-02-15",
-  },
-];
 
 export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
-  const [vehicles, setVehicles] = useState<Vehicle[]>(vehicleData);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,22 +26,44 @@ export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
   const itemsPerPage = 5;
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const filteredVehicles = useMemo(() => {
-    const sorted = [...vehicles].sort((a, b) => {
-      const dateA = new Date(a.registrationDate).getTime();
-      const dateB = new Date(b.registrationDate).getTime();
-      return orderByAsc ? dateA - dateB : dateB - dateA;
-    });
+  useEffect(() => {
+  const loadVehicles = async () => {
+    try {
+      const data = await fetchVehicles();
+      if (Array.isArray(data)) {
+        setVehicles(data);
+      } else {
+        console.error("Data fetched is not an array", data);
+        setVehicles([]); // fallback për të shmangur gabime
+      }
+    } catch (err) {
+      alert("Failed to fetch vehicles");
+      console.error(err);
+      setVehicles([]); // fallback në rast errori
+    }
+  };
+  loadVehicles();
+}, []);
 
-    return sorted.filter((v) => {
-      const searchMatch =
-        v.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.chassisNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.color.toLowerCase().includes(searchTerm.toLowerCase());
-      const statusMatch = statusFilter ? v.status === statusFilter : true;
-      return searchMatch && statusMatch;
-    });
-  }, [vehicles, searchTerm, statusFilter, orderByAsc]);
+
+ const filteredVehicles = useMemo(() => {
+  if (!Array.isArray(vehicles)) return [];
+  const sorted = [...vehicles].sort((a, b) => {
+    const dateA = new Date(a.createdOn).getTime();
+    const dateB = new Date(b.createdOn).getTime();
+    return orderByAsc ? dateA - dateB : dateB - dateA;
+  });
+
+  return sorted.filter((v) => {
+    const searchMatch =
+      v.plateNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.chassisNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      v.color.toLowerCase().includes(searchTerm.toLowerCase());
+    const statusMatch = statusFilter ? v.status === statusFilter : true;
+    return searchMatch && statusMatch;
+  });
+}, [vehicles, searchTerm, statusFilter, orderByAsc]);
+
 
   const paginatedVehicles = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -74,15 +75,24 @@ export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
   const endIndex = Math.min(currentPage * itemsPerPage, filteredVehicles.length);
 
   const handleEdit = (id: string) => {
-    const vehicle = vehicles.find((v) => v.id === id);
+    const vehicle = vehicles.find((v) => v.idpk_Vehicle === id);
     if (vehicle) {
       const { plateNumber, color, seatCount, doorCount, chassisNumber } = vehicle;
       onEdit({ plateNumber, color, seatCount, doorCount, chassisNumber });
     }
   };
 
-  const handleDelete = (id: string) => {
-    setVehicles((prev) => prev.filter((v) => v.id !== id));
+  const handleDelete = async (id: string) => {
+     const confirm = window.confirm("Are you sure you want to request deletion?");
+  if (!confirm) return;
+  try {
+    await deleteVehicle(id);
+    alert("Delete request submitted.");
+    setVehicles((prev) => prev.filter((v) => v.idpk_Vehicle !== id));
+  } catch (err) {
+    alert("Delete request failed.");
+    console.error(err);
+  }
   };
 
   return (
@@ -173,7 +183,7 @@ export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
 
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {paginatedVehicles.map((vehicle) => (
-              <TableRow key={vehicle.id}>
+              <TableRow key={vehicle.idpk_Vehicle}>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.plateNumber}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.color}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.seatCount}</TableCell>
@@ -192,20 +202,20 @@ export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
                   </Badge>
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-600 dark:text-gray-300">
-                  {new Date(vehicle.registrationDate).toLocaleDateString()}
+                  {new Date(vehicle.createdOn).toLocaleDateString()}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-left">
                   <div className="flex items-center gap-3">
                     <button
                       title="Edit"
-                      onClick={() => handleEdit(vehicle.id)}
+                      onClick={() => handleEdit(vehicle.idpk_Vehicle)}
                       className="text-blue-600 hover:text-blue-800 text-xl"
                     >
                       <HiPencilAlt />
                     </button>
                     <button
                       title="Delete"
-                      onClick={() => handleDelete(vehicle.id)}
+                      onClick={() => handleDelete(vehicle.idpk_Vehicle)}
                       className="text-red-600 hover:text-red-800 text-xl"
                     >
                       <HiTrash />

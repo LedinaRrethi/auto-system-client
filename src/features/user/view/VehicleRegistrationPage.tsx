@@ -5,11 +5,15 @@ import PageMeta from "../../../components/common/PageMeta";
 import { VehicleInput } from "../../../utils/validations/vehicleSchema";
 import VehicleRegistrationTable from "../components/VehicleRegistrationTable";
 import VehicleRegistrationModal from "../components/VehicleRegistrationModal";
+import { deleteVehicle, fetchVehicles, registerVehicle, updateVehicle } from "../../../services/vehicleService";
+import { Vehicle } from "../../../types/Vehicle";
 
 export default function VehicleRegistrationPage() {
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editData, setEditData] = useState<VehicleInput | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
+
 
   const handleAddClick = () => {
     setEditData(null);
@@ -17,37 +21,48 @@ export default function VehicleRegistrationPage() {
     setIsModalOpen(true);
   };
 
-  const handleEditClick = (vehicle: VehicleInput) => {
+   const handleEditClick = (vehicle: VehicleInput) => {
     setEditData(vehicle);
     setMode("edit");
     setIsModalOpen(true);
   };
 
-  const handleDeleteClick = async (vehicleId: string) => {
-  try {
-    const confirm = window.confirm("Are you sure you want to request to delete this vehicle?");
-    if (!confirm) return;
-
-    // Call API to request deletion
-    // await api.post("/vehicle-request/delete", {
-    //   vehicleId,
-    // });
-
-    console.log(`Delete request submitted for vehicle ID: ${vehicleId}`);
-
-    // toast 
-    alert("Delete request submitted for approval.");
-  } catch (err) {
-    alert("Failed to submit delete request.");
-    console.error(err);
-  }
-};
-
-
-  const handleSubmit = (data: VehicleInput, mode: "add" | "edit") => {
-    console.log(`${mode.toUpperCase()} VEHICLE`, data);
-    setIsModalOpen(false);
+   const handleDeleteClick = async (vehicleId: string) => {
+    try {
+      const confirm = window.confirm("Are you sure you want to request to delete this vehicle?");
+      if (!confirm) return;
+      await deleteVehicle(vehicleId);
+      alert("Delete request submitted.");
+      setVehicles((prev) => prev.filter((v) => v.idpk_Vehicle !== vehicleId));
+    } catch (err) {
+      alert("Failed to submit delete request.");
+      console.error(err);
+    }
   };
+
+
+ const handleSubmit = async (data: VehicleInput, mode: "add" | "edit") => {
+    try {
+      if (mode === "add") {
+        await registerVehicle(data);
+        alert("Vehicle registration request submitted.");
+      } else {
+        const vehicleToUpdate = vehicles.find((v) => v.plateNumber === data.plateNumber);
+        if (!vehicleToUpdate) return alert("Vehicle not found.");
+        await updateVehicle(vehicleToUpdate.idpk_Vehicle, data);
+        alert("Update request submitted.");
+      }
+
+      const updated = await fetchVehicles();
+      setVehicles(updated);
+      setIsModalOpen(false);
+    } catch (err) {
+      alert("Submission failed.");
+      console.error(err);
+    }
+  };
+
+
 
   return (
     <>
@@ -76,3 +91,4 @@ export default function VehicleRegistrationPage() {
     </>
   );
 }
+
