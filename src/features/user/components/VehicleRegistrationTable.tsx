@@ -12,6 +12,7 @@ import { VehicleInput } from "../../../utils/validations/vehicleSchema";
 interface Props {
   onAdd: () => void;
   onEdit: (vehicle: VehicleInput) => void;
+  onDelete: (vehicleId: string) => Promise<void>;
 }
 
 const vehicleData: Vehicle[] = [

@@ -28,12 +28,12 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
     defaultValues: initialValues,
   });
 
-  // 🔁 Reset form fields whenever initialValues change
+  //  Reset form fields whenever initialValues change
   useEffect(() => {
     if (initialValues) {
       reset(initialValues);
     } else {
-      reset(); // for "add" mode, clear the form
+      reset(); // Reset to default values if no initialValues are provided
     }
   }, [initialValues, reset]);
 
