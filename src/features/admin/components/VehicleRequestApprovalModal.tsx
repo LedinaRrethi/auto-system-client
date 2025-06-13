@@ -24,10 +24,10 @@ export default function VehicleApprovalModal({
 }: VehicleApprovalModalProps) {
   const isApprove = action === "approve";
   const title = isApprove ? "Approve Vehicle Request" : "Reject Vehicle Request";
-  const buttonText = isApprove ? "Approve Request" : "Reject Request";
+  const buttonText = isApprove ? "Approve" : "Reject";
   const sentence = isApprove
-    ? "Do you want to approve this vehicle registration/modification request?"
-    : "Please confirm you want to reject this vehicle request. Optionally, explain why.";
+    ? " ✅ Are you sure you want to approve this vehicle request?Once approved, it will become active in the system."
+    : " ⚠️ Are you sure you want to reject this vehicle request?  Provide a reason below if necessary.";
 
   const buttonClass = isApprove
     ? "bg-green-600 text-white hover:bg-green-700"
@@ -35,9 +35,9 @@ export default function VehicleApprovalModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className="text-xl font-semibold mb-2">{title}</h2>
-      <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">{sentence}</p>
-      <div className="space-y-4">
+      <h2 className="text-2xl font-bold mb-3 text-gray-800 dark:text-white">{title}</h2>
+      <p className="text-base text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">{sentence}</p>
+      <div className="space-y-5">
         <div>
           <Label>Comment for the vehicle owner</Label>
           <TextArea
@@ -47,7 +47,7 @@ export default function VehicleApprovalModal({
             onChange={setComment}
           />
         </div>
-        <div className="flex justify-end gap-4">
+        <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
