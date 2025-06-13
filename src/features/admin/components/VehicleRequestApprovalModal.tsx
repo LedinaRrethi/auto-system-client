@@ -2,6 +2,7 @@ import { Modal } from "../../../components/ui/modal";
 import TextArea from "../../../components/form/input/TextArea";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
+import { HiCheckCircle, HiExclamationTriangle } from "react-icons/hi2";
 
 interface VehicleApprovalModalProps {
   isOpen: boolean;
@@ -24,19 +25,32 @@ export default function VehicleApprovalModal({
 }: VehicleApprovalModalProps) {
   const isApprove = action === "approve";
   const title = isApprove ? "Approve Vehicle Request" : "Reject Vehicle Request";
-  const buttonText = isApprove ? "Approve" : "Reject";
-  const sentence = isApprove
-    ? " ✅ Are you sure you want to approve this vehicle request?Once approved, it will become active in the system."
-    : " ⚠️ Are you sure you want to reject this vehicle request?  Provide a reason below if necessary.";
-
-  const buttonClass = isApprove
-    ? "bg-green-600 text-white hover:bg-green-700"
-    : "bg-red-600 text-white hover:bg-red-700";
+  const buttonText = isApprove ? "Yes, Approve" : "Yes, Reject";
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <h2 className="text-2xl font-bold mb-3 text-gray-800 dark:text-white">{title}</h2>
-      <p className="text-base text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">{sentence}</p>
+      <div className="flex items-center gap-2 mb-3">
+        {isApprove ? (
+          <HiCheckCircle className="text-green-600 w-6 h-6" />
+        ) : (
+          <HiExclamationTriangle className="text-red-600 w-6 h-6" />
+        )}
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+          {title}
+        </h2>
+      </div>
+      <div className="text-sm text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">
+        <p className="font-semibold text-base">
+          {isApprove
+            ? "Are you sure you want to approve this vehicle request?"
+            : "Are you sure you want to reject this vehicle request?"}
+        </p>
+        <p className="mt-1">
+          {isApprove
+            ? "Once approved, it will become active in the system."
+            : "This action cannot be undone. Please explain the reason if needed."}
+        </p>
+      </div>
       <div className="space-y-5">
         <div>
           <Label>Comment for the vehicle owner</Label>
@@ -55,7 +69,11 @@ export default function VehicleApprovalModal({
             type="button"
             onClick={() => onConfirm(comment)}
             disabled={loading}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${buttonClass} disabled:opacity-50`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              isApprove
+                ? "bg-green-600 text-white hover:bg-green-700"
+                : "bg-red-600 text-white hover:bg-red-700"
+            } disabled:opacity-50`}
           >
             {buttonText}
           </button>
