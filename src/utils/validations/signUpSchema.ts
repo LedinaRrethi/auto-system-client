@@ -8,26 +8,14 @@ const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
 
 export const signUpSchema = z
   .object({
-    fname: z
-      .string()
-      .min(1, "First name is required")
-      .regex(nameRegex, "First name must only contain letters"),
-    fathername: z
-      .string()
-      .min(1, "Father name is required")
-      .regex(nameRegex, "Father name must only contain letters"),
-    lname: z
-      .string()
-      .min(1, "Last name is required")
-      .regex(nameRegex, "Last name must only contain letters"),
+    fname: z.string().min(1, "First name is required").regex(nameRegex, "First name must only contain letters"),
+    fathername: z.string().min(1, "Father name is required").regex(nameRegex, "Father name must only contain letters"),
+    lname: z.string().min(1, "Last name is required").regex(nameRegex, "Last name must only contain letters"),
     email: z.string().email("Invalid email format"),
     password: z
       .string()
-      .min(9, "Password must be at least 9 characters long")
-      .regex(
-        passwordRegex,
-        "Password must include 1 uppercase letter, 1 number, and 1 special character"
-      ),
+      .min(8, "Password must be at least 8 characters long")
+      .regex(passwordRegex, "Password must include 1 uppercase letter, 1 number, and 1 special character"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     birthDate: z
       .date({
@@ -37,12 +25,10 @@ export const signUpSchema = z
       .refine((val) => val <= new Date(), {
         message: "Birthdate cannot be in the future",
       }),
-    acceptedTerms: z
-      .boolean()
-      .refine((val) => val === true, {
-        message: "You must accept the terms.",
-      }),
-      role: z.enum(["Individ", "Polic", "Specialist"], {
+    acceptedTerms: z.boolean().refine((val) => val === true, {
+      message: "You must accept the terms.",
+    }),
+    role: z.enum(["Individ", "Polic", "Specialist"], {
       required_error: "Role is required",
     }),
     specialistNumber: z.string().optional(),
@@ -73,5 +59,4 @@ export const signUpSchema = z
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
 
-
-//TODO : Specialist number te mos kete hapesira , as first naem , father name , last name 
+//TODO : Specialist number te mos kete hapesira , as first naem , father name , last name
