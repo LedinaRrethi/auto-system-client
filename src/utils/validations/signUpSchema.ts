@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-// Regex for password: min 9 chars, 1 uppercase, 1 number, 1 special character
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,}$/;
+// Regex for password: min 8 chars, 1 uppercase, 1 number, 1 special character
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 // Names: only letters + accents
 const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;

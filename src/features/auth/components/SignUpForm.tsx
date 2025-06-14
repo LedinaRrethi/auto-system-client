@@ -29,6 +29,7 @@ export default function SignUpForm() {
     handleSubmit,
     control,
     watch,
+    trigger,
     formState: { errors },
     reset,
   } = useForm<SignUpFormData>({
@@ -39,6 +40,12 @@ export default function SignUpForm() {
       acceptedTerms: false,
     },
   });
+
+  const passwordValue = watch("password");
+
+  useEffect(() => {
+    trigger("confirmPassword");
+  }, [passwordValue, trigger]);
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
     try {
@@ -251,6 +258,9 @@ export default function SignUpForm() {
               </Label>
               <Input {...register("email")} type="email" placeholder="Enter your email" />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              {alertData?.message?.toLowerCase().includes("email") && (
+                <span className="text-sm text-red-500">{alertData.message}</span>
+              )}
             </div>
 
             {/* Password */}
