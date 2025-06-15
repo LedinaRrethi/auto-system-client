@@ -1,121 +1,27 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { SignUpFormData, signUpSchema } from "../../../utils/validations/signUpSchema";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Directorate } from "../../../types/Directorate";
+import { Controller } from "react-hook-form";
 import Alert from "../../../components/ui/alert/Alert";
 import Label from "../../../components/form/Label";
 import Input from "../../../components/form/input/InputField";
 import DatePicker from "../../../components/form/date-picker";
 import Select from "../../../components/form/Select";
 import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
-import { registerUser } from "../../../services/authService";
-import { getDirectorates } from "../../../services/directoryService";
+
+import { useSignUpForm } from "../hooks/useSignUpForm";
 
 export default function SignUpForm() {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const [alertData, setAlertData] = useState<{
-    variant: "success" | "error" | "warning" | "info";
-    title: string;
-    message: string;
-  } | null>(null);
-
-  const [directorateOptions, setDirectorateOptions] = useState<{ label: string; value: string }[]>([]);
-
   const {
     register,
     handleSubmit,
     control,
     watch,
-    trigger,
-    formState: { errors },
-    reset,
-  } = useForm<SignUpFormData>({
-    resolver: zodResolver(signUpSchema),
-    mode: "onSubmit",
-    defaultValues: {
-      birthDate: undefined,
-      acceptedTerms: false,
-    },
-  });
-
-  const passwordValue = watch("password");
-
-  useEffect(() => {
-    trigger("confirmPassword");
-  }, [passwordValue, trigger]);
-
-  const onSubmit: SubmitHandler<SignUpFormData> = async (data) => {
-    try {
-      await registerUser({
-        firstName: data.fname,
-        fatherName: data.fathername,
-        lastName: data.lname,
-        birthDate: data.birthDate,
-        email: data.email,
-        password: data.password,
-        role: data.role,
-        specialistNumber: data.specialistNumber,
-        directorate: data.directorate,
-      });
-
-      setAlertData({
-        variant: "success",
-        title: "Success",
-        message: "Registration successful! You can now log in.",
-      });
-
-      reset();
-
-      console.log("Submitted, redirecting to Sign In...");
-      setTimeout(() => {
-        window.location.href = "/signin";
-      }, 1500);
-    } catch (err: unknown) {
-      if (
-        err &&
-        typeof err === "object" &&
-        "response" in err &&
-        err.response &&
-        typeof err.response === "object" &&
-        "data" in err.response &&
-        err.response.data &&
-        typeof err.response.data === "object" &&
-        "error" in err.response.data
-      ) {
-        setAlertData({
-          variant: "error",
-          title: "Registration Error",
-          message: (err as { response: { data: { error: string } } }).response.data.error,
-        });
-      } else {
-        setAlertData({
-          variant: "error",
-          title: "Registration Error",
-          message: "Registration failed. Please try again.",
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    const fetchDirectorates = async () => {
-      try {
-        const data: Directorate[] = await getDirectorates();
-        const options = data.map((d) => ({
-          label: d.directoryName,
-          value: d.id,
-        }));
-        setDirectorateOptions(options);
-      } catch (error) {
-        console.error("Error fetching directorates:", error);
-      }
-    };
-
-    fetchDirectorates();
-  }, []);
+    errors,
+    alertData,
+    showPassword,
+    setShowPassword,
+    directorateOptions,
+    onSubmit,
+  } = useSignUpForm();
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
