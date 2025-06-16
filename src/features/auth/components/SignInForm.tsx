@@ -1,9 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-
-import { AxiosError } from "axios";
 import { SignInFormData, signInSchema } from "../../../utils/validations/signInSchema";
 import Input from "../../../components/form/input/InputField";
 import Label from "../../../components/form/Label";
@@ -13,6 +11,7 @@ import Button from "../../../components/ui/button/Button";
 import { login } from "../../../services/authService";
 import { useLocation } from "react-router";
 import Alert from "../../../components/ui/alert/Alert";
+import { AxiosError } from "axios";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -38,12 +37,31 @@ export default function SignInForm() {
     try {
       await login(data.email, data.password);
       navigate("/");
-    } catch (err: unknown) {
-      const error = err as AxiosError<{ error: string }>;
-      const message = error.response?.data?.error || "Login failed. Please try again.";
-      setLoginError(message);
-    }
+    }catch (err) {
+  let message = "Login failed. Please try again.";
+
+  if (
+    typeof err === "object" &&
+    err !== null &&
+    "response" in err &&
+    (err as AxiosError).response
+  ) {
+    const axiosErr = err as AxiosError<{ error: string }>;
+    message = axiosErr.response?.data?.error || message;
+  }
+
+  setLoginError(message);
+}
+
+
   };
+
+  useEffect(() => {
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("UNHANDLED PROMISE:", event.reason);
+  });
+}, []);
+
 
   const handleFieldChange = () => {
     if (loginError) setLoginError("");
