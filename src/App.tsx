@@ -23,6 +23,7 @@ import NotFound from "./pages/OtherPage/NotFound";
 
 import { Toaster } from "react-hot-toast";
 import VehicleRequestApproval from "./features/admin/view/VehicleRequestApproval";
+import FineRegistrationPage from "./features/police/view/FineRegistrationPage";
 
 export default function App() {
   return (
@@ -51,6 +52,7 @@ export default function App() {
             <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
             <Route path="/user-approval" element={<UserApprovalPage />} />
             <Route path="/vehicle-request-approval" element={<VehicleRequestApproval />} />
+            <Route path="/fine-registration" element={<FineRegistrationPage />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

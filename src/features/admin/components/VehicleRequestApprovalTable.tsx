@@ -19,7 +19,7 @@ const mockRequests: VehicleRequest[] = [
     id: "1",
     requestType: "Update",
     plateNumber: "AA123ZZ",
-    requesterName: "Elira Dosti",
+    requesterName: "Ledina Rrethi",
     requestDataJson: JSON.stringify({ color: "Black", plateNumber: "AA123ZZ" }),
     currentDataSnapshotJson: JSON.stringify({
       color: "White",
@@ -33,7 +33,7 @@ const mockRequests: VehicleRequest[] = [
     id: "2",
     requestType: "Register",
     plateNumber: "BB456YY",
-    requesterName: "Ardit Meta",
+    requesterName: "Kristian Rrethi",
     requestDataJson: JSON.stringify({ color: "Red", plateNumber: "BB456YY" }),
     currentDataSnapshotJson: "{}",
     status: "Approved",
