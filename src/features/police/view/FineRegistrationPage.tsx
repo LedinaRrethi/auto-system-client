@@ -16,14 +16,17 @@ export default function FineRegistrationPage() {
     setModalOpen(true);
   };
 
-  const handleModalSubmit = async (data: FineCreate) => {
-    try {
-      await createFine(data);
-      setModalOpen(false);
-    } catch (err) {
-      console.error("Error creating fine:", err);
-    }
-  };
+ const handleModalSubmit = async (data: FineCreate): Promise<boolean> => {
+  try {
+    await createFine(data);
+    setModalOpen(false);
+    return true;
+  } catch (err) {
+    console.error("Error creating fine:", err);
+    return false;
+  }
+};
+
 
   return (
     <>
