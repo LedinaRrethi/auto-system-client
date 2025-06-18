@@ -1,46 +1,55 @@
 import { z } from "zod";
 
-export const fineSchema = z.object({
-  plateNumber: z
-    .string()
-    .min(1, "Targa është e detyrueshme.")
-    .regex(/^[A-Z0-9]+$/, "Targa nuk duhet të përmbajë hapësira ose karaktere jo të lejuara."),
+const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
 
-  fineAmount: z
-    .number({ invalid_type_error: "Shuma duhet të jetë numër." })
-    .min(1, "Shuma duhet të jetë më e madhe se 0."),
+export const fineSchema = z
+  .object({
+    plateNumber: z.string().min(1, "Plate number is required"),
 
-  fineReason: z
-    .string()
-    .max(250, "Reason nuk mund të jetë më e gjatë se 250 karaktere.")
-    .optional()
-    .or(z.literal("")),
+    fineAmount: z
+      .number({ invalid_type_error: "Fine amount must be a number" })
+      .positive("Fine amount must be greater than 0"),
 
-  firstName: z
-    .string()
-    .min(1, "Emri është i detyrueshëm.")
-    .regex(/^[A-Za-zëËçÇ ]+$/, "Emri nuk mund të përmbajë numra ose simbole."),
+    fineReason: z.string().optional(),
 
-  lastName: z
-    .string()
-    .min(1, "Mbiemri është i detyrueshëm.")
-    .regex(/^[A-Za-zëËçÇ ]+$/, "Mbiemri nuk mund të përmbajë numra ose simbole."),
+    firstName: z
+      .string()
+      .optional()
+      .refine((val) => !val || nameRegex.test(val), {
+        message: "First name must only contain letters",
+      }),
 
-  fatherName: z
-    .string()
-    .regex(/^[A-Za-zëËçÇ ]*$/, "Emri i babait nuk mund të përmbajë numra ose simbole.")
-    .optional()
-    .or(z.literal("")),
+    lastName: z
+      .string()
+      .optional()
+      .refine((val) => !val || nameRegex.test(val), {
+        message: "Last name must only contain letters",
+      }),
 
-  phoneNumber: z
-    .string()
-    .regex(/^\+?[0-9]{7,15}$/, "Numri i telefonit duhet të jetë i vlefshëm.")
-    .optional()
-    .or(z.literal("")),
+    fatherName: z
+      .string()
+      .optional()
+      .refine((val) => !val || nameRegex.test(val), {
+        message: "Father name must only contain letters",
+      }),
 
-  personalId: z
-    .string()
-    .regex(/^[A-Z0-9]{5,20}$/, "ID personale duhet të përmbajë vetëm shkronja dhe numra.")
-    .optional()
-    .or(z.literal("")),
-});
+    phoneNumber: z.string().optional(),
+
+    personalId: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const hasAutoFilledFields =
+      !!data.firstName?.trim() ||
+      !!data.lastName?.trim() ||
+      !!data.fatherName?.trim();
+
+    if (!hasAutoFilledFields && !data.personalId?.trim()) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Personal ID is required when user is not registered",
+        path: ["personalId"],
+      });
+    }
+  });
+
+export type FineCreateFormInput = z.infer<typeof fineSchema>;
