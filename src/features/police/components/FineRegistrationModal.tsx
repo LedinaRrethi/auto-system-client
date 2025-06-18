@@ -5,7 +5,6 @@ import Input from "../../../components/form/input/InputField";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
 import { Modal } from "../../../components/ui/modal";
-import Form from "../../../components/form/Form";
 import { fineSchema, FineCreateFormInput } from "../../../utils/validations/fineSchema";
 import { fetchVehicleOwnerDetails } from "../../../services/fineService";
 import Alert from "../../../components/ui/alert/Alert";
@@ -40,8 +39,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
   const [isDisabled, setIsDisabled] = useState(false);
   const plateNumber = watch("plateNumber");
-  const [alert, setAlert] = useState<{ variant: "success" | "error", title: string, message: string } | null>(null);
-
+  const [alert, setAlert] = useState<{ variant: "success" | "error"; title: string; message: string } | null>(null);
 
   const handlePlateCheck = async () => {
     if (!plateNumber.trim()) return;
@@ -65,10 +63,10 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
       }
     } catch {
       setAlert({
-      variant: "error",
-      title: "Error",
-      message: "Failed to fetch vehicle owner data.",
-    });
+        variant: "error",
+        title: "Error",
+        message: "Failed to fetch vehicle owner data.",
+      });
     }
   };
 
@@ -79,48 +77,41 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
     }
   };
 
-  const submitHandler = async (data: FineCreateFormInput) => {
-  try {
-    const success = await onSubmit(data);
-    if (success) {
-      setAlert({
-        variant: "success",
-        title: "Fine Registered",
-        message: "The fine has been successfully submitted.",
-      });
-      reset();
-      setIsDisabled(false);
-      onClose(); // Mund ta heqësh nëse do që të qëndrojë modal-i hapur
-    } else {
+  const submitHandler = handleSubmit(async (data) => {
+    try {
+      const success = await onSubmit(data);
+      if (success) {
+        setAlert({
+          variant: "success",
+          title: "Fine Registered",
+          message: "The fine has been successfully submitted.",
+        });
+        reset();
+        setIsDisabled(false);
+        onClose();
+      } else {
+        setAlert({
+          variant: "error",
+          title: "Submission Failed",
+          message: "Could not submit the fine. Please try again.",
+        });
+      }
+    } catch {
       setAlert({
         variant: "error",
-        title: "Submission Failed",
-        message: "Could not submit the fine. Please try again.",
+        title: "Unexpected Error",
+        message: "Something went wrong while submitting the fine.",
       });
     }
-  } catch {
-    setAlert({
-      variant: "error",
-      title: "Unexpected Error",
-      message: "Something went wrong while submitting the fine.",
-    });
-  }
-};
-
+  });
+  
 
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
       <div className="p-5 sm:p-6 w-full max-w-md">
-
-        {alert && (
-  <Alert
-    variant={alert.variant}
-    title={alert.title}
-    message={alert.message}
-  />
-)}
-        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
+        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        <form onSubmit={submitHandler} className="space-y-3">
           <div>
             <Label>Plate Number</Label>
             <Input
@@ -166,7 +157,12 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
           <div>
             <Label>Phone Number</Label>
-            <Input {...register("phoneNumber")} disabled={isDisabled} />
+            <Input
+              {...register("phoneNumber")}
+              disabled={isDisabled}
+              error={!!errors.phoneNumber}
+              hint={errors.phoneNumber?.message}
+            />
           </div>
 
           <div>
@@ -184,7 +180,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
               Submit Fine
             </Button>
           </div>
-        </Form>
+        </form>
       </div>
     </Modal>
   );
