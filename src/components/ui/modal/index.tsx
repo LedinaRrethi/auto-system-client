@@ -7,6 +7,7 @@ interface ModalProps {
   children: React.ReactNode;
   showCloseButton?: boolean;
   isFullscreen?: boolean;
+  title?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -15,6 +16,7 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   className = "",
   showCloseButton = true,
+  title,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
@@ -52,8 +54,8 @@ export const Modal: React.FC<ModalProps> = ({
               &times;
             </button>
           )}
-          <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
-            Register Fine
+          <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
+           {title ?? "Modal Title"}
           </h2>
         </div>
 
