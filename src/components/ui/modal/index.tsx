@@ -9,7 +9,13 @@ interface ModalProps {
   isFullscreen?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, className = "", showCloseButton = true }) => {
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  children,
+  className = "",
+  showCloseButton = true,
+}) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   // Escape closes modal
@@ -35,7 +41,7 @@ export const Modal: React.FC<ModalProps> = ({ isOpen, onClose, children, classNa
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 backdrop-blur-lg">
       <div
         ref={modalRef}
-        className={`relative w-full max-w-lg mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 sm:p-8 ${className}`}
+        className={`relative w-full max-w-lg h-[80vh] overflow-y-auto no-scrollbar mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 sm:p-8 ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {showCloseButton && (
