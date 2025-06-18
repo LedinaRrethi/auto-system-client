@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
-import { HiPlus, HiSearch } from "react-icons/hi";
+import { HiPlus, HiSearch, HiFilter } from "react-icons/hi";
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
 import { getPoliceFines } from "../../../services/fineService";
 import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
-import DatePicker from "../../../components/form/date-picker"; // Your custom component
+import FineFilterModal from "./FineFilterModal";
 
 interface Props {
   onAdd: () => void;
@@ -21,8 +19,7 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [plateOptions, setPlateOptions] = useState<string[]>([]);
-  const [fromDate, setFromDate] = useState<Date | null>(null);
-  const [toDate, setToDate] = useState<Date | null>(null);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchFines = async () => {
@@ -40,26 +37,6 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
 
     fetchFines();
   }, [filters, currentPage]);
-
-  const handleFromDateChange = (dates: Date[]) => {
-    const date = dates[0] || null;
-    setFromDate(date);
-    onFilterChange({
-      ...filters,
-      fromDate: date ? date.toISOString().split("T")[0] : undefined,
-      toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
-    });
-  };
-
-  const handleToDateChange = (dates: Date[]) => {
-    const date = dates[0] || null;
-    setToDate(date);
-    onFilterChange({
-      ...filters,
-      fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
-      toDate: date ? date.toISOString().split("T")[0] : undefined,
-    });
-  };
 
   const totalPages = Math.ceil(fines.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage + 1;
@@ -79,42 +56,13 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
             />
           </div>
 
-          <div className="w-64">
-            <Autocomplete
-              options={plateOptions}
-              value={filters.plateNumber || ""}
-              onInputChange={(_, value) => {
-                onFilterChange({ ...filters, plateNumber: value });
-              }}
-              renderInput={(params) => (
-                <TextField {...params} label="Filter by plate" variant="outlined" size="small" />
-              )}
-            />
-          </div>
-
-          <div className="w-48">
-            <DatePicker
-              id="fromDate"
-              label="From Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={fromDate ?? undefined}
-              onChange={handleFromDateChange}
-              maxDate={toDate ?? undefined}
-            />
-          </div>
-
-          <div className="w-48">
-            <DatePicker
-              id="toDate"
-              label="To Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={toDate ?? undefined}
-              onChange={handleToDateChange}
-              minDate={fromDate ?? undefined}
-            />
-          </div>
+          <Button
+            startIcon={<HiFilter />}
+            onClick={() => setIsFilterModalOpen(true)}
+            className="!text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+          >
+            Filter
+          </Button>
         </div>
 
         <div className="relative">
@@ -132,21 +80,37 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
         <Table className="w-full min-w-[1000px]">
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Plate</TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Recipient</TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Amount</TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Reason</TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">Date</TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Plate
+              </TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Recipient
+              </TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Amount
+              </TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Reason
+              </TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Date
+              </TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
             {fines.map((fine) => (
               <TableRow key={fine.idpk_Fine}>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.plateNumber}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.recipientFullName ?? "-"}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {fine.recipientFullName ?? "-"}
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.fineAmount} ALL</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.fineReason ?? "-"}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{new Date(fine.fineDate).toLocaleDateString()}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {fine.fineReason ?? "-"}
+                </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {new Date(fine.fineDate).toLocaleDateString()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -160,6 +124,17 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
         endIndex={endIndex}
         totalItems={fines.length}
         onPageChange={setCurrentPage}
+      />
+
+      <FineFilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setIsFilterModalOpen(false)}
+        onApply={(newFilter) => {
+          onFilterChange(newFilter);
+          setIsFilterModalOpen(false);
+        }}
+        plateOptions={plateOptions}
+        initialFilter={filters}
       />
     </div>
   );
