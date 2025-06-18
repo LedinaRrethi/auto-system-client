@@ -17,9 +17,19 @@ type PropsType = {
   placeholder?: string;
 };
 
-export default function DatePicker({ id, mode, onChange, label, defaultDate, maxDate, minDate, placeholder }: PropsType) {
+export default function DatePicker({
+  id,
+  mode,
+  onChange,
+  label,
+  defaultDate,
+  maxDate,
+  minDate,
+  placeholder,
+}: PropsType) {
   useEffect(() => {
-    const flatPickr = flatpickr(`#${id}`, {
+    const inputElement = document.getElementById(id) as HTMLElement;
+    const flatPickr = flatpickr(inputElement, {
       mode: mode || "single",
       static: true,
       monthSelectorType: "static",
@@ -28,6 +38,9 @@ export default function DatePicker({ id, mode, onChange, label, defaultDate, max
       minDate,
       defaultDate,
       onChange,
+      appendTo: inputElement.parentElement!, // shfaqet brenda wrapper-it
+      positionElement: inputElement, // pozicionohet sipas input-it
+      position: "auto center", // qendrohet nën ose sipër input-it
     });
 
     return () => {
@@ -41,7 +54,7 @@ export default function DatePicker({ id, mode, onChange, label, defaultDate, max
     <div>
       {label && <Label htmlFor={id}>{label}</Label>}
 
-      <div className="relative">
+      <div className="relative z-50 w-full">
         <input
           id={id}
           placeholder={placeholder}

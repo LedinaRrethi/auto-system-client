@@ -54,15 +54,11 @@ export const Modal: React.FC<ModalProps> = ({
               &times;
             </button>
           )}
-          <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
-           {title ?? "Modal Title"}
-          </h2>
+          <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">{title ?? "Modal Title"}</h2>
         </div>
 
         {/* Content - scrollable */}
-        <div className="overflow-y-auto h-[calc(80vh-72px)] px-6 sm:px-8 pb-6 no-scrollbar">
-          {children}
-        </div>
+        <div className="overflow-visible h-[calc(80vh-72px)] px-6 sm:px-8 pb-6 no-scrollbar">{children}</div>
       </div>
     </div>
   );
