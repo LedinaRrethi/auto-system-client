@@ -12,11 +12,12 @@ type PropsType = {
   onChange?: Hook | Hook[];
   defaultDate?: DateOption;
   maxDate?: Date;
+  minDate?: Date;
   label?: string;
   placeholder?: string;
 };
 
-export default function DatePicker({ id, mode, onChange, label, defaultDate, maxDate, placeholder }: PropsType) {
+export default function DatePicker({ id, mode, onChange, label, defaultDate, maxDate, minDate, placeholder }: PropsType) {
   useEffect(() => {
     const flatPickr = flatpickr(`#${id}`, {
       mode: mode || "single",
@@ -24,6 +25,7 @@ export default function DatePicker({ id, mode, onChange, label, defaultDate, max
       monthSelectorType: "static",
       dateFormat: "d/m/Y",
       maxDate,
+      minDate,
       defaultDate,
       onChange,
     });
@@ -33,7 +35,7 @@ export default function DatePicker({ id, mode, onChange, label, defaultDate, max
         flatPickr.destroy();
       }
     };
-  }, [mode, onChange, id, defaultDate, maxDate]);
+  }, [mode, onChange, id, defaultDate, maxDate, minDate]);
 
   return (
     <div>
@@ -43,7 +45,7 @@ export default function DatePicker({ id, mode, onChange, label, defaultDate, max
         <input
           id={id}
           placeholder={placeholder}
-          className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30  bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700  dark:focus:border-brand-800"
+          className="h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-brand-500/20 dark:border-gray-700 dark:focus:border-brand-800"
         />
 
         <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
