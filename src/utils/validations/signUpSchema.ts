@@ -28,7 +28,7 @@ export const signUpSchema = z
     acceptedTerms: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms.",
     }),
-    role: z.enum(["Individ", "Polic", "Specialist"], {
+    role: z.enum(["Individ", "Police", "Specialist"], {
       required_error: "Role is required",
     }),
     specialistNumber: z.string().optional(),

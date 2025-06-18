@@ -110,7 +110,7 @@ export default function SignUpForm() {
                   <Select
                     options={[
                       { label: "Individ", value: "Individ" },
-                      { label: "Polic", value: "Polic" },
+                      { label: "Police", value: "Police" },
                       { label: "Specialist", value: "Specialist" },
                     ]}
                     placeholder="Select role"
@@ -148,7 +148,7 @@ export default function SignUpForm() {
                       options={directorateOptions}
                       placeholder="Select directorate"
                       onChange={field.onChange}
-                      value={field.value} // ✅ tani kjo punon
+                      value={field.value} 
                     />
 
                     {errors.directorate && <p className="text-sm text-red-500 mt-1">{errors.directorate.message}</p>}

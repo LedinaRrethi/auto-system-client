@@ -1,56 +1,73 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FineCreateFormInput } from "../../../types/Fine/FineCreateFormInput";
 import Input from "../../../components/form/input/InputField";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
 import { Modal } from "../../../components/ui/modal";
 import Form from "../../../components/form/Form";
-import { fineSchema } from "../../../utils/validations/fineSchema";
-import { fetchVehicleDetails } from "../../../services/vehicleService"; 
+import { fetchVehicleOwnerDetails } from "../../../services/fineService";
+import { FineCreate } from "../../../types/Fine/FineCreate";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: FineCreateFormInput) => void;
+  onSubmit: (data: FineCreate) => void;
 }
 
 export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Props) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
     reset,
     watch,
     setValue,
-  } = useForm<FineCreateFormInput>({
-    resolver: zodResolver(fineSchema),
-    mode: "onSubmit",
+  } = useForm<FineCreate>({
+    defaultValues: {
+      plateNumber: "",
+      fineAmount: 0,
+      fineReason: "",
+      firstName: "",
+      lastName: "",
+      fatherName: "",
+      phoneNumber: "",
+      personalId: "",
+    },
   });
 
   const plateNumber = watch("plateNumber");
 
   useEffect(() => {
-    const loadVehicleOwner = async () => {
-      if (!plateNumber) return;
+    const loadOwner = async () => {
+      if (!plateNumber || plateNumber.length < 3) return;
+
       try {
-        const vehicle = await fetchVehicleDetails(plateNumber);
-        if (vehicle?.owner) {
-          setValue("firstName", vehicle.owner.firstName);
-          setValue("lastName", vehicle.owner.lastName);
-          setValue("fatherName", vehicle.owner.fatherName);
-          setValue("personalId", vehicle.owner.personalId);
-          setValue("phoneNumber", vehicle.owner.phoneNumber);
+        const data = await fetchVehicleOwnerDetails(plateNumber);
+        if (data.isFrom !== "Manual") {
+          setValue("firstName", data.firstName);
+          setValue("lastName", data.lastName);
+          setValue("fatherName", data.fatherName);
+          setValue("phoneNumber", data.phoneNumber);
+          setValue("personalId", data.personalId);
+        } else {
+          setValue("firstName", "");
+          setValue("lastName", "");
+          setValue("fatherName", "");
+          setValue("phoneNumber", "");
+          setValue("personalId", "");
         }
-      } catch (error) {
-        console.warn("Vehicle not found or error fetching data", error);
+      } catch {
+        setValue("firstName", "");
+        setValue("lastName", "");
+        setValue("fatherName", "");
+        setValue("phoneNumber", "");
+        setValue("personalId", "");
       }
     };
-    loadVehicleOwner();
+
+    loadOwner();
   }, [plateNumber, setValue]);
 
-  const submitHandler = (data: FineCreateFormInput) => {
+  const submitHandler = (data: FineCreate) => {
     onSubmit(data);
     reset();
     onClose();
@@ -58,7 +75,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="p-5 sm:p-6 w-full max-w-md">
+       <div className="p-5 sm:p-6 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
           Register Fine
         </h2>
@@ -66,84 +83,42 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
           <div>
             <Label>Plate Number</Label>
-            <Input
-              {...register("plateNumber")}
-              placeholder="e.g. AB123CD"
-              error={!!errors.plateNumber}
-              hint={errors.plateNumber?.message}
-            />
+            <Input {...register("plateNumber")} placeholder="e.g. AB123CD" />
           </div>
 
           <div>
             <Label>Fine Amount</Label>
-            <Input
-              type="number"
-              min={0}
-              step={0.01}
-              {...register("fineAmount", { valueAsNumber: true })}
-              error={!!errors.fineAmount}
-              hint={errors.fineAmount?.message}
-            />
+            <Input type="number" step="0.01" min={0} {...register("fineAmount")} />
           </div>
 
           <div>
             <Label>Fine Reason</Label>
-            <Input
-              {...register("fineReason")}
-              placeholder="Optional"
-              error={!!errors.fineReason}
-              hint={errors.fineReason?.message}
-            />
+            <Input {...register("fineReason")} placeholder="e.g. Speeding" />
           </div>
 
           <div>
             <Label>First Name</Label>
-            <Input
-              {...register("firstName")}
-              placeholder="Owner's first name"
-              error={!!errors.firstName}
-              hint={errors.firstName?.message}
-            />
+            <Input {...register("firstName")} />
           </div>
 
           <div>
             <Label>Last Name</Label>
-            <Input
-              {...register("lastName")}
-              placeholder="Owner's last name"
-              error={!!errors.lastName}
-              hint={errors.lastName?.message}
-            />
+            <Input {...register("lastName")} />
           </div>
 
           <div>
             <Label>Father Name</Label>
-            <Input
-              {...register("fatherName")}
-              placeholder="Optional"
-              error={!!errors.fatherName}
-              hint={errors.fatherName?.message}
-            />
+            <Input {...register("fatherName")} />
           </div>
 
           <div>
             <Label>Phone Number</Label>
-            <Input
-              {...register("phoneNumber")}
-              placeholder="Optional"
-              error={!!errors.phoneNumber}
-              hint={errors.phoneNumber?.message}
-            />
+            <Input {...register("phoneNumber")} />
           </div>
 
           <div>
             <Label>Personal ID</Label>
-            <Input
-              {...register("personalId")}
-              placeholder="Optional"
-              error={!!errors.personalId}
-              hint={errors.personalId?.message}
-            />
+            <Input {...register("personalId")} />
           </div>
 
           <div className="pt-2">

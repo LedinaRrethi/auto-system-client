@@ -1,9 +1,9 @@
-export interface FineTableItem {
+export interface FineResponse {
   idpk_Fine: string;
-  plateNumber: string;
   fineAmount: number;
-  fineReason?: string;
+  fineReason: string | null;
   fineDate: string;
   policeFullName: string;
   recipientFullName?: string;
+  plateNumber?: string;
 }
