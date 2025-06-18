@@ -58,7 +58,20 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
             />
           </div>
-          <div className="w-64">
+        </div>
+
+        <div className="relative">
+          <Button
+            startIcon={<HiPlus />}
+            onClick={onAdd}
+            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+            Add Fine
+          </Button>
+        </div>      
+      </div>
+      
+        <div  className="pl-4 w-64 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <Autocomplete
             options={plateOptions}
             value={filters.plateNumber || ""}
@@ -70,24 +83,6 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
             )}
           />
           </div>
-          
-        </div>
-
-        <div className="relative">
-          <Button
-            startIcon={<HiPlus />}
-            onClick={onAdd}
-            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
-          >
-            Add Fine
-          </Button>
-
-          <Dropdown isOpen={dropdownOpen} onClose={() => setDropdownOpen(false)}>
-            <DropdownItem onClick={() => alert("Coming soon")}>Settings</DropdownItem>
-            <DropdownItem onClick={() => alert("Coming soon")}>Export</DropdownItem>
-          </Dropdown>
-        </div>
-      </div>
 
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
