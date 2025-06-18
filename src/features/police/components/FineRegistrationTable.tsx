@@ -3,8 +3,6 @@ import { HiPlus, HiSearch } from "react-icons/hi";
 import { Table, TableBody, TableCell, TableHeader, TableRow,} from "../../../components/ui/table";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
-import { Dropdown } from "../../../components/ui/dropdown/Dropdown";
-import { DropdownItem } from "../../../components/ui/dropdown/DropdownItem";
 import { getPoliceFines } from "../../../services/fineService";
 import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
@@ -22,7 +20,6 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const [searchTerm, setSearchTerm] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [plateOptions, setPlateOptions] = useState<string[]>([]);
 
   useEffect(() => {
@@ -71,7 +68,7 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
         </div>      
       </div>
       
-        <div  className="pl-4 w-64 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="w-64 pl-4">
             <Autocomplete
             options={plateOptions}
             value={filters.plateNumber || ""}
@@ -82,7 +79,7 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
               <TextField {...params} label="Filter by plate" variant="outlined" size="small" />
             )}
           />
-          </div>
+       </div>
 
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
