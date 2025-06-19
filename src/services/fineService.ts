@@ -1,8 +1,7 @@
 import { FineCreate } from "../types/Fine/FineCreate";
 import { FineFilter } from "../types/Fine/FineFilter";
 import { FineResponse } from "../types/Fine/FineResponse";
-import api from "./api"; 
-
+import api from "./api";
 
 // 1. Create fine (for Police)
 export async function createFine(data: FineCreate): Promise<void> {
@@ -29,20 +28,13 @@ export async function getMyFines(
 }
 
 // 3. Search fines by plate (Police)
-export async function searchFinesByPlate(
-  plate: string,
-  page = 1,
-  pageSize = 10
-): Promise<FineResponse[]> {
+export async function searchFinesByPlate(plate: string, page = 1, pageSize = 10): Promise<FineResponse[]> {
   const res = await api.get(`/Fine/search?plate=${encodeURIComponent(plate)}&page=${page}&pageSize=${pageSize}`);
   return res.data.items;
 }
 
 // 4. Get all fines (Police)
-export async function getAllFines(
-  page = 1,
-  pageSize = 10
-): Promise<FineResponse[]> {
+export async function getAllFines(page = 1, pageSize = 10): Promise<FineResponse[]> {
   const res = await api.get(`/Fine/all?page=${page}&pageSize=${pageSize}`);
   return res.data.items;
 }
@@ -68,6 +60,7 @@ export async function getPoliceFines(
 ): Promise<{ items: FineResponse[]; page: number; hasNextPage: boolean }> {
   const params = new URLSearchParams();
 
+  if (filter.plateNumber) params.append("PlateNumber", filter.plateNumber);
   if (filter.fromDate) params.append("FromDate", filter.fromDate);
   if (filter.toDate) params.append("ToDate", filter.toDate);
   params.append("page", page.toString());
