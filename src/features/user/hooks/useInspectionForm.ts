@@ -26,8 +26,20 @@ export function useInspectionForm(onSuccess: () => void) {
           v.map((vr) => ({ id: vr.idpk_Vehicle, plateNumber: vr.plateNumber }))
         );
 
+        console.log("Fetched vehicles:", v);
+        console.log(
+          "Mapped vehicles:",
+          v.map((vr) => ({ id: vr.idpk_Vehicle, plateNumber: vr.plateNumber }))
+        );
+
         const d: Directorate[] = await getDirectorates();
         setDirectorates(d.map((dr) => ({ id: dr.id, name: dr.directoryName })));
+
+        console.log("Fetched directorates:", d);
+        console.log(
+          "Mapped directorates:",
+          d.map((dr) => ({ id: dr.id, name: dr.directoryName }))
+        );
       } catch {
         setErrorMsg("Failed to load data.");
       }

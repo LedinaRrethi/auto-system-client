@@ -10,7 +10,10 @@ import { TimeIcon } from "../../../assets/icons";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
-import { InspectionRequestInput, inspectionRequestSchema } from "../../../utils/validations/inspectionRequestSchema";
+import {
+  InspectionRequestInput,
+  inspectionRequestSchema,
+} from "../../../utils/validations/inspectionRequestSchema";
 
 interface Props {
   isOpen: boolean;
@@ -18,6 +21,8 @@ interface Props {
   onSubmit: (data: InspectionRequestInput) => void;
   vehicles: { id: string; plateNumber: string }[];
   directorates: { id: string; name: string }[];
+  errorMsg?: string | null;
+  successMsg?: string | null;
 }
 
 export default function InspectionRegistrationModal({
@@ -26,6 +31,8 @@ export default function InspectionRegistrationModal({
   onSubmit,
   vehicles,
   directorates,
+  errorMsg,
+  successMsg,
 }: Props) {
   const {
     handleSubmit,
@@ -46,20 +53,42 @@ export default function InspectionRegistrationModal({
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Request Inspection Appointment"
+    >
       <div className="p-5 sm:p-6 w-full max-w-md">
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Success/Error Messages */}
+          {successMsg && (
+            <p className="text-green-600 text-sm bg-green-50 p-2 rounded-md border border-green-200">
+              {successMsg}
+            </p>
+          )}
+          {errorMsg && (
+            <p className="text-red-600 text-sm bg-red-50 p-2 rounded-md border border-red-200">
+              {errorMsg}
+            </p>
+          )}
+
           {/* Plate Number */}
+
           <div>
             <Label>Plate Number</Label>
             <Autocomplete
               options={vehicles}
-              getOptionLabel={(v) => v.plateNumber}
+              getOptionLabel={(v) => v?.plateNumber || ""}
               inputValue={plateInput}
               onInputChange={(_, value) => setPlateInput(value)}
               onChange={(_, value) => {
                 setValue("vehicleId", value?.id || "");
               }}
+              renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                  {option.plateNumber}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -84,12 +113,17 @@ export default function InspectionRegistrationModal({
             <Label>Directorate</Label>
             <Autocomplete
               options={directorates}
-              getOptionLabel={(d) => d.name}
+              getOptionLabel={(d) => d?.name || ""}
               inputValue={dirInput}
               onInputChange={(_, value) => setDirInput(value)}
               onChange={(_, value) => {
                 setValue("directoryId", value?.id || "");
               }}
+              renderOption={(props, option) => (
+                <li {...props} key={option.id}>
+                  {option.name}
+                </li>
+              )}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -105,7 +139,9 @@ export default function InspectionRegistrationModal({
               )}
             />
             {errors.directoryId && (
-              <p className="text-red-500 text-sm">{errors.directoryId.message}</p>
+              <p className="text-red-500 text-sm">
+                {errors.directoryId.message}
+              </p>
             )}
           </div>
 
