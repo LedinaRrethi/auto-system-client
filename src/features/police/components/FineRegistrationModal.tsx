@@ -52,7 +52,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
         setValue("lastName", data.lastName);
         setValue("fatherName", data.fatherName);
         setValue("phoneNumber", data.phoneNumber);
-        setValue("personalId", data.personalId ?? "");
+        setValue("personalId", data.personalId);
       } else {
         setIsDisabled(false);
         setValue("firstName", "");
