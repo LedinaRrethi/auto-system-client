@@ -40,19 +40,14 @@ export default function InspectionRegistrationModal({
   const [plateInput, setPlateInput] = useState("");
   const [dirInput, setDirInput] = useState("");
 
-  // Set initial values when modal opens (optional)
   useEffect(() => {
     setPlateInput("");
     setDirInput("");
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
       <div className="p-5 sm:p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-4 text-gray-800 dark:text-white">
-          Request Inspection Appointment
-        </h2>
-
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Plate Number */}
           <div>
