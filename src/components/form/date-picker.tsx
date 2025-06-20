@@ -38,9 +38,9 @@ export default function DatePicker({
       minDate,
       defaultDate,
       onChange,
-      appendTo: inputElement.parentElement!, // shfaqet brenda wrapper-it
-      positionElement: inputElement, // pozicionohet sipas input-it
-      position: "auto center", // qendrohet nën ose sipër input-it
+      appendTo: inputElement.parentElement!,
+      positionElement: inputElement,
+      position: "auto center",
     });
 
     return () => {

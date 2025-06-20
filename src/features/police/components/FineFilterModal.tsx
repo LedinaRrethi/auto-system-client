@@ -4,8 +4,7 @@ import TextField from "@mui/material/TextField";
 import DatePicker from "../../../components/form/date-picker";
 import Button from "../../../components/ui/button/Button";
 import { useEffect, useState } from "react";
-import { HiX, HiCheck, HiTrash } from "react-icons/hi";
-import Alert from "../../../components/ui/alert/Alert";
+import { HiX, HiCheck } from "react-icons/hi";
 import { Modal } from "./Modal";
 
 interface Props {
@@ -20,48 +19,30 @@ export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions
   const [localFilter, setLocalFilter] = useState<FineFilter>(initialFilter);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
-  const [alert, setAlert] = useState<{ title: string; message: string; variant: "success" | "error" } | null>(null);
 
   useEffect(() => {
     setLocalFilter(initialFilter);
     setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
     setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
-    setAlert(null);
   }, [initialFilter, isOpen]);
 
   const handleApply = () => {
-    const updatedFilter: FineFilter = {
+    onApply({
       ...localFilter,
       fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
       toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
-    };
-
-    onApply(updatedFilter);
-    setAlert({ title: "Filter Applied", message: "Your filter has been applied.", variant: "success" });
-    setTimeout(() => {
-      setAlert(null);
-      onClose();
-    }, 1500);
-  };
-
-  const handleClear = () => {
-    setLocalFilter({} as FineFilter);
-    setFromDate(null);
-    setToDate(null);
+    });
+    onClose();
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
       <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
-        {alert && <Alert title={alert.title} message={alert.message} variant={alert.variant} />}
-
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700 dark:text-white">Plate Number</label>
           <Autocomplete
             options={plateOptions}
             value={localFilter.plateNumber || ""}
-            freeSolo
-            filterSelectedOptions
             onInputChange={(_, value) => setLocalFilter((prev) => ({ ...prev, plateNumber: value }))}
             renderInput={(params) => (
               <TextField
@@ -104,18 +85,13 @@ export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions
           </div>
         </div>
 
-        <div className="flex justify-between pt-4">
-          <Button onClick={handleClear} variant="outline" startIcon={<HiTrash />}>
-            Clear Filters
+        <div className="flex justify-end gap-2 pt-4">
+          <Button onClick={onClose} variant="outline" startIcon={<HiX />}>
+            Cancel
           </Button>
-          <div className="flex gap-2">
-            <Button onClick={onClose} variant="outline" startIcon={<HiX />}>
-              Cancel
-            </Button>
-            <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
-              Apply
-            </Button>
-          </div>
+          <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
+            Apply
+          </Button>
         </div>
       </div>
     </Modal>
