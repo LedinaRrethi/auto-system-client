@@ -102,7 +102,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
               defaultDate={toDate ?? undefined}
               onChange={(d) => setToDate(d[0] || null)}
               minDate={fromDate ?? undefined}
-              maxDate={new Date()}
+             // maxDate={new Date()}
             />
           </div>
         </div>

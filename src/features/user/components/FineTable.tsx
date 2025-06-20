@@ -12,6 +12,7 @@ import { getMyFines } from "../../../services/fineService";
 import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineFilterModal from "./FineFilterModal";
+import Button from "../../../components/ui/button/Button";
 
 interface Props {
   onAdd: () => void;
@@ -65,13 +66,13 @@ export default function FineTable({ filters, onFilterChange }: Props) {
             />
           </div>
 
-          <button
+           <Button
+            startIcon={<HiFilter />}
             onClick={() => setFilterModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+            className="!text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
-            <HiFilter />
             Filter
-          </button>
+          </Button>
         </div>
       </div>
 

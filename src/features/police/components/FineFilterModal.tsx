@@ -88,7 +88,7 @@ toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
               placeholder="dd/mm/yyyy"
               defaultDate={fromDate ?? undefined}
               onChange={(d) => setFromDate(d[0] || null)}
-              maxDate={toDate ?? new Date()}
+              maxDate={toDate }
             />
           </div>
           <div className="space-y-2">
