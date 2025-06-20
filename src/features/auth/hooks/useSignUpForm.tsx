@@ -5,6 +5,7 @@ import { SignUpFormData, signUpSchema } from "../../../utils/validations/signUpS
 import { Directorate } from "../../../types/Directorate";
 import { getDirectorates } from "../../../services/directoryService";
 import { registerUser } from "../../../services/authService";
+import { AxiosError } from "axios";
 
 export function useSignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,7 @@ export function useSignUpForm() {
     control,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors  },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
@@ -67,6 +68,7 @@ export function useSignUpForm() {
         lastName: data.lname,
         birthDate: data.birthDate,
         email: data.email,
+        personalId: data.personalId,
         password: data.password,
         role: data.role,
         specialistNumber: data.specialistNumber,
@@ -83,13 +85,15 @@ export function useSignUpForm() {
       setTimeout(() => {
         window.location.href = "/signin?registered=true";
       }, 4000);
-    } catch (err: any) {
-      const message = err?.response?.data?.error ?? "Registration failed. Please try again.";
-      setAlertData({
-        variant: "error",
-        title: "Registration Error",
-        message,
-      });
+    } catch (err: unknown) {
+  const axiosErr = err as AxiosError<{ error?: string }>;
+  const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
+  setAlertData({
+    variant: "error",
+    title: "Registration Error",
+    message,
+  });
+
     }
   };
 

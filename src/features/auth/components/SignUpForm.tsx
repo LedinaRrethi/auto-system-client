@@ -37,7 +37,11 @@ export default function SignUpForm() {
 
         {alertData && (
           <div className="mb-4">
-            <Alert variant={alertData.variant} title={alertData.title} message={alertData.message} />
+            <Alert
+              variant={alertData.variant}
+              title={alertData.title}
+              message={alertData.message}
+            />
           </div>
         )}
 
@@ -49,8 +53,13 @@ export default function SignUpForm() {
                 <Label>
                   First Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("fname")} placeholder="Enter your first name" />
-                {errors.fname && <p className="text-sm text-red-500">{errors.fname.message}</p>}
+                <Input
+                  {...register("fname")}
+                  placeholder="Enter your first name"
+                />
+                {errors.fname && (
+                  <p className="text-sm text-red-500">{errors.fname.message}</p>
+                )}
               </div>
 
               {/* Father Name */}
@@ -58,8 +67,15 @@ export default function SignUpForm() {
                 <Label>
                   Father Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("fathername")} placeholder="Enter your father name" />
-                {errors.fathername && <p className="text-sm text-red-500">{errors.fathername.message}</p>}
+                <Input
+                  {...register("fathername")}
+                  placeholder="Enter your father name"
+                />
+                {errors.fathername && (
+                  <p className="text-sm text-red-500">
+                    {errors.fathername.message}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -70,8 +86,13 @@ export default function SignUpForm() {
                 <Label>
                   Last Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("lname")} placeholder="Enter your last name" />
-                {errors.lname && <p className="text-sm text-red-500">{errors.lname.message}</p>}
+                <Input
+                  {...register("lname")}
+                  placeholder="Enter your last name"
+                />
+                {errors.lname && (
+                  <p className="text-sm text-red-500">{errors.lname.message}</p>
+                )}
               </div>
 
               {/* Birthdate */}
@@ -93,8 +114,33 @@ export default function SignUpForm() {
                     />
                   )}
                 />
-                {errors.birthDate && <p className="text-sm text-red-500">{errors.birthDate.message}</p>}
+                {errors.birthDate && (
+                  <p className="text-sm text-red-500">
+                    {errors.birthDate.message}
+                  </p>
+                )}
               </div>
+            </div>
+
+            {/* PersonalId */}
+            <div>
+              <Label>
+                Personal Id<span className="text-error-500">*</span>
+              </Label>
+              <Input
+                {...register("personalId")}
+                placeholder="Enter your personal id"
+              />
+              {errors.personalId && (
+                <p className="text-sm text-red-500">
+                  {errors.personalId.message}
+                </p>
+              )}
+              {alertData?.message?.toLowerCase().includes("personal id") && (
+                <span className="text-sm text-red-500">
+                  {alertData.message}
+                </span>
+              )}
             </div>
 
             {/* Role Dropdown */}
@@ -117,7 +163,11 @@ export default function SignUpForm() {
                     onChange={(value) => field.onChange(value)}
                     defaultValue={field.value}
                   />
-                  {errors.role && <p className="text-sm text-red-500 mt-1">{errors.role.message}</p>}
+                  {errors.role && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {errors.role.message}
+                    </p>
+                  )}
                 </div>
               )}
             />
@@ -128,8 +178,15 @@ export default function SignUpForm() {
                 <Label>
                   Specialist Number<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("specialistNumber")} placeholder="Enter specialist number" />
-                {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
+                <Input
+                  {...register("specialistNumber")}
+                  placeholder="Enter specialist number"
+                />
+                {errors.specialistNumber && (
+                  <p className="text-sm text-red-500">
+                    {errors.specialistNumber.message}
+                  </p>
+                )}
               </div>
             )}
 
@@ -148,10 +205,14 @@ export default function SignUpForm() {
                       options={directorateOptions}
                       placeholder="Select directorate"
                       onChange={field.onChange}
-                      value={field.value} 
+                      value={field.value}
                     />
 
-                    {errors.directorate && <p className="text-sm text-red-500 mt-1">{errors.directorate.message}</p>}
+                    {errors.directorate && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {errors.directorate.message}
+                      </p>
+                    )}
                   </div>
                 )}
               />
@@ -162,10 +223,18 @@ export default function SignUpForm() {
               <Label>
                 Email<span className="text-error-500">*</span>
               </Label>
-              <Input {...register("email")} type="email" placeholder="Enter your email" />
-              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
+              <Input
+                {...register("email")}
+                type="email"
+                placeholder="Enter your email"
+              />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
               {alertData?.message?.toLowerCase().includes("email") && (
-                <span className="text-sm text-red-500">{alertData.message}</span>
+                <span className="text-sm text-red-500">
+                  {alertData.message}
+                </span>
               )}
             </div>
 
@@ -191,7 +260,11 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.password && (
+                <p className="text-sm text-red-500">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
 
             {/* Confirm Password */}
@@ -216,18 +289,35 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
+              {errors.confirmPassword && (
+                <p className="text-sm text-red-500">
+                  {errors.confirmPassword.message}
+                </p>
+              )}
             </div>
 
             {/* Terms Checkbox */}
             <div className="flex items-center gap-3">
-              <input type="checkbox" {...register("acceptedTerms")} id="acceptedTerms" className="w-5 h-5" />
+              <input
+                type="checkbox"
+                {...register("acceptedTerms")}
+                id="acceptedTerms"
+                className="w-5 h-5"
+              />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
-                By creating an account, you agree to the <span className="font-semibold text-brand-500">Terms</span> and{" "}
-                <span className="font-semibold text-brand-500">Privacy Policy</span>.
+                By creating an account, you agree to the{" "}
+                <span className="font-semibold text-brand-500">Terms</span> and{" "}
+                <span className="font-semibold text-brand-500">
+                  Privacy Policy
+                </span>
+                .
               </label>
             </div>
-            {errors.acceptedTerms && <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>}
+            {errors.acceptedTerms && (
+              <p className="text-sm text-red-500">
+                {errors.acceptedTerms.message}
+              </p>
+            )}
 
             {/* Submit */}
             <div>
@@ -237,6 +327,7 @@ export default function SignUpForm() {
               >
                 Sign Up
               </button>
+
             </div>
           </div>
         </form>
@@ -244,7 +335,10 @@ export default function SignUpForm() {
         <div className="mt-5">
           <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
             Already have an account?{" "}
-            <Link to="/signin" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
+            <Link
+              to="/signin"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >
               Sign In
             </Link>
           </p>

@@ -8,14 +8,26 @@ const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
 
 export const signUpSchema = z
   .object({
-    fname: z.string().min(1, "First name is required").regex(nameRegex, "First name must only contain letters"),
-    fathername: z.string().min(1, "Father name is required").regex(nameRegex, "Father name must only contain letters"),
-    lname: z.string().min(1, "Last name is required").regex(nameRegex, "Last name must only contain letters"),
+    fname: z
+      .string()
+      .min(1, "First name is required")
+      .regex(nameRegex, "First name must only contain letters"),
+    fathername: z
+      .string()
+      .min(1, "Father name is required")
+      .regex(nameRegex, "Father name must only contain letters"),
+    lname: z
+      .string()
+      .min(1, "Last name is required")
+      .regex(nameRegex, "Last name must only contain letters"),
     email: z.string().email("Invalid email format"),
     password: z
       .string()
       .min(8, "Password must be at least 8 characters long")
-      .regex(passwordRegex, "Password must include 1 uppercase letter, 1 number, and 1 special character"),
+      .regex(
+        passwordRegex,
+        "Password must include 1 uppercase letter, 1 number, and 1 special character"
+      ),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     birthDate: z
       .date({
@@ -33,6 +45,12 @@ export const signUpSchema = z
     }),
     specialistNumber: z.string().optional(),
     directorate: z.string().optional(),
+    personalId: z
+      .string()
+      .min(5, "Personal ID is required")
+      .max(20, "Personal ID must be max 20 characters"),
+
+    
   })
   .superRefine((data, ctx) => {
     if (data.role === "Specialist") {

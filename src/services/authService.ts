@@ -21,6 +21,7 @@ export async function registerUser(user: {
   lastName: string;
   birthDate: Date;
   email: string;
+  personalId: string;
   password: string;
   role: string;
   specialistNumber?: string;

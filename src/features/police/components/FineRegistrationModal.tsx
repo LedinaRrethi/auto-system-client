@@ -124,6 +124,16 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           </div>
 
           <div>
+            <Label>Personal ID</Label>
+            <Input
+              {...register("personalId")}
+              disabled={isDisabled}
+              error={!!errors.personalId}
+              hint={errors.personalId?.message}
+            />
+          </div>
+
+          <div>
             <Label>Fine Amount</Label>
             <Input
               type="number"
@@ -153,26 +163,6 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           <div>
             <Label>Father Name</Label>
             <Input {...register("fatherName")} disabled={isDisabled} />
-          </div>
-
-          <div>
-            <Label>Phone Number</Label>
-            <Input
-              {...register("phoneNumber")}
-              disabled={isDisabled}
-              error={!!errors.phoneNumber}
-              hint={errors.phoneNumber?.message}
-            />
-          </div>
-
-          <div>
-            <Label>Personal ID</Label>
-            <Input
-              {...register("personalId")}
-              disabled={isDisabled}
-              error={!!errors.personalId}
-              hint={errors.personalId?.message}
-            />
           </div>
 
           <div className="pt-2">
