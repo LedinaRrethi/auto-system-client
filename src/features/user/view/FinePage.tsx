@@ -4,9 +4,13 @@ import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineTable from "../components/FineTable";
+import FineFilterModal from "../components/FineFilterModal";
 
 export default function FineRegistrationPage() {
-  const [filters, setFilters] = useState<FineFilter>({});
+
+
+   const [filters, setFilters] = useState<FineFilter>({});
+  const [isFilterModalOpen, setFilterModalOpen] = useState(false);
 
   return (
     <>
@@ -28,6 +32,16 @@ export default function FineRegistrationPage() {
                       } }          />
         </ComponentCard>
       </div>
+
+      <FineFilterModal
+        isOpen={isFilterModalOpen}
+        onClose={() => setFilterModalOpen(false)}
+        onApply={(newFilters) => {
+          setFilters({ ...filters, ...newFilters });
+          setFilterModalOpen(false);
+        }}
+        initialFilter={filters}
+      />
 
       
     </>

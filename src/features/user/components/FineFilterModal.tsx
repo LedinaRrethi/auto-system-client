@@ -6,56 +6,58 @@ import Button from "../../../components/ui/button/Button";
 import { useEffect, useState } from "react";
 import { HiX, HiCheck } from "react-icons/hi";
 import { Modal } from "./Modal";
+import { fetchVehicles } from "../../../services/vehicleService";
+import { Vehicle } from "../../../types/Vehicle";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onApply: (filters: FineFilter) => void;
-  plateOptions: string[];
   initialFilter: FineFilter;
 }
 
-export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions, initialFilter }: Props) {
+export default function FineFilterModal({ isOpen, onClose, onApply, initialFilter }: Props) {
   const [localFilter, setLocalFilter] = useState<FineFilter>(initialFilter);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
+  const [plateOptions, setPlateOptions] = useState<string[]>([]);
 
-  // useEffect(() => {
-  //   setLocalFilter(initialFilter);
-  //   setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
-  //   setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
-  // }, [initialFilter, isOpen]);
+  useEffect(() => {
+    setLocalFilter(initialFilter);
 
- useEffect(() => {
-  setLocalFilter(initialFilter);
-  setFromDate(
-    initialFilter.fromDate
-      ? new Date(initialFilter.fromDate + "T00:00:00")
-      : null
-  );
+    setFromDate(
+      initialFilter.fromDate
+        ? new Date(new Date(initialFilter.fromDate).setHours(0, 0, 0, 0))
+        : null
+    );
 
-  setToDate(
-    initialFilter.toDate
-      ? new Date(initialFilter.toDate + "T23:59:59")
-      : null
-  );
-}, [initialFilter, isOpen]);
+    setToDate(
+      initialFilter.toDate
+        ? new Date(new Date(initialFilter.toDate).setHours(23, 59, 59, 999))
+        : null
+    );
+  }, [initialFilter, isOpen]);
 
-
-
+  useEffect(() => {
+    if (isOpen) {
+      fetchVehicles().then((vehicles : Vehicle[]) => {
+        const plates = vehicles.map((v) => v.plateNumber).filter(Boolean);
+        setPlateOptions(plates);
+      });
+    }
+  }, [isOpen]);
 
   const handleApply = () => {
     onApply({
       ...localFilter,
       fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
-toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
-
+      toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
     });
     onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
+    <Modal isOpen={isOpen} onClose={onClose} title="Filter My Fines">
       <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700 dark:text-white">Plate Number</label>
@@ -66,7 +68,7 @@ toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
             renderInput={(params) => (
               <TextField
                 {...params}
-                placeholder="Type plate number..."
+                placeholder="Type your plate..."
                 variant="standard"
                 InputProps={{
                   ...params.InputProps,
@@ -100,7 +102,7 @@ toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
               defaultDate={toDate ?? undefined}
               onChange={(d) => setToDate(d[0] || null)}
               minDate={fromDate ?? undefined}
-              // maxDate= {new Date()}
+              maxDate={new Date()}
             />
           </div>
         </div>

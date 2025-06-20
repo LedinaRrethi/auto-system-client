@@ -1,5 +1,5 @@
 export interface FineFilter {
-  plateNumber: string;
+  plateNumber?: string;
   fromDate?: string;
   toDate?: string;
   page?: number;

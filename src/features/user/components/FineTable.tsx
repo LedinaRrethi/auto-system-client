@@ -118,6 +118,7 @@ export default function FineTable({ filters }: Props) {
         totalItems={filteredFines.length}
         onPageChange={setCurrentPage}
       />
+
     </div>
   );
 }

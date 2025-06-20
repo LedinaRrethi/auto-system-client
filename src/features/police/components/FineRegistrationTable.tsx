@@ -8,6 +8,7 @@ import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineFilterModal from "./FineFilterModal";
 
+
 interface Props {
   onAdd: () => void;
   filters: FineFilter;

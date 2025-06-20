@@ -37,6 +37,8 @@ export default function DatePicker({
       maxDate,
       minDate,
       defaultDate,
+       defaultHour: 12,       
+  defaultMinute: 0,       //garanton koha te jete brenda dites
       onChange,
       appendTo: inputElement.parentElement!,
       positionElement: inputElement,
