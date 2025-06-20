@@ -1,4 +1,3 @@
-import { Modal } from "../../../components/ui/modal";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -7,6 +6,7 @@ import Button from "../../../components/ui/button/Button";
 import { useEffect, useState } from "react";
 import { HiX, HiCheck, HiTrash } from "react-icons/hi";
 import Alert from "../../../components/ui/alert/Alert";
+import { Modal } from "./Modal";
 
 interface Props {
   isOpen: boolean;
