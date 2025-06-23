@@ -45,6 +45,7 @@ export default function InspectionRegistrationModal({
   const [vehicleOptions, setVehicleOptions] = useState<MyVehiclePlate[]>([]);
   const [directorateOptions, setDirectorateOptions] = useState<Directorate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -68,12 +69,10 @@ export default function InspectionRegistrationModal({
     loadData();
   }, [isOpen]);
 
- 
   const updateDateTime = useCallback(
     (modifier: (current: Date) => Date) => {
       const current = watch("requestedDate") ?? new Date();
-      const updated = modifier(current);
-      setValue("requestedDate", updated);
+      setValue("requestedDate", modifier(current));
     },
     [watch, setValue]
   );
@@ -82,12 +81,19 @@ export default function InspectionRegistrationModal({
     (dates: Date[]) => {
       const [selectedDate] = dates;
       if (selectedDate) {
-        updateDateTime((current) => new Date(
+        const isWeekend = [0, 6].includes(selectedDate.getDay());
+        if (isWeekend) {
+          setLocalError("Inspections cannot be scheduled on weekends.");
+          return;
+        }
+        setLocalError(null);
+
+        updateDateTime((prev) => new Date(
           selectedDate.getFullYear(),
           selectedDate.getMonth(),
           selectedDate.getDate(),
-          current.getHours(),
-          current.getMinutes()
+          prev.getHours(),
+          prev.getMinutes()
         ));
       }
     },
@@ -98,10 +104,10 @@ export default function InspectionRegistrationModal({
     (timeStr: string) => {
       const [hour, minute] = timeStr.split(":").map(Number);
       if (!isNaN(hour) && !isNaN(minute)) {
-        updateDateTime((current) => new Date(
-          current.getFullYear(),
-          current.getMonth(),
-          current.getDate(),
+        updateDateTime((prev) => new Date(
+          prev.getFullYear(),
+          prev.getMonth(),
+          prev.getDate(),
           hour,
           minute
         ));
@@ -110,10 +116,20 @@ export default function InspectionRegistrationModal({
     [updateDateTime]
   );
 
+  const handleSubmitWithValidation = (data: InspectionRequestInput) => {
+    const day = new Date(data.requestedDate).getDay();
+    if (day === 0 || day === 6) {
+      setLocalError("Inspections cannot be scheduled on weekends.");
+      return;
+    }
+    setLocalError(null);
+    onSubmit(data);
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
       <div className="p-5 sm:p-6 w-full max-w-md">
-        <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+        <Form onSubmit={handleSubmit(handleSubmitWithValidation)} className="space-y-5">
 
           {successMsg && (
             <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
@@ -125,7 +141,13 @@ export default function InspectionRegistrationModal({
               {errorMsg}
             </div>
           )}
+          {localError && (
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
+              {localError}
+            </div>
+          )}
 
+          {/* Plate Number Dropdown */}
           <div>
             <Label>Vehicle Plate</Label>
             <Controller
@@ -145,6 +167,7 @@ export default function InspectionRegistrationModal({
             {errors.vehicleId && <p className="text-red-500 text-xs mt-1">{errors.vehicleId.message}</p>}
           </div>
 
+          {/* Directorate Dropdown */}
           <div>
             <Label>Directorate</Label>
             <Controller
@@ -164,11 +187,13 @@ export default function InspectionRegistrationModal({
             {errors.directoryId && <p className="text-red-500 text-xs mt-1">{errors.directoryId.message}</p>}
           </div>
 
+          {/* Date Picker */}
           <div>
             <Label>Date</Label>
             <DatePicker id="date-picker" onChange={handleDateChange} />
           </div>
 
+          {/* Time Picker */}
           <div>
             <Label htmlFor="time-input">Time</Label>
             <div className="relative">
