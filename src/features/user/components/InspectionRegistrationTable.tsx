@@ -12,9 +12,7 @@ interface Props {
 export default function InspectionRegistrationTable({ onAdd }: Props) {
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
   //const [currentPage, setCurrentPage] = useState(1);
-  const [orderByAsc, setOrderByAsc] = useState(false);
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
 
   useEffect(() => {
@@ -43,28 +41,7 @@ export default function InspectionRegistrationTable({ onAdd }: Props) {
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
             />
           </div>
-           <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="h-11 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 dark:border-gray-800 dark:bg-gray-800 dark:text-white px-4"
-          >
-            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="">
-              All Statuses
-            </option>
-            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Approved">
-              Approved
-            </option>
-            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Pending">
-              Pending
-            </option>
-            <option className="text-black dark:text-white bg-white dark:bg-gray-800" value="Rejected">
-              Rejected
-            </option>
-          </select>
-
-          <Button variant="outline" onClick={() => setOrderByAsc(!orderByAsc)}>
-            Order by Date {orderByAsc ? "↑" : "↓"}
-          </Button>
+          
         </div>
 
         <Button

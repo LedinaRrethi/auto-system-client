@@ -1,36 +1,48 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
 import { Modal } from "../../../components/ui/modal";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
 import Form from "../../../components/form/Form";
 import Input from "../../../components/form/input/InputField";
 import DatePicker from "../../../components/form/date-picker";
-import { TimeIcon } from "../../../assets/icons";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { useEffect, useState } from "react";
+import { TimeIcon } from "../../../assets/icons";
 import {
   InspectionRequestInput,
   inspectionRequestSchema,
 } from "../../../utils/validations/inspectionRequestSchema";
+import { fetchVehicles } from "../../../services/vehicleService";
+import { getDirectorates } from "../../../services/directoryService";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: InspectionRequestInput) => void;
-  vehicles: { id: string; plateNumber: string }[];
-  directorates: { id: string; name: string }[];
   errorMsg?: string | null;
   successMsg?: string | null;
+}
+
+interface RawVehicle {
+  idfK_Vehicle?: string;
+  id?: string;
+  idpk_Vehicle?: string;
+  plateNumber: string;
+}
+
+interface RawDirectorate {
+  id?: string;
+  idpk_Directorate?: string;
+  directoryName?: string;
+  name?: string;
 }
 
 export default function InspectionRegistrationModal({
   isOpen,
   onClose,
   onSubmit,
-  vehicles,
-  directorates,
   errorMsg,
   successMsg,
 }: Props) {
@@ -44,23 +56,51 @@ export default function InspectionRegistrationModal({
     mode: "onSubmit",
   });
 
+  const [vehicles, setVehicles] = useState<{ id: string; plateNumber: string }[]>([]);
+  const [directorates, setDirectorates] = useState<{ id: string; name: string }[]>([]);
   const [plateInput, setPlateInput] = useState("");
   const [dirInput, setDirInput] = useState("");
 
   useEffect(() => {
-    setPlateInput("");
-    setDirInput("");
+    const fetchData = async () => {
+      try {
+        const rawVehicles = await fetchVehicles();
+        const rawDirectorates = await getDirectorates();
+
+        const mappedVehicles = (rawVehicles as RawVehicle[])
+          .map((v) => ({
+            id: v.idfK_Vehicle ?? v.id ?? v.idpk_Vehicle ?? "",
+            plateNumber: v.plateNumber,
+          }))
+          .filter((v, i, self) => self.findIndex((x) => x.id === v.id) === i); 
+
+        const mappedDirectorates = (rawDirectorates as RawDirectorate[])
+          .map((d) => ({
+            id: d.id ?? d.idpk_Directorate ?? "",
+            name: d.directoryName ?? d.name ?? "",
+          }))
+          .filter((d, i, self) => self.findIndex((x) => x.id === d.id) === i); //fshij id qe jan shfaq dy here
+
+
+          console.log(mappedVehicles);
+          console.log(mappedDirectorates);
+
+        setVehicles(mappedVehicles);
+        setDirectorates(mappedDirectorates);
+      } catch (error) {
+        console.error("Failed to fetch modal data:", error);
+      }
+    };
+
+    if (isOpen) {
+      fetchData();
+    }
   }, [isOpen]);
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      title="Request Inspection Appointment"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
       <div className="p-5 sm:p-6 w-full max-w-md">
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          {/* Success/Error Messages */}
           {successMsg && (
             <p className="text-green-600 text-sm bg-green-50 p-2 rounded-md border border-green-200">
               {successMsg}
@@ -73,22 +113,16 @@ export default function InspectionRegistrationModal({
           )}
 
           {/* Plate Number */}
-
           <div>
             <Label>Plate Number</Label>
             <Autocomplete
               options={vehicles}
-              getOptionLabel={(v) => v?.plateNumber || ""}
+              getOptionLabel={(v) => v.plateNumber}
+              isOptionEqualToValue={(a, b) => a.id === b.id}
+              value={vehicles.find((v) => v.plateNumber === plateInput) || null}
               inputValue={plateInput}
               onInputChange={(_, value) => setPlateInput(value)}
-              onChange={(_, value) => {
-                setValue("vehicleId", value?.id || "");
-              }}
-              renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.plateNumber}
-                </li>
-              )}
+              onChange={(_, value) => setValue("vehicleId", value?.id || "")}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -113,17 +147,12 @@ export default function InspectionRegistrationModal({
             <Label>Directorate</Label>
             <Autocomplete
               options={directorates}
-              getOptionLabel={(d) => d?.name || ""}
+              getOptionLabel={(d) => d.name}
+              isOptionEqualToValue={(a, b) => a.id === b.id}
+              value={directorates.find((d) => d.name === dirInput) || null}
               inputValue={dirInput}
               onInputChange={(_, value) => setDirInput(value)}
-              onChange={(_, value) => {
-                setValue("directoryId", value?.id || "");
-              }}
-              renderOption={(props, option) => (
-                <li {...props} key={option.id}>
-                  {option.name}
-                </li>
-              )}
+              onChange={(_, value) => setValue("directoryId", value?.id || "")}
               renderInput={(params) => (
                 <TextField
                   {...params}
@@ -139,9 +168,7 @@ export default function InspectionRegistrationModal({
               )}
             />
             {errors.directoryId && (
-              <p className="text-red-500 text-sm">
-                {errors.directoryId.message}
-              </p>
+              <p className="text-red-500 text-sm">{errors.directoryId.message}</p>
             )}
           </div>
 
@@ -150,8 +177,6 @@ export default function InspectionRegistrationModal({
             <Label>Date</Label>
             <DatePicker
               id="date-picker"
-              label=""
-              placeholder="Select a date"
               onChange={(dates) => {
                 const [date] = dates;
                 if (date) {
@@ -174,8 +199,7 @@ export default function InspectionRegistrationModal({
                 type="time"
                 id="tm"
                 onChange={(e) => {
-                  const time = e.target.value;
-                  const [hour, minute] = time.split(":").map(Number);
+                  const [hour, minute] = e.target.value.split(":").map(Number);
                   const current = watch("requestedDate") ?? new Date();
                   const updated = new Date(current);
                   updated.setHours(hour);
@@ -185,7 +209,7 @@ export default function InspectionRegistrationModal({
                   setValue("requestedDate", updated);
                 }}
               />
-              <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <span className="absolute text-gray-500 right-3 top-1/2 -translate-y-1/2">
                 <TimeIcon className="size-6" />
               </span>
             </div>

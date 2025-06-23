@@ -33,8 +33,7 @@ export default function VehicleRegistrationTable({ onAdd, onEdit }: Props) {
       if (Array.isArray(data)) {
         setVehicles(data);
       } else {
-        console.error("Data fetched is not an array", data);
-        setVehicles([]); // fallback për të shmangur gabime
+        setVehicles([]); 
       }
     } catch (err) {
       alert("Failed to fetch vehicles");
