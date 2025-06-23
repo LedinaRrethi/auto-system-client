@@ -18,6 +18,8 @@ import { getDirectorates } from "../../../services/directoryService";
 import { MyVehiclePlate } from "../../../types/MyVehiclePlate";
 import { Directorate } from "../../../types/Directorate";
 import { AxiosError } from "axios";
+import { HiPlus, HiSearch } from "react-icons/hi";
+import Button from "../../../components/ui/button/Button";
 
 export default function InspectionPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,8 +29,10 @@ export default function InspectionPage() {
   const [vehicles, setVehicles] = useState<MyVehiclePlate[]>([]);
   const [directorates, setDirectorates] = useState<Directorate[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(1);
+  const [pageSize] = useState(2);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [submittedSearch, setSubmittedSearch] = useState("");
 
   useEffect(() => {
     const loadMetaData = async () => {
@@ -50,7 +54,11 @@ export default function InspectionPage() {
   useEffect(() => {
     const fetchInspections = async () => {
       try {
-        const res = await getMyInspectionRequests({ page, pageSize });
+        const res = await getMyInspectionRequests({
+          page,
+          pageSize,
+          search: submittedSearch,
+        });
         setInspections(res.items);
         setHasNextPage(res.hasNextPage);
       } catch {
@@ -59,7 +67,7 @@ export default function InspectionPage() {
     };
 
     fetchInspections();
-  }, [page, pageSize]);
+  }, [page, pageSize, submittedSearch]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
@@ -77,8 +85,12 @@ export default function InspectionPage() {
 
       await createInspectionRequest(dto);
 
-      const plate = vehicles.find((v) => v.id === data.vehicleId)?.plateNumber || data.vehicleId;
-      const directorate = directorates.find((d) => d.id === data.directoryId)?.directoryName || data.directoryId;
+      const plate =
+        vehicles.find((v) => v.id === data.vehicleId)?.plateNumber ||
+        data.vehicleId;
+      const directorate =
+        directorates.find((d) => d.id === data.directoryId)?.directoryName ||
+        data.directoryId;
 
       const newInspection: MyInspectionsRequest = {
         idpk_InspectionRequest: crypto.randomUUID(),
@@ -113,15 +125,57 @@ export default function InspectionPage() {
 
   return (
     <>
-      <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." />
+      <PageMeta
+        title="Vehicle Inspections | AutoSystem"
+        description="Manage and schedule vehicle inspections."
+      />
       <PageBreadcrumb pageTitle="Vehicle Inspections" />
 
       <div className="space-y-4">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
 
-        <ComponentCard title="Inspections" desc="Here you can view and manage your vehicle inspections.">
-          <InspectionRegistrationTable inspections={inspections} onAdd={handleAddClick} />
+        <ComponentCard
+          title="Inspections"
+          desc="Here you can view and manage your vehicle inspections."
+        >
+          <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
+          <div className="relative w-full sm:w-80">
+            <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+            <input
+              type="text"
+              placeholder="Search ..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+               onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  setSubmittedSearch(searchTerm);
+                  setPage(1);
+                }
+              }}
+              className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+            />
+          </div>
+          
+        </div>
+
+        <Button
+          startIcon={<HiPlus />}
+          onClick={handleAddClick}
+           className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
+          >
+          Add Inspection
+        </Button>
+      </div>
+          
+
+          <InspectionRegistrationTable
+  inspections={inspections}
+/>
+
           <Pagination
             currentPage={page}
             hasNextPage={hasNextPage}
