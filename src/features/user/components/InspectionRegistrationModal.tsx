@@ -38,6 +38,7 @@ export default function InspectionRegistrationModal({
     control,
     watch,
     formState: { errors },
+    reset,
   } = useForm<InspectionRequestInput>({
     resolver: zodResolver(inspectionRequestSchema),
   });
@@ -81,7 +82,7 @@ export default function InspectionRegistrationModal({
     (dates: Date[]) => {
       const [selectedDate] = dates;
       if (!selectedDate) return;
-      setValue("requestedDate", selectedDate); 
+      setValue("requestedDate", selectedDate);
 
       updateDateTime((prev) =>
         new Date(
@@ -140,6 +141,7 @@ export default function InspectionRegistrationModal({
 
     setLocalError(null);
     onSubmit(data);
+    reset();
   };
 
   return (
@@ -162,7 +164,6 @@ export default function InspectionRegistrationModal({
             </div>
           )}
 
-          {/* Vehicle Plate Dropdown */}
           <div>
             <Label>Vehicle Plate</Label>
             <Controller
@@ -182,7 +183,6 @@ export default function InspectionRegistrationModal({
             {errors.vehicleId && <p className="text-red-500 text-xs mt-1">{errors.vehicleId.message}</p>}
           </div>
 
-          {/* Directorate Dropdown */}
           <div>
             <Label>Directorate</Label>
             <Controller
@@ -202,13 +202,11 @@ export default function InspectionRegistrationModal({
             {errors.directoryId && <p className="text-red-500 text-xs mt-1">{errors.directoryId.message}</p>}
           </div>
 
-          {/* Date Picker */}
           <div>
             <Label>Date</Label>
             <DatePicker id="date-picker" onChange={handleDateChange} />
           </div>
 
-          {/* Time Picker */}
           <div>
             <Label htmlFor="time-input">Time</Label>
             <div className="relative">
