@@ -28,10 +28,10 @@ export default function InspectionPage() {
   const [directorates, setDirectorates] = useState<Directorate[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
-    const loadData = async () => {
+    const loadMetaData = async () => {
       try {
         const [vehicleData, dirData] = await Promise.all([
           fetchMyVehiclePlates(),
@@ -44,7 +44,7 @@ export default function InspectionPage() {
       }
     };
 
-    loadData();
+    loadMetaData();
   }, []);
 
   useEffect(() => {
@@ -52,14 +52,14 @@ export default function InspectionPage() {
       try {
         const res = await getMyInspectionRequests({ page, pageSize });
         setInspections(res.items);
-        setTotalPages(Math.ceil((res.pageSize * (res.hasNextPage ? page + 1 : page)) / pageSize));
+        setHasNextPage(res.hasNextPage);
       } catch {
         setErrorMsg("Failed to load inspections.");
       }
     };
 
     fetchInspections();
-  },[page,pageSize]);
+  }, [page, pageSize]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
@@ -124,7 +124,7 @@ export default function InspectionPage() {
           <InspectionRegistrationTable inspections={inspections} onAdd={handleAddClick} />
           <Pagination
             currentPage={page}
-            totalPages={totalPages}
+            hasNextPage={hasNextPage}
             onPageChange={setPage}
           />
         </ComponentCard>
