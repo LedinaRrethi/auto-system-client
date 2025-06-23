@@ -1,6 +1,6 @@
 import api from "./api";
+import { RegisterDTO } from "../types/RegisterDTO";
 
-// Ruan token ne sessionStorage
 export function saveToken(token: string) {
   sessionStorage.setItem("authToken", token);
 }
@@ -14,31 +14,17 @@ export function removeToken() {
   sessionStorage.clear();
 }
 
-//  Regjistrim i perdoruesit te ri
-export async function registerUser(user: {
-  firstName: string;
-  fatherName: string;
-  lastName: string;
-  birthDate: Date;
-  email: string;
-  personalId: string;
-  password: string;
-  role: string;
-  specialistNumber?: string;
-  directorate?: string;
-}) {
+export async function registerUser(user: RegisterDTO) {
   const response = await api.post("/Auth/register", user);
   return response.data;
 }
 
-//  Login: merr token nga backend
 export async function login(email: string, password: string) {
   const response = await api.post("/Auth/login", { email, password });
   saveToken(response.data.token);
   return response.data;
 }
 
-// Logout: pastron token-in dhe redirect te signin
 export async function logout() {
   try {
     const response = await api.post("/Auth/logout");

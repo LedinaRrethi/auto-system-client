@@ -1,6 +1,6 @@
 // File: components/UserActionButtons.tsx
 import { HiCheck, HiX } from "react-icons/hi";
-import { User } from "../../../types/User";
+import { User } from "../../../types/RegisterDTO";
 
 interface Props {
   user: User;

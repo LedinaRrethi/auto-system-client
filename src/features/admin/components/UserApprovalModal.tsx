@@ -1,5 +1,5 @@
 import { HiCheck, HiX } from "react-icons/hi";
-import { User } from "../../../types/User";
+import { User } from "../../../types/RegisterDTO";
 import { Modal } from "../../../components/ui/modal";
 import Badge from "../../../components/ui/badge/Badge";
 import Button from "../../../components/ui/button/Button";

@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
 import Badge from "../../../components/ui/badge/Badge";
 import { HiSearch } from "react-icons/hi";
-import { User } from "../../../types/User";
+import { User } from "../../../types/RegisterDTO";
 import { useState, useMemo, useEffect } from "react";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
