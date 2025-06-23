@@ -77,28 +77,41 @@ export default function InspectionRegistrationModal({
     [watch, setValue]
   );
 
-  const handleDateChange = useCallback(
-    (dates: Date[]) => {
-      const [selectedDate] = dates;
-      if (selectedDate) {
-        const isWeekend = [0, 6].includes(selectedDate.getDay());
-        if (isWeekend) {
-          setLocalError("Inspections cannot be scheduled on weekends.");
-          return;
-        }
-        setLocalError(null);
+ const handleDateChange = useCallback(
+  (dates: Date[]) => {
+    const [selectedDate] = dates;
+    if (!selectedDate) return;
 
-        updateDateTime((prev) => new Date(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          selectedDate.getDate(),
-          prev.getHours(),
-          prev.getMinutes()
-        ));
-      }
-    },
-    [updateDateTime]
-  );
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); 
+    selectedDate.setHours(0, 0, 0, 0);
+
+    if (selectedDate < today) {
+      setLocalError("You cannot select a past date.");
+      return;
+    }
+
+    const isWeekend = [0, 6].includes(selectedDate.getDay());
+    if (isWeekend) {
+      setLocalError("Inspections cannot be scheduled on weekends.");
+      return;
+    }
+
+    setLocalError(null);
+
+    updateDateTime((prev) =>
+      new Date(
+        selectedDate.getFullYear(),
+        selectedDate.getMonth(),
+        selectedDate.getDate(),
+        prev.getHours(),
+        prev.getMinutes()
+      )
+    );
+  },
+  [updateDateTime]
+);
+
 
   const handleTimeChange = useCallback(
     (timeStr: string) => {
