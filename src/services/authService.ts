@@ -27,13 +27,13 @@ export async function registerUser(user: {
   specialistNumber?: string;
   directorate?: string;
 }) {
-  const response = await api.post("/account/register", user);
+  const response = await api.post("/Auth/register", user);
   return response.data;
 }
 
 //  Login: merr token nga backend
 export async function login(email: string, password: string) {
-  const response = await api.post("/account/login", { email, password });
+  const response = await api.post("/Auth/login", { email, password });
   saveToken(response.data.token);
   return response.data;
 }
@@ -41,7 +41,7 @@ export async function login(email: string, password: string) {
 // Logout: pastron token-in dhe redirect te signin
 export async function logout() {
   try {
-    const response = await api.post("/account/logout");
+    const response = await api.post("/Auth/logout");
     console.log("Logout response:", response.data);
     removeToken();
     await new Promise((res) => setTimeout(res, 1500));
