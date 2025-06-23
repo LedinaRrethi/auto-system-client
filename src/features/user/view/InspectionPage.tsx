@@ -26,6 +26,7 @@ export default function InspectionPage() {
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [infoMsg , setInfoMsg] = useState<string | null> (null);
   const [vehicles, setVehicles] = useState<MyVehiclePlate[]>([]);
   const [directorates, setDirectorates] = useState<Directorate[]>([]);
   const [page, setPage] = useState(1);
@@ -50,7 +51,7 @@ export default function InspectionPage() {
 
     loadMetaData();
   }, []);
-
+  
   useEffect(() => {
     const fetchInspections = async () => {
       try {
@@ -61,6 +62,9 @@ export default function InspectionPage() {
         });
         setInspections(res.items);
         setHasNextPage(res.hasNextPage);
+
+        if (res.items.length === 0)
+          setInfoMsg("You have no requests.");
       } catch {
         setErrorMsg("Failed to load inspections.");
       }
@@ -136,6 +140,8 @@ export default function InspectionPage() {
           <Alert variant="success" title="Success" message={successMsg} />
         )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+
+        {infoMsg && <Alert variant="info" title="Info" message={infoMsg}></Alert>}
 
         <ComponentCard
           title="Inspections"
