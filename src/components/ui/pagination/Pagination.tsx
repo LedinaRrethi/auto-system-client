@@ -3,11 +3,9 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi";
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
-  startIndex: number;
-  endIndex: number;
-  totalItems: number;
   onPageChange: (page: number) => void;
 }
+
 
 export default function Pagination({
   currentPage,
@@ -16,9 +14,9 @@ export default function Pagination({
 }: PaginationProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 gap-4">
-      {/* Showing info */}
+      {/* Only show current page and total pages */}
       <div className="text-sm text-gray-600 dark:text-gray-300">
-        Showing <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span> pages
+        Page <span className="font-medium">{currentPage}</span> 
       </div>
 
       {/* Navigation buttons */}
