@@ -77,64 +77,67 @@ export default function InspectionRegistrationModal({
     [watch, setValue]
   );
 
- const handleDateChange = useCallback(
-  (dates: Date[]) => {
-    const [selectedDate] = dates;
-    if (!selectedDate) return;
+  const handleDateChange = useCallback(
+    (dates: Date[]) => {
+      const [selectedDate] = dates;
+      if (!selectedDate) return;
+      setValue("requestedDate", selectedDate); 
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); 
-    selectedDate.setHours(0, 0, 0, 0);
-
-    if (selectedDate < today) {
-      setLocalError("You cannot select a past date.");
-      return;
-    }
-
-    const isWeekend = [0, 6].includes(selectedDate.getDay());
-    if (isWeekend) {
-      setLocalError("Inspections cannot be scheduled on weekends.");
-      return;
-    }
-
-    setLocalError(null);
-
-    updateDateTime((prev) =>
-      new Date(
-        selectedDate.getFullYear(),
-        selectedDate.getMonth(),
-        selectedDate.getDate(),
-        prev.getHours(),
-        prev.getMinutes()
-      )
-    );
-  },
-  [updateDateTime]
-);
-
+      updateDateTime((prev) =>
+        new Date(
+          selectedDate.getFullYear(),
+          selectedDate.getMonth(),
+          selectedDate.getDate(),
+          prev.getHours(),
+          prev.getMinutes()
+        )
+      );
+    },
+    [updateDateTime, setValue]
+  );
 
   const handleTimeChange = useCallback(
     (timeStr: string) => {
       const [hour, minute] = timeStr.split(":").map(Number);
       if (!isNaN(hour) && !isNaN(minute)) {
-        updateDateTime((prev) => new Date(
-          prev.getFullYear(),
-          prev.getMonth(),
-          prev.getDate(),
-          hour,
-          minute
-        ));
+        updateDateTime((prev) =>
+          new Date(
+            prev.getFullYear(),
+            prev.getMonth(),
+            prev.getDate(),
+            hour,
+            minute
+          )
+        );
       }
     },
     [updateDateTime]
   );
 
   const handleSubmitWithValidation = (data: InspectionRequestInput) => {
-    const day = new Date(data.requestedDate).getDay();
-    if (day === 0 || day === 6) {
+    const selectedDate = new Date(data.requestedDate);
+    if (!data.requestedDate || isNaN(selectedDate.getTime())) {
+      setLocalError("Please select a valid date.");
+      return;
+    }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    const isPast = selectedDate < today;
+    const isWeekend = [0, 6].includes(selectedDate.getDay());
+
+    if (isPast) {
+      setLocalError("You cannot select a past date.");
+      return;
+    }
+
+    if (isWeekend) {
       setLocalError("Inspections cannot be scheduled on weekends.");
       return;
     }
+
     setLocalError(null);
     onSubmit(data);
   };
@@ -143,7 +146,6 @@ export default function InspectionRegistrationModal({
     <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
       <div className="p-5 sm:p-6 w-full max-w-md">
         <Form onSubmit={handleSubmit(handleSubmitWithValidation)} className="space-y-5">
-
           {successMsg && (
             <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
               {successMsg}
@@ -160,7 +162,7 @@ export default function InspectionRegistrationModal({
             </div>
           )}
 
-          {/* Plate Number Dropdown */}
+          {/* Vehicle Plate Dropdown */}
           <div>
             <Label>Vehicle Plate</Label>
             <Controller
