@@ -16,6 +16,7 @@ import { InspectionRequestCreateDTO } from "../../../types/Inspection/Inspection
 import { getDirectorates } from "../../../services/directoryService";
 import { MyVehiclePlate } from "../../../types/MyVehiclePlate";
 import { Directorate } from "../../../types/Directorate";
+import { AxiosError } from "axios";
 
 export default function InspectionPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,36 +51,43 @@ export default function InspectionPage() {
     setErrorMsg(null);
   };
 
-  const handleSubmit = async (data: InspectionRequestInput) => {
-    try {
-      const dto: InspectionRequestCreateDTO = {
-        IDFK_Vehicle: data.vehicleId,
-        IDFK_Directory: data.directoryId,
-        RequestedDate: data.requestedDate,
-      };
 
-      await createInspectionRequest(dto);
+const handleSubmit = async (data: InspectionRequestInput) => {
+  try {
+    const dto: InspectionRequestCreateDTO = {
+      IDFK_Vehicle: data.vehicleId,
+      IDFK_Directory: data.directoryId,
+      RequestedDate: data.requestedDate,
+    };
 
-      const plate = vehicles.find((v) => v.id === data.vehicleId)?.plateNumber || data.vehicleId;
-      const directorate = directorates.find((d) => d.id === data.directoryId)?.directoryName || data.directoryId;
+    await createInspectionRequest(dto);
 
-      const newInspection: MyInspectionsRequest = {
-        idpk_InspectionRequest: crypto.randomUUID(),
-        plateNumber: plate,
-        requestedDate: data.requestedDate.toISOString(),
-        directorateName: directorate,
-        status: "Pending",
-        comment: "",
-        documents: [],
-      };
+    const plate = vehicles.find((v) => v.id === data.vehicleId)?.plateNumber || data.vehicleId;
+    const directorate = directorates.find((d) => d.id === data.directoryId)?.directoryName || data.directoryId;
 
-      setInspections((prev) => [newInspection, ...prev]);
-      setSuccessMsg("Inspection request submitted successfully!");
-      setIsModalOpen(false);
-    } catch {
-      setErrorMsg("Failed to submit inspection request.");
-    }
-  };
+    const newInspection: MyInspectionsRequest = {
+      idpk_InspectionRequest: crypto.randomUUID(),
+      plateNumber: plate,
+      requestedDate: data.requestedDate.toISOString(),
+      directorateName: directorate,
+      status: "Pending",
+      comment: "",
+      documents: [],
+    };
+
+    setInspections((prev) => [newInspection, ...prev]);
+    setSuccessMsg("Inspection request submitted successfully!");
+    setIsModalOpen(false);
+  } catch (error) {
+    const err = error as AxiosError;
+    const backendMsg =
+      err?.response?.data && typeof err.response.data === "string"
+        ? err.response.data
+        : "Failed to submit inspection request.";
+    setErrorMsg(backendMsg);
+  }
+};
+
 
   return (
     <>
