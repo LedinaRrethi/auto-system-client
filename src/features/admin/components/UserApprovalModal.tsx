@@ -1,13 +1,13 @@
 import { HiCheck, HiX } from "react-icons/hi";
-import { User } from "../../../types/RegisterDTO";
 import { Modal } from "../../../components/ui/modal";
 import Badge from "../../../components/ui/badge/Badge";
 import Button from "../../../components/ui/button/Button";
+import { RegisterDTO } from "../../../types/RegisterDTO";
 
 interface Props {
   isOpen: boolean;
   action: "approve" | "reject" | "deactivate" | null;
-  user: User | null;
+  user: RegisterDTO | null;
   onConfirm: () => void;
   onCancel: () => void;
 }

@@ -1,9 +1,8 @@
-// File: components/UserActionButtons.tsx
 import { HiCheck, HiX } from "react-icons/hi";
-import { User } from "../../../types/RegisterDTO";
+import { RegisterDTO } from "../../../types/RegisterDTO";
 
 interface Props {
-  user: User;
+  user: RegisterDTO;
   onAction: (id: string, action: "approve" | "reject" | "deactivate") => void;
 }
 
