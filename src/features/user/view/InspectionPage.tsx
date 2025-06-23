@@ -88,6 +88,15 @@ const handleSubmit = async (data: InspectionRequestInput) => {
   }
 };
 
+useEffect(() => {
+  const timeout = setTimeout(() => {
+    setSuccessMsg(null);
+    setErrorMsg(null);
+  }, 3000);
+
+  return () => clearTimeout(timeout);
+}, [successMsg, errorMsg]);
+
 
   return (
     <>
