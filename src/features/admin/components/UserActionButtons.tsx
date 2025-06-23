@@ -1,5 +1,5 @@
 import { HiCheck, HiX } from "react-icons/hi";
-import { RegisterDTO } from "../../../types/RegisterDTO";
+import { RegisterDTO } from "../../../types/User";
 
 interface Props {
   user: RegisterDTO;

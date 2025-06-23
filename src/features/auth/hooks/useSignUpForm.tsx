@@ -6,6 +6,7 @@ import { Directorate } from "../../../types/Directorate";
 import { getDirectorates } from "../../../services/directoryService";
 import { registerUser } from "../../../services/authService";
 import { AxiosError } from "axios";
+import { UserRole } from "../../../types/RegisterDTO";
 
 export function useSignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,7 +24,7 @@ export function useSignUpForm() {
     control,
     watch,
     reset,
-    formState: { errors  },
+    formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     mode: "onChange",
@@ -35,13 +36,13 @@ export function useSignUpForm() {
 
   useEffect(() => {
     const subscription = watch((_value, { name }) => {
-      if (name === "email" && alertData?.message?.toLowerCase().includes("email")) {
+      if (name && alertData?.message?.toLowerCase().includes(name)) {
         setAlertData(null);
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, alertData, setAlertData]);
+  }, [watch, alertData]);
 
   useEffect(() => {
     const fetchDirectorates = async () => {
@@ -63,37 +64,38 @@ export function useSignUpForm() {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       await registerUser({
-        firstName: data.fname,
-        fatherName: data.fathername,
-        lastName: data.lname,
-        birthDate: data.birthDate,
+        firstName: data.fname.trim(),
+        fatherName: data.fathername.trim(),
+        lastName: data.lname.trim(),
+        birthDate: data.birthDate?.toISOString() ?? "",
         email: data.email,
-        personalId: data.personalId,
         password: data.password,
-        role: data.role,
-        specialistNumber: data.specialistNumber,
-        directorate: data.directorate,
+        confirmPassword: data.confirmPassword,
+        role: UserRole[data.role],
+        specialistNumber: data.specialistNumber?.trim() || undefined,
+        directorateId: data.directorate || undefined,
+        personalId: data.personalId,
       });
 
       setAlertData({
         variant: "success",
         title: "Success",
-        message: "Registration successful! You can now log in.",
+        message: "Registration successful! Redirecting to login...",
       });
 
       reset();
       setTimeout(() => {
         window.location.href = "/signin?registered=true";
-      }, 4000);
+      }, 3000);
     } catch (err: unknown) {
-  const axiosErr = err as AxiosError<{ error?: string }>;
-  const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
-  setAlertData({
-    variant: "error",
-    title: "Registration Error",
-    message,
-  });
+      const axiosErr = err as AxiosError<{ error?: string }>;
+      const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
 
+      setAlertData({
+        variant: "error",
+        title: "Registration Error",
+        message,
+      });
     }
   };
 

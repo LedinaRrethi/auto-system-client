@@ -2,7 +2,7 @@ import { HiCheck, HiX } from "react-icons/hi";
 import { Modal } from "../../../components/ui/modal";
 import Badge from "../../../components/ui/badge/Badge";
 import Button from "../../../components/ui/button/Button";
-import { RegisterDTO } from "../../../types/RegisterDTO";
+import { RegisterDTO } from "../../../types/User";
 
 interface Props {
   isOpen: boolean;

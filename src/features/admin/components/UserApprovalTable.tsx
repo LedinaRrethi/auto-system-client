@@ -1,7 +1,7 @@
 import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
 import Badge from "../../../components/ui/badge/Badge";
 import { HiSearch } from "react-icons/hi";
-import { User } from "../../../types/RegisterDTO";
+import { User } from "../../../types/User";
 import { useState, useMemo, useEffect } from "react";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
@@ -234,14 +234,7 @@ export default function UserApprovalTable() {
           </Table>
         </div>
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          startIndex={startIndex}
-          endIndex={endIndex}
-          totalItems={filteredUsers.length}
-          onPageChange={setCurrentPage}
-        />
+        <Pagination currentPage={currentPage} onPageChange={setCurrentPage} />
       </div>
 
       <UserApprovalModal

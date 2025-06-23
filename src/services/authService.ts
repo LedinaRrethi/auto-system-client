@@ -1,5 +1,5 @@
-import api from "./api";
 import { RegisterDTO } from "../types/RegisterDTO";
+import api from "./api";
 
 export function saveToken(token: string) {
   sessionStorage.setItem("authToken", token);

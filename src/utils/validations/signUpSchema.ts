@@ -1,80 +1,71 @@
 import { z } from "zod";
 
-// Regex for password: min 8 chars, 1 uppercase, 1 number, 1 special character
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-// Names: only letters + accents
-const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
+const simpleNameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË'-]+$/;
 
 export const signUpSchema = z
   .object({
-    fname: z
-      .string()
-      .min(1, "First name is required")
-      .regex(nameRegex, "First name must only contain letters"),
-    fathername: z
-      .string()
-      .min(1, "Father name is required")
-      .regex(nameRegex, "Father name must only contain letters"),
-    lname: z
-      .string()
-      .min(1, "Last name is required")
-      .regex(nameRegex, "Last name must only contain letters"),
+    fname: z.string().min(1, "First name is required").regex(simpleNameRegex, "Only letters allowed, no spaces"),
+    fathername: z.string().min(1, "Father name is required").regex(simpleNameRegex, "Only letters allowed, no spaces"),
+    lname: z.string().min(1, "Last name is required").regex(simpleNameRegex, "Only letters allowed, no spaces"),
+
     email: z.string().email("Invalid email format"),
+
     password: z
       .string()
       .min(8, "Password must be at least 8 characters long")
-      .regex(
-        passwordRegex,
-        "Password must include 1 uppercase letter, 1 number, and 1 special character"
-      ),
+      .regex(passwordRegex, "Must include 1 uppercase, 1 number, and 1 special character"),
+
     confirmPassword: z.string().min(1, "Please confirm your password"),
-    birthDate: z
-      .date({
-        required_error: "Birthdate is required",
-        invalid_type_error: "Birthdate must be a valid date",
-      })
-      .refine((val) => val <= new Date(), {
-        message: "Birthdate cannot be in the future",
-      }),
+
+    birthDate: z.date({ required_error: "Birthdate is required" }).refine((d) => d <= new Date(), {
+      message: "Birthdate cannot be in the future",
+    }),
+
     acceptedTerms: z.boolean().refine((val) => val === true, {
       message: "You must accept the terms.",
     }),
+
     role: z.enum(["Individ", "Police", "Specialist"], {
       required_error: "Role is required",
     }),
-    specialistNumber: z.string().optional(),
-    directorate: z.string().optional(),
-    personalId: z
-      .string()
-      .min(5, "Personal ID is required")
-      .max(20, "Personal ID must be max 20 characters"),
 
-    
+    specialistNumber: z
+      .string()
+      .optional()
+      .refine((val) => !val || !val.includes(" "), {
+        message: "Specialist number must not contain spaces",
+      }),
+
+    directorate: z.string().optional(),
+
+    personalId: z.string().length(10, "Personal ID must be exactly 10 characters"),
   })
+
   .superRefine((data, ctx) => {
     if (data.role === "Specialist") {
-      if (!data.specialistNumber?.trim()) {
+      if (!data.specialistNumber) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Specialist number is required for specialists",
+          message: "Specialist number is required",
           path: ["specialistNumber"],
         });
       }
-      if (!data.directorate?.trim()) {
+
+      if (!data.directorate) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: "Directorate is required for specialists",
+          message: "Directorate is required",
           path: ["directorate"],
         });
       }
     }
   })
+
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
-
-//TODO : Specialist number te mos kete hapesira , as first naem , father name , last name
