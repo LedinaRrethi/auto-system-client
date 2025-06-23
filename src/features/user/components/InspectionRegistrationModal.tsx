@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { Modal } from "../../../components/ui/modal";
@@ -14,8 +14,8 @@ import {
   InspectionRequestInput,
   inspectionRequestSchema,
 } from "../../../utils/validations/inspectionRequestSchema";
-import { fetchVehicles } from "../../../services/vehicleService";
 import { getDirectorates } from "../../../services/directoryService";
+import { fetchMyVehiclePlates } from "../../../services/inspectionService";
 
 interface Props {
   isOpen: boolean;
@@ -49,6 +49,7 @@ export default function InspectionRegistrationModal({
   const {
     handleSubmit,
     setValue,
+    control,
     watch,
     formState: { errors },
   } = useForm<InspectionRequestInput>({
@@ -56,49 +57,52 @@ export default function InspectionRegistrationModal({
     mode: "onSubmit",
   });
 
-  const [vehicles, setVehicles] = useState<{ id: string; plateNumber: string }[]>([]);
-  const [directorates, setDirectorates] = useState<{ id: string; name: string }[]>([]);
-  const [plateInput, setPlateInput] = useState("");
-  const [dirInput, setDirInput] = useState("");
+  const [vehicles, setVehicles] = useState<
+    { id: string; plateNumber: string }[]
+  >([]);
+  const [directorates, setDirectorates] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const rawVehicles = await fetchVehicles();
+        const rawVehicles = await fetchMyVehiclePlates();
         const rawDirectorates = await getDirectorates();
 
-        const mappedVehicles = (rawVehicles as RawVehicle[])
+        const uniqueVehicles = (rawVehicles as RawVehicle[])
           .map((v) => ({
             id: v.idfK_Vehicle ?? v.id ?? v.idpk_Vehicle ?? "",
             plateNumber: v.plateNumber,
           }))
-          .filter((v, i, self) => self.findIndex((x) => x.id === v.id) === i); 
+          .filter((v, i, arr) => arr.findIndex((x) => x.id === v.id) === i);
 
-        const mappedDirectorates = (rawDirectorates as RawDirectorate[])
+        const uniqueDirectorates = (rawDirectorates as RawDirectorate[])
           .map((d) => ({
             id: d.id ?? d.idpk_Directorate ?? "",
             name: d.directoryName ?? d.name ?? "",
           }))
-          .filter((d, i, self) => self.findIndex((x) => x.id === d.id) === i); //fshij id qe jan shfaq dy here
+          .filter((d, i, arr) => arr.findIndex((x) => x.id === d.id) === i);
 
+        console.log(uniqueVehicles);
+        console.log(uniqueDirectorates);
 
-          console.log(mappedVehicles);
-          console.log(mappedDirectorates);
-
-        setVehicles(mappedVehicles);
-        setDirectorates(mappedDirectorates);
+        setVehicles(uniqueVehicles);
+        setDirectorates(uniqueDirectorates);
       } catch (error) {
         console.error("Failed to fetch modal data:", error);
       }
     };
 
-    if (isOpen) {
-      fetchData();
-    }
+    if (isOpen) fetchData();
   }, [isOpen]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Request Inspection Appointment">
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Request Inspection Appointment"
+    >
       <div className="p-5 sm:p-6 w-full max-w-md">
         <Form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {successMsg && (
@@ -115,61 +119,72 @@ export default function InspectionRegistrationModal({
           {/* Plate Number */}
           <div>
             <Label>Plate Number</Label>
-            <Autocomplete
-              options={vehicles}
-              getOptionLabel={(v) => v.plateNumber}
-              isOptionEqualToValue={(a, b) => a.id === b.id}
-              value={vehicles.find((v) => v.plateNumber === plateInput) || null}
-              inputValue={plateInput}
-              onInputChange={(_, value) => setPlateInput(value)}
-              onChange={(_, value) => setValue("vehicleId", value?.id || "")}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  placeholder="Type plate number"
-                  InputProps={{
-                    ...params.InputProps,
-                    disableUnderline: true,
-                    className:
-                      "h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-white/30 dark:focus:border-brand-600",
+            <Controller
+              name="vehicleId"
+              control={control}
+              rules={{ required: "Plate number is required" }}
+              render={({ field }) => (
+                <Autocomplete
+                  options={vehicles}
+                  getOptionLabel={(v) => v.plateNumber}
+                  isOptionEqualToValue={(a, b) => a.id === b.id}
+                  value={vehicles.find((v) => v.id === field.value) || null}
+                  onChange={(_, newValue) => {
+                    field.onChange(newValue?.id || "");
                   }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Type your plate..."
+                      variant="standard"
+                      error={!!errors.vehicleId}
+                      helperText={errors.vehicleId?.message}
+                      InputProps={{
+                        ...params.InputProps,
+                        disableUnderline: true,
+                        className:
+                          "h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-white/30 dark:focus:border-brand-600",
+                      }}
+                    />
+                  )}
                 />
               )}
             />
-            {errors.vehicleId && (
-              <p className="text-red-500 text-sm">{errors.vehicleId.message}</p>
-            )}
           </div>
-
           {/* Directorate */}
           <div>
             <Label>Directorate</Label>
-            <Autocomplete
-              options={directorates}
-              getOptionLabel={(d) => d.name}
-              isOptionEqualToValue={(a, b) => a.id === b.id}
-              value={directorates.find((d) => d.name === dirInput) || null}
-              inputValue={dirInput}
-              onInputChange={(_, value) => setDirInput(value)}
-              onChange={(_, value) => setValue("directoryId", value?.id || "")}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  variant="standard"
-                  placeholder="Type directorate"
-                  InputProps={{
-                    ...params.InputProps,
-                    disableUnderline: true,
-                    className:
-                      "h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-white/30 dark:focus:border-brand-600",
+            <Controller
+              name="directoryId"
+              control={control}
+              rules={{ required: "Directorate is required" }}
+              render={({ field }) => (
+                <Autocomplete
+                  options={directorates}
+                  getOptionLabel={(d) => d.name}
+                  isOptionEqualToValue={(a, b) => a.id === b.id}
+                  value={directorates.find((d) => d.id === field.value) || null}
+                  onChange={(_, newValue) => {
+                    field.onChange(newValue?.id || "");
                   }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      placeholder="Type directorate..."
+                      variant="standard"
+                      error={!!errors.directoryId}
+                      helperText={errors.directoryId?.message}
+                      InputProps={{
+                        ...params.InputProps,
+                        disableUnderline: true,
+                        className:
+                          "h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-white/30 dark:focus:border-brand-600",
+                      }}
+                    />
+                  )}
                 />
               )}
             />
-            {errors.directoryId && (
-              <p className="text-red-500 text-sm">{errors.directoryId.message}</p>
-            )}
           </div>
 
           {/* Date Picker */}
@@ -215,7 +230,6 @@ export default function InspectionRegistrationModal({
             </div>
           </div>
 
-          {/* Submit */}
           <Button type="submit" className="w-full">
             Submit Request
           </Button>
