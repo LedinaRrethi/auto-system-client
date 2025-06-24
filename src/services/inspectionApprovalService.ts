@@ -1,6 +1,7 @@
 import axios from "axios";
 import { InspectionRequestList } from "../types/InspectionApproval/InspectionList";
 import { PaginationQuery } from "../types/PaginationQuery";
+import api from "./api";
 
 interface PaginatedResponse<T> {
   items: T[];
@@ -21,9 +22,11 @@ export const fetchMyInspections = async (
     if (query.sortField) params.append("sortField", query.sortField);
     if (query.sortOrder) params.append("sortOrder", query.sortOrder);
 
-    const response = await axios.get("/api/Inspection/my-requests", {
-      params,
-    });
+    const response = await api.get<PaginatedResponse<InspectionRequestList>>(
+  "/Inspection/my-requests",
+  { params }
+);
+console.log(" Axios fetched response:", response.data);
 
     return response.data;
   } catch (err) {

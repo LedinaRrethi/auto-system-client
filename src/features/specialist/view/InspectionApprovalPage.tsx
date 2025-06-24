@@ -32,14 +32,16 @@ useEffect(() => {
         page,
         pageSize,
         search: submittedSearch,
-        sortField: "RequestedDate",
-        sortOrder: "desc",
       });
       setInspections(res.items);
       setHasNextPage(res.hasNextPage);
       if (!res.items || res.items.length === 0) {
   setInfoMsg("You have no requests.");
+} else {
+  setInfoMsg(""); 
 }
+console.log("Fetched inspections:", res.items);
+
 
     } catch {
       console.error("Error fetching inspections");
