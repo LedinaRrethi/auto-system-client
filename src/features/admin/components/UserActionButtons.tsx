@@ -1,8 +1,8 @@
 import { HiCheck, HiX } from "react-icons/hi";
-import { RegisterDTO } from "../../../types/User";
+import { User } from "../../../types/User";
 
 interface Props {
-  user: RegisterDTO;
+  user: User;
   onAction: (id: string, action: "approve" | "reject" | "deactivate") => void;
 }
 

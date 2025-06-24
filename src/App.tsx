@@ -26,6 +26,7 @@ import VehicleRequestApproval from "./features/admin/view/VehicleRequestApproval
 import FineRegistrationPage from "./features/police/view/FineRegistrationPage";
 import FinePage from "./features/user/view/FinePage";
 import InspectionPage from "./features/user/view/InspectionPage";
+import InspectionApprovalPage from "./features/specialist/view/InspectionApprovalPage";
 
 export default function App() {
   return (
@@ -57,6 +58,7 @@ export default function App() {
             <Route path="/fine-registration" element={<FineRegistrationPage />} />
             <Route path="/my-fines" element={<FinePage />} />
             <Route path="/my-inspections" element={<InspectionPage />} />
+            <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
         
 
             {/* Ui Elements */}
