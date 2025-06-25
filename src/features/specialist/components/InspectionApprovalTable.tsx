@@ -46,18 +46,8 @@ export default function InspectionApprovalTable({
               >
                 Status
               </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                Comment
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                Documents
-              </TableCell>
+             
+        
               <TableCell
                 isHeader
                 className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
@@ -81,16 +71,7 @@ export default function InspectionApprovalTable({
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.status}
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {item.comment || "-"}
-                </TableCell>
-
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {item.documents.length > 0
-                    ? item.documents.map((doc) => doc.documentName).join(", ")
-                    : "-"}
-                </TableCell>
-
+                
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   <InspectionButtons request={item} onAction={onAction} />
                 </TableCell>
