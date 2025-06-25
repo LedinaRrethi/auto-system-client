@@ -5,43 +5,34 @@ interface ModalProps {
   onClose: () => void;
   className?: string;
   children: React.ReactNode;
-  showCloseButton?: boolean; // New prop to control close button visibility
-  isFullscreen?: boolean; // Default to false for backwards compatibility
+  showCloseButton?: boolean;
+  isFullscreen?: boolean;
+  title?: string;
+  titleIcon?: React.ReactNode;
 }
 
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
   children,
-  className,
-  showCloseButton = true, // Default to true for backwards compatibility
+  className = "",
+  showCloseButton = true,
   isFullscreen = false,
+  title,
+  titleIcon,
 }) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        onClose();
-      }
+      if (event.key === "Escape") onClose();
     };
-
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-    };
+    if (isOpen) document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-
+    document.body.style.overflow = isOpen ? "hidden" : "unset";
     return () => {
       document.body.style.overflow = "unset";
     };
@@ -49,45 +40,65 @@ export const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
-  const contentClasses = isFullscreen
-    ? "w-full h-full"
-    : "relative w-full rounded-3xl bg-white  dark:bg-gray-900";
-
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-y-auto modal z-99999">
-      {!isFullscreen && (
-        <div
-          className="fixed inset-0 h-full w-full bg-gray-400/50 backdrop-blur-[32px]"
-          onClick={onClose}
-        ></div>
-      )}
+    <div 
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 backdrop-blur-lg p-2 sm:p-4"
+      onClick={onClose}
+    >
       <div
         ref={modalRef}
-        className={`${contentClasses}  ${className}`}
+        className={`
+          relative w-full bg-white dark:bg-gray-900 rounded-2xl shadow-xl mx-2 sm:mx-4
+          ${isFullscreen 
+            ? 'h-full max-w-none sm:h-[95vh] sm:max-w-7xl' 
+            : 'max-w-xs sm:max-w-md md:max-w-lg lg:max-w-xl max-h-[95vh] sm:max-h-[90vh]'
+          }
+          ${className}
+        `}
         onClick={(e) => e.stopPropagation()}
       >
-        {showCloseButton && (
-          <button
-            onClick={onClose}
-            className="absolute right-3 top-3 z-999 flex h-9.5 w-9.5 items-center justify-center rounded-full bg-gray-100 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white sm:right-6 sm:top-6 sm:h-11 sm:w-11"
-          >
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                fillRule="evenodd"
-                clipRule="evenodd"
-                d="M6.04289 16.5413C5.65237 16.9318 5.65237 17.565 6.04289 17.9555C6.43342 18.346 7.06658 18.346 7.45711 17.9555L11.9987 13.4139L16.5408 17.956C16.9313 18.3466 17.5645 18.3466 17.955 17.956C18.3455 17.5655 18.3455 16.9323 17.955 16.5418L13.4129 11.9997L17.955 7.4576C18.3455 7.06707 18.3455 6.43391 17.955 6.04338C17.5645 5.65286 16.9313 5.65286 16.5408 6.04338L11.9987 10.5855L7.45711 6.0439C7.06658 5.65338 6.43342 5.65338 6.04289 6.0439C5.65237 6.43442 5.65237 7.06759 6.04289 7.45811L10.5845 11.9997L6.04289 16.5413Z"
-                fill="currentColor"
-              />
-            </svg>
-          </button>
+        {/* Header - sticky */}
+        {(title || titleIcon || showCloseButton) && (
+          <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 rounded-t-2xl px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-3 border-b border-gray-200 dark:border-gray-700">
+            {showCloseButton && (
+              <button
+                onClick={onClose}
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1 sm:p-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white text-xl sm:text-2xl font-bold transition-colors touch-manipulation rounded-full hover:bg-gray-100 dark:hover:bg-gray-800"
+                aria-label="Close modal"
+              >
+                &times;
+              </button>
+            )}
+            
+            <div className="flex items-center gap-2 sm:gap-3 mb-3 pr-8 sm:pr-12">
+              {titleIcon && (
+                <span className="text-lg sm:text-xl lg:text-2xl flex-shrink-0">
+                  {titleIcon}
+                </span>
+              )}
+              <h2 className="text-base sm:text-xl lg:text-2xl font-semibold text-gray-800 dark:text-white truncate">
+                {title ?? "Modal Title"}
+              </h2>
+            </div>
+          </div>
         )}
-        <div>{children}</div>
+
+        {/* Content - scrollable */}
+        <div 
+          className={`
+            overflow-y-auto px-3 sm:px-6 lg:px-8 pb-3 sm:pb-6
+            ${title || titleIcon || showCloseButton 
+              ? isFullscreen 
+                ? 'h-[calc(100%-70px)] sm:h-[calc(95vh-80px)]'
+                : 'max-h-[calc(95vh-70px)] sm:max-h-[calc(90vh-80px)]'
+              : isFullscreen 
+                ? 'h-full sm:h-[95vh]'
+                : 'max-h-[95vh] sm:max-h-[90vh]'
+            }
+          `}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

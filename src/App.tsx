@@ -1,31 +1,42 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import NotFound from "./pages/OtherPage/NotFound";
-import UserProfiles from "./pages/UserProfiles";
-import Videos from "./pages/UiElements/Videos";
-import Images from "./pages/UiElements/Images";
-import Alerts from "./pages/UiElements/Alerts";
-import Badges from "./pages/UiElements/Badges";
-import Avatars from "./pages/UiElements/Avatars";
-import Buttons from "./pages/UiElements/Buttons";
-import LineChart from "./pages/Charts/LineChart";
-import BarChart from "./pages/Charts/BarChart";
-import Calendar from "./pages/Calendar";
-import BasicTables from "./pages/Tables/BasicTables";
-import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
-import AppLayout from "./layout/AppLayout";
+import { Route, BrowserRouter, Routes } from "react-router-dom";
 import { ScrollToTop } from "./components/common/ScrollToTop";
+import AppLayout from "./components/layout/AppLayout";
 import Home from "./pages/Dashboard/Home";
-import VehicleRegistrationPage from "./pages/VehicleRegistrationPage";
-import UserApprovalPage from "./pages/UserApprovalPage";
+import UserProfiles from "./features/shared/view/UserProfiles";
+import FullCalendar from "@fullcalendar/react";
+import Blank from "./features/shared/view/Blank";
+import FormElements from "./pages/Forms/FormElements";
+import BasicTables from "./pages/Tables/BasicTables";
+import VehicleRegistrationPage from "./features/user/view/VehicleRegistrationPage";
+import UserApprovalPage from "./features/admin/view/UserApprovalPage";
+import Alerts from "./pages/UiElements/Alerts";
+import Avatars from "./pages/UiElements/Avatars";
+import Badges from "./pages/UiElements/Badges";
+import Buttons from "./pages/UiElements/Buttons";
+import Images from "./pages/UiElements/Images";
+import Videos from "./pages/UiElements/Videos";
+import BarChart from "./pages/Charts/BarChart";
+import LineChart from "./pages/Charts/LineChart";
+import SignIn from "./features/auth/view/SignIn";
+import SignUp from "./features/auth/view/SignUp";
+import NotFound from "./pages/OtherPage/NotFound";
+
+import { Toaster } from "react-hot-toast";
+import VehicleRequestApproval from "./features/admin/view/VehicleRequestApproval";
+import FineRegistrationPage from "./features/police/view/FineRegistrationPage";
+import FinePage from "./features/user/view/FinePage";
+import InspectionPage from "./features/user/view/InspectionPage";
+import InspectionApprovalPage from "./features/specialist/view/InspectionApprovalPage";
 
 export default function App() {
   return (
     <>
-      <Router>
+      <BrowserRouter>
         <ScrollToTop />
+
+        {/* Toaster global */}
+        <Toaster position="top-right" reverseOrder={false} />
+
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
@@ -33,7 +44,7 @@ export default function App() {
 
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/calendar" element={<FullCalendar />} />
             <Route path="/blank" element={<Blank />} />
 
             {/* Forms */}
@@ -43,6 +54,12 @@ export default function App() {
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
             <Route path="/user-approval" element={<UserApprovalPage />} />
+            <Route path="/vehicle-request-approval" element={<VehicleRequestApproval />} />
+            <Route path="/fine-registration" element={<FineRegistrationPage />} />
+            <Route path="/my-fines" element={<FinePage />} />
+            <Route path="/my-inspections" element={<InspectionPage />} />
+            <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
+        
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
@@ -64,7 +81,7 @@ export default function App() {
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
+      </BrowserRouter>
     </>
   );
 }
