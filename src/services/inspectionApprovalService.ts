@@ -2,6 +2,7 @@ import axios from "axios";
 import { InspectionRequestList } from "../types/InspectionApproval/InspectionList";
 import { PaginationQuery } from "../types/PaginationQuery";
 import api from "./api";
+import { InspectionApproval } from "../types/InspectionApproval/InspectionApproval";
 
 interface PaginatedResponse<T> {
   items: T[];
@@ -33,4 +34,10 @@ console.log(" Axios fetched response:", response.data);
     console.error("fetchMyInspections error:", err);
     throw err;
   }
+};
+
+
+export const approveInspection = async (dto: InspectionApproval) => {
+  const res = await api.post("/Inspection/approve", dto);
+  return res.data;
 };
