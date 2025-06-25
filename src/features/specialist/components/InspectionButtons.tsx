@@ -24,7 +24,8 @@ export default function InspectionButtons({ request, onAction }: Props) {
             ? "Inspection Approved"
             : "Approve Inspection"
         }
-        onClick={() => isPending && onAction(request.idpK_InspectionRequest, "approve")}
+    
+        onClick={() => isPending && onAction(request.idpK_Inspection , "approve")}
         disabled={!isPending}
         className={`${baseButtonClass} ${
           isPending

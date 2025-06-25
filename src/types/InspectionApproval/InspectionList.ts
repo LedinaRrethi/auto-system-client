@@ -6,6 +6,7 @@ export interface InspectionDocument {
 }
 
 export interface InspectionRequestList {
+  idpK_Inspection: string;
   idpK_InspectionRequest: string;
   plateNumber: string;
   requestedDate: string;

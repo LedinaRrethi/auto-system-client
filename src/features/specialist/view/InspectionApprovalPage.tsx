@@ -73,13 +73,18 @@ export default function InspectionPage() {
   }
 };
 
-const fileToBase64 = (file: File): Promise<string> =>
+  const fileToBase64 = (file: File): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result?.toString() || "");
+    reader.onload = () => {
+      const fullBase64 = reader.result?.toString() || "";
+      const pureBase64 = fullBase64.split(",")[1];
+      resolve(pureBase64);
+    };
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+
 
 
   useEffect(() => {
