@@ -1,13 +1,16 @@
+import { useState } from "react";
 import { Modal } from "../../../components/ui/modal";
 import TextArea from "../../../components/form/input/TextArea";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
-import { HiCheckCircle, HiExclamationTriangle } from "react-icons/hi2";
+import DropzoneComponent from "../../../components/form/form-elements/DropZone";
+import { HiCheckCircle } from "react-icons/hi";
+import { HiExclamationTriangle } from "react-icons/hi2";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (comment: string) => void;
+  onConfirm: (comment: string, files: File[]) => void; // updated
   action: "approve" | "reject";
   loading?: boolean;
   comment: string;
@@ -23,22 +26,25 @@ export default function InspectionApprovalModal({
   comment,
   setComment,
 }: Props) {
+  const [files, setFiles] = useState<File[]>([]);
+
   const isApprove = action === "approve";
-  const title = isApprove ? "Approve Inspection" : "Reject Inspection";
+
   const btnText = isApprove ? "Yes, Approve" : "Yes, Reject";
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <div className="flex items-center gap-2 mb-3">
-        {isApprove ? (
-          <HiCheckCircle className="text-green-600 w-6 h-6" />
-        ) : (
-          <HiExclamationTriangle className="text-red-600 w-6 h-6" />
-        )}
-        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
-          {title}
-        </h2>
-      </div>
+    <Modal
+  isOpen={isOpen}
+  onClose={onClose}
+  title={isApprove ? "Approve Request" : "Reject Request"}
+  titleIcon={
+    isApprove ? (
+      <HiCheckCircle className="text-green-600 w-5 h-5" />
+    ) : (
+      <HiExclamationTriangle className="text-red-600 w-5 h-5" />
+    )
+  }
+>
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5">
         <p className="font-semibold">
           {isApprove
@@ -51,6 +57,7 @@ export default function InspectionApprovalModal({
             : "Please explain the reason for rejection below."}
         </p>
       </div>
+
       <div className="space-y-4">
         <div>
           <Label>Comment</Label>
@@ -61,6 +68,12 @@ export default function InspectionApprovalModal({
             onChange={setComment}
           />
         </div>
+
+        <div>
+          <Label>Attach PDF Documents</Label>
+          <DropzoneComponent files={files} setFiles={setFiles} />
+        </div>
+
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
@@ -68,7 +81,7 @@ export default function InspectionApprovalModal({
           <button
             type="button"
             disabled={loading}
-            onClick={() => onConfirm(comment)}
+            onClick={() => onConfirm(comment, files)}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               isApprove
                 ? "bg-green-600 text-white hover:bg-green-700"
