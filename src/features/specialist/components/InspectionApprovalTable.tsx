@@ -10,8 +10,12 @@ import InspectionButtons from "./InspectionButtons";
 
 interface Props {
   inspections: InspectionRequestList[];
-  onAction: (id: string, action: "approve" | "reject") => void;
+  onAction: (
+    inspection: InspectionRequestList,
+    action: "approve" | "reject"
+  ) => void;
 }
+
 export default function InspectionApprovalTable({
   inspections,
   onAction,
@@ -46,8 +50,7 @@ export default function InspectionApprovalTable({
               >
                 Status
               </TableCell>
-             
-        
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
@@ -71,7 +74,7 @@ export default function InspectionApprovalTable({
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.status}
                 </TableCell>
-                
+
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   <InspectionButtons request={item} onAction={onAction} />
                 </TableCell>

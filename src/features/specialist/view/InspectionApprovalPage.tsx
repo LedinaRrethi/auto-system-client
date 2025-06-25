@@ -26,66 +26,67 @@ export default function InspectionPage() {
   const [errorMsg, setErrorMsg] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [action, setAction] = useState<"approve" | "reject">("approve");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const onAction = (id: string, action: "approve" | "reject") => {
-    setSelectedId(id);
+  const [selectedInspection, setSelectedInspection] =
+    useState<InspectionRequestList | null>(null);
+
+  const onAction = (
+    inspection: InspectionRequestList,
+    action: "approve" | "reject"
+  ) => {
+    setSelectedInspection(inspection);
     setAction(action);
     setModalOpen(true);
   };
 
   const handleConfirm = async (comment: string, files: File[]) => {
-  if (!selectedId) return;
+    if (!selectedInspection) return;
 
-  setLoading(true);
-  try {
-    const documents = await Promise.all(
-  files.map(async (file) => {
-    const base64 = await fileToBase64(file);
-    return {
-      idfK_InspectionRequest: selectedId, // kjo është çelësi që mungon
-      documentName: file.name,
-      fileBase64: base64,
-    };
-  })
-);
+    setLoading(true);
+    try {
+      const documents = await Promise.all(
+        files.map(async (file) => {
+          const base64 = await fileToBase64(file);
+          return {
+            idfK_InspectionRequest: selectedInspection.idpK_InspectionRequest,
+            documentName: file.name,
+            fileBase64: base64,
+          };
+        })
+      );
 
+      await approveInspection({
+        idpK_Inspection: selectedInspection.idpK_Inspection,
+        isPassed: action === "approve",
+        comment,
+        documents,
+      });
 
-
-    await approveInspection({
-      idpK_Inspection: selectedId,
-      isPassed: action === "approve",
-      comment,
-      documents,
-    });
-
-    setSuccessMsg(`Inspection ${action}d successfully.`);
-    setSubmittedSearch(searchTerm);
-  } catch {
-    setErrorMsg("Failed to update inspection.");
-  } finally {
-    setLoading(false);
-    setModalOpen(false);
-    setComment("");
-  }
-};
+      setSuccessMsg(`Inspection ${action}d successfully.`);
+      setSubmittedSearch(searchTerm);
+    } catch {
+      setErrorMsg("Failed to update inspection.");
+    } finally {
+      setLoading(false);
+      setModalOpen(false);
+      setComment("");
+    }
+  };
 
   const fileToBase64 = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const fullBase64 = reader.result?.toString() || "";
-      const pureBase64 = fullBase64.split(",")[1];
-      resolve(pureBase64);
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-
-
+    new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const fullBase64 = reader.result?.toString() || "";
+        const pureBase64 = fullBase64.split(",")[1];
+        resolve(pureBase64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
 
   useEffect(() => {
     const fetchData = async () => {

@@ -3,7 +3,7 @@ import { InspectionRequestList } from "../../../types/InspectionApproval/Inspect
 
 interface Props {
   request: InspectionRequestList;
-  onAction: (id: string, action: "approve" | "reject") => void;
+  onAction: (inspection: InspectionRequestList, action: "approve" | "reject") => void;
 }
 
 export default function InspectionButtons({ request, onAction }: Props) {
@@ -24,8 +24,9 @@ export default function InspectionButtons({ request, onAction }: Props) {
             ? "Inspection Approved"
             : "Approve Inspection"
         }
-    
-        onClick={() => isPending && onAction(request.idpK_Inspection , "approve")}
+        onClick={() => {
+          if (isPending) onAction(request, "approve");
+        }}
         disabled={!isPending}
         className={`${baseButtonClass} ${
           isPending
@@ -44,7 +45,9 @@ export default function InspectionButtons({ request, onAction }: Props) {
             ? "Inspection Rejected"
             : "Reject Inspection"
         }
-        onClick={() => isPending && onAction(request.idpK_InspectionRequest, "reject")}
+        onClick={() => {
+          if (isPending) onAction(request, "reject");
+        }}
         disabled={!isPending}
         className={`${baseButtonClass} ${
           isPending
