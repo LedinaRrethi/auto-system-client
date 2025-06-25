@@ -1,4 +1,3 @@
-// InspectionRegistrationTable.tsx
 import { Table, TableCell, TableHeader, TableRow, TableBody } from "../../../components/ui/table";
 import { MyInspectionsRequest } from "../../../types/Inspection/MyInspectionsRequest";
 

@@ -30,7 +30,7 @@ export default function InspectionPage() {
   const [vehicles, setVehicles] = useState<MyVehiclePlate[]>([]);
   const [directorates, setDirectorates] = useState<Directorate[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(2);
+  const [pageSize] = useState(10);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");

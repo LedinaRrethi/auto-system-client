@@ -1,4 +1,3 @@
-import axios from "axios";
 import { InspectionRequestList } from "../types/InspectionApproval/InspectionList";
 import { PaginationQuery } from "../types/PaginationQuery";
 import api from "./api";

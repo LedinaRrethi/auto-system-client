@@ -6,53 +6,84 @@ import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { HiSearch } from "react-icons/hi";
 import { InspectionRequestList } from "../../../types/InspectionApproval/InspectionList";
-import { fetchMyInspections } from "../../../services/inspectionApprovalService";
+import {
+  approveInspection,
+  fetchMyInspections,
+} from "../../../services/inspectionApprovalService";
 import InspectionApprovalTable from "../components/InspectionApprovalTable";
-
+import InspectionApprovalModal from "../components/InspectionApprovalModal";
 
 export default function InspectionPage() {
+  const [inspections, setInspections] = useState<InspectionRequestList[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize] = useState(10);
+  const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [submittedSearch, setSubmittedSearch] = useState("");
 
+  const [infoMsg, setInfoMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
 
-const [inspections, setInspections] = useState<InspectionRequestList[]>([]);
-const [page, setPage] = useState(1);
-const [pageSize] = useState(10);
-const [hasNextPage, setHasNextPage] = useState(false);
-const [searchTerm, setSearchTerm] = useState("");
-const [submittedSearch, setSubmittedSearch] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [action, setAction] = useState<"approve" | "reject">("approve");
+  const [comment, setComment] = useState("");
+  const [loading, setLoading] = useState(false);
 
-const [infoMsg , setInfoMsg] = useState("");
-const [successMsg , setSuccessMsg] = useState("");
-const [errorMsg , setErrorMsg] = useState("");
+  const onAction = (id: string, action: "approve" | "reject") => {
+    setSelectedId(id);
+    setAction(action);
+    setModalOpen(true);
+  };
 
+  const handleConfirm = async (comment: string) => {
+    if (!selectedId) return;
 
-useEffect(() => {
-  const fetchData = async () => {
+    setLoading(true);
     try {
-      const res = await fetchMyInspections({
-        page,
-        pageSize,
-        search: submittedSearch,
+      await approveInspection({
+        idpK_Inspection: selectedId,
+        isPassed: action === "approve",
+        comment,
+        documents: [],
       });
-      setInspections(res.items);
-      setHasNextPage(res.hasNextPage);
-      if (!res.items || res.items.length === 0) {
-  setInfoMsg("You have no requests.");
-} else {
-  setInfoMsg(""); 
-}
-console.log("Fetched inspections:", res.items);
 
-
+      setSuccessMsg(`Inspection ${action}d successfully.`);
+      setSubmittedSearch(searchTerm); // reload current page
     } catch {
-      console.error("Error fetching inspections");
-      setErrorMsg("Failed to load inspections.");
+      setErrorMsg("Failed to update inspection.");
+    } finally {
+      setLoading(false);
+      setModalOpen(false);
+      setComment("");
     }
   };
 
-  fetchData();
-}, [page, pageSize, submittedSearch]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetchMyInspections({
+          page,
+          pageSize,
+          search: submittedSearch,
+        });
+        setInspections(res.items);
+        setHasNextPage(res.hasNextPage);
+        if (!res.items || res.items.length === 0) {
+          setInfoMsg("You have no requests.");
+        } else {
+          setInfoMsg("");
+        }
+        console.log("Fetched inspections:", res.items);
+      } catch {
+        console.error("Error fetching inspections");
+        setErrorMsg("Failed to load inspections.");
+      }
+    };
 
-  
+    fetchData();
+  }, [page, pageSize, submittedSearch]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -68,7 +99,7 @@ console.log("Fetched inspections:", res.items);
         title="Vehicle Inspections | AutoSystem"
         description="Manage and schedule vehicle inspections."
       />
-      <PageBreadcrumb pageTitle="Vehicle Inspections" />
+      <PageBreadcrumb pageTitle="Inspection Approval" />
 
       <div className="space-y-4">
         {successMsg && (
@@ -76,45 +107,49 @@ console.log("Fetched inspections:", res.items);
         )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
 
-        {infoMsg && <Alert variant="info" title="Info" message={infoMsg}></Alert>}
+        {infoMsg && (
+          <Alert variant="info" title="Info" message={infoMsg}></Alert>
+        )}
 
         <ComponentCard
           title="Inspections"
           desc="Here you can view and manage your vehicle inspections."
         >
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
-          <div className="relative w-full sm:w-80">
-            <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-            <input
-              type="text"
-              placeholder="Search ..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setSubmittedSearch(searchTerm);
-                  setPage(1);
-                }
-              }}
-              className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-            />
+            <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
+              <div className="relative w-full sm:w-80">
+                <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+                <input
+                  type="text"
+                  placeholder="Search ..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      setSubmittedSearch(searchTerm);
+                      setPage(1);
+                    }
+                  }}
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                />
+              </div>
+            </div>
           </div>
-          
-        </div>
 
-        {/* <Button
-          startIcon={<HiPlus />}
-          onClick={handleAddClick}
-           className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
-          >
-          Add Inspection
-        </Button> */}
-      </div>
-          
-          <InspectionApprovalTable inspections={inspections}/>
+          <InspectionApprovalTable
+            inspections={inspections}
+            onAction={onAction}
+          />
 
- 
+          <InspectionApprovalModal
+            isOpen={modalOpen}
+            onClose={() => setModalOpen(false)}
+            onConfirm={handleConfirm}
+            action={action}
+            comment={comment}
+            setComment={setComment}
+            loading={loading}
+          />
 
           <Pagination
             currentPage={page}
