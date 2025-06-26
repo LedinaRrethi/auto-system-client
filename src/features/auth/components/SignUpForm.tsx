@@ -24,7 +24,7 @@ export default function SignUpForm() {
   } = useSignUpForm();
 
   return (
-    <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+    <div className="flex flex-col justify-center flex-1 w-full max-w-lg mx-auto">
       <div>
         <div className="mb-5 sm:mb-8">
           <h1 className="mt-2 mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
