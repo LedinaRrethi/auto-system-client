@@ -27,10 +27,10 @@ export default function SignUpForm() {
     <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
       <div>
         <div className="mb-5 sm:mb-8">
-          <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
+          <h1 className="mt-2 mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
             Sign Up
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-300">
             Please fill in the form below with accurate personal information.
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function SignUpForm() {
               </Label>
               <Input
                 {...register("personalId")}
-                placeholder="Enter your personal id"
+                placeholder="Enter your national ID number"
               />
               {errors.personalId && (
                 <p className="text-sm text-red-500">
@@ -226,7 +226,7 @@ export default function SignUpForm() {
               <Input
                 {...register("email")}
                 type="email"
-                placeholder="Enter your email"
+                placeholder="example@domain.com"
               />
               {errors.email && (
                 <p className="text-sm text-red-500">{errors.email.message}</p>
@@ -254,9 +254,9 @@ export default function SignUpForm() {
                   className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                 >
                   {showPassword ? (
-                    <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
                   ) : (
-                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
                   )}
                 </span>
               </div>
@@ -283,9 +283,9 @@ export default function SignUpForm() {
                   className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                 >
                   {showPassword ? (
-                    <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
                   ) : (
-                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
                   )}
                 </span>
               </div>
@@ -306,10 +306,9 @@ export default function SignUpForm() {
               />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
-                <span className="font-semibold text-brand-500">Terms</span> and{" "}
-                <span className="font-semibold text-brand-500">
-                  Privacy Policy
-                </span>
+                <Link to="/terms" className="text-brand-500 font-semibold hover:underline">
+                  <span className="font-semibold text-brand-500">Terms and Privacy Policy</span>
+                </Link>
                 .
               </label>
             </div>
@@ -327,17 +326,16 @@ export default function SignUpForm() {
               >
                 Sign Up
               </button>
-
             </div>
           </div>
         </form>
 
         <div className="mt-5">
-          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
+          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-300 sm:text-start">
             Already have an account?{" "}
             <Link
               to="/signin"
-              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-300"
             >
               Sign In
             </Link>
