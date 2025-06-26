@@ -1,21 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInFormData, signInSchema } from "../../../utils/validations/signInSchema";
+import {
+  SignInFormData,
+  signInSchema,
+} from "../../../utils/validations/signInSchema";
 import Input from "../../../components/form/input/InputField";
 import Label from "../../../components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
-import Checkbox from "../../../components/form/input/Checkbox";
 import Button from "../../../components/ui/button/Button";
 import { login } from "../../../services/authService";
 import { useLocation } from "react-router";
 import Alert from "../../../components/ui/alert/Alert";
-import { AxiosError } from "axios";
+
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [loginError, setLoginError] = useState("");
 
   const navigate = useNavigate();
@@ -33,34 +34,23 @@ export default function SignInForm() {
     mode: "onSubmit",
   });
 
-  const onSubmit = async (data: SignInFormData): Promise<void> => {
-    try {
-      await login(data.email, data.password);
-      navigate("/");
-    }catch (err) {
-  let message = "Login failed. Please try again.";
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (
-    typeof err === "object" &&
-    err !== null &&
-    "response" in err &&
-    (err as AxiosError).response
-  ) {
-    const axiosErr = err as AxiosError<{ error: string }>;
-    message = axiosErr.response?.data?.error || message;
+ const onSubmit = async (data: SignInFormData) => {
+  setIsSubmitting(true);
+  try {
+    await login(data.email, data.password);
+    navigate("/");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      setLoginError(err.message);
+    } else {
+      setLoginError("Something went wrong.");
+    }
+  } finally {
+    setIsSubmitting(false);
   }
-
-  setLoginError(message);
-}
-
-
-  };
-
-  useEffect(() => {
-  window.addEventListener("unhandledrejection", (event) => {
-    console.error("UNHANDLED PROMISE:", event.reason);
-  });
-}, []);
+};
 
 
   const handleFieldChange = () => {
@@ -75,7 +65,9 @@ export default function SignInForm() {
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
               Sign In
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Enter your email and password to sign in!</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter your email and password to sign in!
+            </p>
           </div>
 
           {registered === "true" && (
@@ -93,8 +85,17 @@ export default function SignInForm() {
                 <Label>
                   Email <span className="text-error-500">*</span>
                 </Label>
-                <Input type="email" placeholder="info@gmail.com" {...register("email")} onChange={handleFieldChange} />
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+                <Input
+                  type="email"
+                  placeholder="info@gmail.com"
+                  {...register("email")}
+                  onChange={handleFieldChange}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -120,18 +121,22 @@ export default function SignInForm() {
                     )}
                   </span>
                 </div>
-                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
-              {/* Login Error */}
+           
+
               {loginError && (
-                <div className="p-3 text-sm text-red-500 bg-red-100 rounded-md dark:bg-red-900 dark:text-red-300 text-center">
-                  {loginError}
-                </div>
-              )}
+  <Alert variant="error" title="Login Failed" message={loginError} />
+)}
+
 
               {/* Remember Me + Forgot */}
-              <div className="flex items-center justify-between">
+              {/* <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Checkbox checked={isChecked} onChange={setIsChecked} />
                   <span className="text-sm text-gray-700 dark:text-gray-400">Keep me logged in</span>
@@ -139,19 +144,23 @@ export default function SignInForm() {
                 <Link to="/reset-password" className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400">
                   Forgot password?
                 </Link>
-              </div>
+              </div> */}
 
               {/* Submit Button */}
-              <Button className="w-full" size="sm" type="submit">
+              <Button className="w-full" size="sm" type="submit" disabled={isSubmitting}>
                 Sign in
               </Button>
+     
             </div>
           </form>
 
           {/* Bottom Link */}
           <div className="mt-5 text-sm text-center text-gray-700 dark:text-gray-400">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
+            <Link
+              to="/signup"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >
               Sign Up
             </Link>
           </div>
