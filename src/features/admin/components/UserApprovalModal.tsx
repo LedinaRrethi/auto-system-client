@@ -69,11 +69,11 @@ export default function UserApprovalModal({ isOpen, action, user, onConfirm, onC
         </div>
 
         <div className="flex justify-end space-x-3">
-          <Button variant="outline" onClick={onCancel} className="px-4 py-2">
-            Cancel
-          </Button>
           <Button variant={action === "approve" ? "primary" : "outline"} onClick={onConfirm} className="px-4 py-2">
             {action === "approve" ? "Approve" : action === "deactivate" ? "Deactivate" : "Reject"}
+          </Button>
+          <Button variant="outline" onClick={onCancel} className="px-4 py-2">
+            Cancel
           </Button>
         </div>
       </div>

@@ -37,7 +37,7 @@ export default function App() {
 
         {/* Toaster global */}
         <Toaster position="top-right" reverseOrder={false} />
-
+        
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>

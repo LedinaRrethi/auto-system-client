@@ -7,7 +7,7 @@ import Pagination from "../../../components/ui/pagination/Pagination";
 import Button from "../../../components/ui/button/Button";
 import Alert from "../../../components/ui/alert/Alert";
 import UserApprovalModal from "./UserApprovalModal";
-import { fetchUsers, updateUserStatus } from "../../../api/adminApi";
+import { fetchUsers, updateUserStatus } from "../../../services/adminApi";
 import UserActionButtons from "./UserActionButtons";
 
 export default function UserApprovalTable() {
@@ -138,10 +138,6 @@ export default function UserApprovalTable() {
     const startIndex = (currentPage - 1) * itemsPerPage;
     return filteredUsers.slice(startIndex, startIndex + itemsPerPage);
   }, [filteredUsers, currentPage]);
-
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage + 1;
-  const endIndex = Math.min(currentPage * itemsPerPage, filteredUsers.length);
 
   return (
     <>
