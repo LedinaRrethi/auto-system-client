@@ -27,7 +27,7 @@ export function useSignUpForm() {
     formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    mode: "onChange",
+    mode: "onBlur",
     defaultValues: {
       birthDate: undefined,
       acceptedTerms: false,
