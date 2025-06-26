@@ -20,21 +20,8 @@ export default function UserApprovalModal({ isOpen, action, user, onConfirm, onC
   const actionColor = action === "approve" ? "text-green-600" : "text-red-600";
 
   return (
-    <Modal isOpen={isOpen} onClose={onCancel} className="max-w-md mx-4">
+    <Modal isOpen={isOpen} onClose={onCancel} className="max-w-md mx-4" titleIcon= {action === "approve" ? <HiCheck className="text-green-600 w-5 h-5"  /> : <HiX className="text-red-600 w-5 h-5"  />} title={action === "approve" ? "Approve User" : action === "deactivate" ? "Deactivate User" : "Reject User"}>
       <div className="p-6">
-        <div className="flex items-center mb-4">
-          <div
-            className={`p-2 rounded-full mr-3 ${
-              action === "approve" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
-            }`}
-          >
-            {action === "approve" ? <HiCheck className="w-6 h-6" /> : <HiX className="w-6 h-6" />}
-          </div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {action === "approve" ? "Approve User" : action === "deactivate" ? "Deactivate User" : "Reject User"}
-          </h3>
-        </div>
-
         <div className="mb-6">
           <p className="text-gray-600 dark:text-gray-300 mb-4">
             Are you sure you want to <span className={`font-semibold ${actionColor}`}>{actionText}</span> the following
