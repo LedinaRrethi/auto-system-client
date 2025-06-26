@@ -47,6 +47,9 @@ export default function SignUpForm() {
 
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="space-y-5">
+
+            <div className="pt-2 pb-2 text-lg font-semibold text-gray-700 uppercase tracking-wide dark:text-white"> PERSONAL INFORMATION</div>
+
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               {/* First Name */}
               <div>
@@ -56,6 +59,7 @@ export default function SignUpForm() {
                 <Input
                   {...register("fname")}
                   placeholder="Enter your first name"
+                  // className="h-12" - to increase height of input
                 />
                 {errors.fname && (
                   <p className="text-sm text-red-500">{errors.fname.message}</p>
@@ -143,6 +147,8 @@ export default function SignUpForm() {
               )}
             </div>
 
+             <div className="pt-2 pb-2 text-lg font-semibold text-gray-700 uppercase tracking-wide dark:text-white"> ACCOUNT INFORMATION</div>
+
             {/* Role Dropdown */}
             <Controller
               name="role"
@@ -161,7 +167,7 @@ export default function SignUpForm() {
                     ]}
                     placeholder="Select role"
                     onChange={(value) => field.onChange(value)}
-                    defaultValue={field.value}
+                    defaultValue={field.value}                
                   />
                   {errors.role && (
                     <p className="text-sm text-red-500 mt-1">
@@ -297,7 +303,7 @@ export default function SignUpForm() {
             </div>
 
             {/* Terms Checkbox */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 pt-1 pb-2">
               <input
                 type="checkbox"
                 {...register("acceptedTerms")}
