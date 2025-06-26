@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  SignInFormData,
+  signInSchema,
+} from "../../../utils/validations/signInSchema";
 import {
   SignInFormData,
   signInSchema,
@@ -13,6 +18,7 @@ import Button from "../../../components/ui/button/Button";
 import { login } from "../../../services/authService";
 import { useLocation } from "react-router";
 import Alert from "../../../components/ui/alert/Alert";
+
 
 
 export default function SignInForm() {
@@ -68,6 +74,9 @@ export default function SignInForm() {
             <p className="text-sm text-gray-500 dark:text-gray-400">
               Enter your email and password to sign in!
             </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter your email and password to sign in!
+            </p>
           </div>
 
           {registered === "true" && (
@@ -85,6 +94,17 @@ export default function SignInForm() {
                 <Label>
                   Email <span className="text-error-500">*</span>
                 </Label>
+                <Input
+                  type="email"
+                  placeholder="info@gmail.com"
+                  {...register("email")}
+                  onChange={handleFieldChange}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
                 <Input
                   type="email"
                   placeholder="info@gmail.com"
@@ -126,7 +146,14 @@ export default function SignInForm() {
                     {errors.password.message}
                   </p>
                 )}
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
+
+           
 
            
 
@@ -134,8 +161,12 @@ export default function SignInForm() {
   <Alert variant="error" title="Login Failed" message={loginError} />
 )}
 
+  <Alert variant="error" title="Login Failed" message={loginError} />
+)}
+
 
               {/* Remember Me + Forgot */}
+              {/* <div className="flex items-center justify-between">
               {/* <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Checkbox checked={isChecked} onChange={setIsChecked} />
@@ -145,11 +176,14 @@ export default function SignInForm() {
                   Forgot password?
                 </Link>
               </div> */}
+              </div> */}
 
               {/* Submit Button */}
               <Button className="w-full" size="sm" type="submit" disabled={isSubmitting}>
+              <Button className="w-full" size="sm" type="submit" disabled={isSubmitting}>
                 Sign in
               </Button>
+     
      
             </div>
           </form>
@@ -157,6 +191,10 @@ export default function SignInForm() {
           {/* Bottom Link */}
           <div className="mt-5 text-sm text-center text-gray-700 dark:text-gray-400">
             Don&apos;t have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >
             <Link
               to="/signup"
               className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
