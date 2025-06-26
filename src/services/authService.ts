@@ -1,5 +1,4 @@
 import { AxiosError } from "axios";
-import { AxiosError } from "axios";
 import { RegisterDTO } from "../types/RegisterDTO";
 import api from "./api";
 
@@ -20,12 +19,6 @@ export async function registerUser(user: RegisterDTO) {
   const response = await api.post("/Auth/register", user);
   return response.data;
 }
-
-// export async function login(email: string, password: string) {
-//   const response = await api.post("/Auth/login", { email, password });
-//   saveToken(response.data.token);
-//   return response.data;
-// }
 
 // export async function login(email: string, password: string) {
 //   const response = await api.post("/Auth/login", { email, password });
