@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { RegisterDTO } from "../types/RegisterDTO";
 import api from "./api";
 
@@ -19,10 +20,34 @@ export async function registerUser(user: RegisterDTO) {
   return response.data;
 }
 
+// export async function login(email: string, password: string) {
+//   const response = await api.post("/Auth/login", { email, password });
+//   saveToken(response.data.token);
+//   return response.data;
+// }
+
 export async function login(email: string, password: string) {
-  const response = await api.post("/Auth/login", { email, password });
-  saveToken(response.data.token);
-  return response.data;
+  try {
+    const response = await api.post("/Auth/login", { email, password });
+    saveToken(response.data.token);
+    return response.data;
+  } catch (error: unknown) {
+    let message = "Login failed. Please try again.";
+    console.error("ERR FULL:", error);
+
+
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      (error as AxiosError).response
+    ) {
+      const axiosErr = error as AxiosError<{ error: string }>;
+      message = axiosErr.response?.data?.error || message;
+    }
+
+    throw new Error(message); 
+  }
 }
 
 export async function logout() {

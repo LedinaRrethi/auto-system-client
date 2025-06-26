@@ -9,15 +9,15 @@ export const signUpSchema = z
     fname: z
       .string()
       .min(1, "First name is required")
-      .regex(simpleNameRegex, "Only letters allowed, no spaces"),
+      .regex(simpleNameRegex, "Only letters allowed"),
     fathername: z
       .string()
       .min(1, "Father name is required")
-      .regex(simpleNameRegex, "Only letters allowed, no spaces"),
+      .regex(simpleNameRegex, "Only letters allowed"),
     lname: z
       .string()
       .min(1, "Last name is required")
-      .regex(simpleNameRegex, "Only letters allowed, no spaces"),
+      .regex(simpleNameRegex, "Only letters allowed"),
 
     email: z.string().email("Invalid email format"),
 

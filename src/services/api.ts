@@ -22,7 +22,10 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    const isLoginRequest = originalRequest.url?.includes("/Auth/login");
+if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
+
+    // if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const res = await axios.post(`${API_URL}/refresh-token`, {}, { withCredentials: true });

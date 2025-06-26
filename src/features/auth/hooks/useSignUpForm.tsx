@@ -86,7 +86,7 @@ export function useSignUpForm() {
       reset();
       setTimeout(() => {
         window.location.href = "/signin?registered=true";
-      }, 3000);
+      }, 2000);
     } catch (err: unknown) {
       const axiosErr = err as AxiosError<{ error?: string }>;
       const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
