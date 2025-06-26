@@ -79,18 +79,21 @@ const Header: React.FC<HeaderProps> = ({ onClick, onToggle }) => {
           </button>
 
           <Link to="/" className="lg:hidden">
-            <img
-              className="dark:hidden"
-              src="./images/logo/logo.svg"
-              alt="Logo"
-            />
-            <img
-              className="hidden dark:block"
-              src="./images/logo/logo-dark.svg"
-              alt="Logo"
-            />
+            <>
+              <div className="dark:hidden">
+                <span className="text-2xl font-bold tracking-wide">
+                  <span className="text-blue-600">Auto</span>
+                  <span className="text-gray-800">System</span>
+                </span>
+              </div>
+              <div className="hidden dark:block">
+                <span className="text-2xl font-bold tracking-wide">
+                  <span className="text-blue-400">Auto</span>
+                  <span className="text-white">System</span>
+                </span>
+              </div>
+            </>
           </Link>
-
           <button
             onClick={toggleApplicationMenu}
             className="flex items-center justify-center w-10 h-10 text-gray-700 rounded-lg z-99999 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800 lg:hidden"
