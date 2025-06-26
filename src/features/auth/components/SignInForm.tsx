@@ -36,37 +36,6 @@ export default function SignInForm() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-
-
-  // const onSubmit = async (
-  //   data: SignInFormData,
-  //   event?: React.BaseSyntheticEvent
-  // ): Promise<void> => {
-  //   event?.preventDefault();
-  //   setIsSubmitting(true);
-    
-  //   try {
-  //     await login(data.email, data.password);
-  //     navigate("/");
-  //   } catch (err) {
-  //     let message = "Login failed. Please try again.";
-
-  //     if (
-  //       typeof err === "object" &&
-  //       err !== null &&
-  //       "response" in err &&
-  //       (err as AxiosError).response
-  //     ) {
-  //       const axiosErr = err as AxiosError<{ error: string }>;
-  //       message = axiosErr.response?.data?.error || message;
-  //     }
-
-  //     setLoginError(message);
-  //   }finally {
-  //     setIsSubmitting(false);
-  //   }
-  // };
-
  const onSubmit = async (data: SignInFormData) => {
   setIsSubmitting(true);
   try {

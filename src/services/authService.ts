@@ -43,7 +43,9 @@ export async function login(email: string, password: string) {
       (error as AxiosError).response
     ) {
       const axiosErr = error as AxiosError<{ error: string }>;
-      message = axiosErr.response?.data?.error || message;
+     if (axiosErr.response?.data?.error) {
+        message = axiosErr.response.data.error;
+      }
     }
 
     throw new Error(message); 
