@@ -1,353 +1,116 @@
-import { Link } from "react-router-dom";
-import { Controller } from "react-hook-form";
-import Alert from "../../../components/ui/alert/Alert";
-import Label from "../../../components/form/Label";
-import Input from "../../../components/form/input/InputField";
-import DatePicker from "../../../components/form/date-picker";
-import Select from "../../../components/form/Select";
-import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SignUpFormData, signUpSchema } from "../../../utils/validations/signUpSchema";
+import { Directorate } from "../../../types/Directorate";
+import { getDirectorates } from "../../../services/directoryService";
+import { registerUser } from "../../../services/authService";
+import { AxiosError } from "axios";
+import { UserRole } from "../../../types/RegisterDTO";
 
-import { useSignUpForm } from "../hooks/useSignUpForm";
+export function useSignUpForm() {
+  const [showPassword, setShowPassword] = useState(false);
+  const [alertData, setAlertData] = useState<{
+    variant: "success" | "error" | "warning" | "info";
+    title: string;
+    message: string;
+  } | null>(null);
 
-export default function SignUpForm() {
+  const [directorateOptions, setDirectorateOptions] = useState<{ label: string; value: string }[]>([]);
+
   const {
     register,
     handleSubmit,
     control,
     watch,
+    reset,
+    formState: { errors },
+  } = useForm<SignUpFormData>({
+    resolver: zodResolver(signUpSchema),
+    mode: "onBlur",
+    defaultValues: {
+      birthDate: undefined,
+      acceptedTerms: false,
+    },
+  });
+
+  useEffect(() => {
+    const subscription = watch((_value, { name }) => {
+      if (name && alertData?.message?.toLowerCase().includes(name)) {
+        setAlertData(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, alertData]);
+
+  useEffect(() => {
+    const fetchDirectorates = async () => {
+      try {
+        const data: Directorate[] = await getDirectorates();
+        const options = data.map((d) => ({
+          label: d.directoryName,
+          value: d.id,
+        }));
+        setDirectorateOptions(options);
+      } catch (error) {
+        console.error("Error fetching directorates:", error);
+      }
+    };
+
+    fetchDirectorates();
+  }, []);
+
+  const onSubmit = async (data: SignUpFormData) => {
+    try {
+      await registerUser({
+        firstName: data.fname.trim(),
+        fatherName: data.fathername.trim(),
+        lastName: data.lname.trim(),
+        birthDate: data.birthDate?.toISOString() ?? "",
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: UserRole[data.role],
+        specialistNumber: data.specialistNumber?.trim() || undefined,
+        directorateId: data.directorate || undefined,
+        personalId: data.personalId,
+      });
+
+      setAlertData({
+        variant: "success",
+        title: "Success",
+        message: "Registration successful! Redirecting to login...",
+      });
+
+      reset();
+      setTimeout(() => {
+        window.location.href = "/signin?registered=true";
+      }, 2000);
+    } catch (err: unknown) {
+      const axiosErr = err as AxiosError<{ error?: string }>;
+      const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
+
+      setAlertData({
+        variant: "error",
+        title: "Registration Error",
+        message,
+      });
+    }
+  };
+
+  return {
+    register,
+    handleSubmit,
+    control,
+    watch,
     errors,
+    reset,
     alertData,
+    setAlertData,
     showPassword,
     setShowPassword,
     directorateOptions,
     onSubmit,
-  } = useSignUpForm();
-
-  return (
-    <div className="flex flex-col justify-center flex-1 w-full max-w-lg mx-auto">
-      <div>
-        <div className="mb-5 sm:mb-8">
-          <h1 className="mt-2 mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
-            Sign Up
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-300">
-            Please fill in the form below with accurate personal information.
-          </p>
-        </div>
-
-        {alertData && (
-          <div className="mb-4">
-            <Alert
-              variant={alertData.variant}
-              title={alertData.title}
-              message={alertData.message}
-            />
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <div className="space-y-5">
-
-            <div className="pt-2 pb-2 text-lg font-semibold text-gray-700 uppercase tracking-wide dark:text-white"> PERSONAL INFORMATION</div>
-
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {/* First Name */}
-              <div>
-                <Label>
-                  First Name<span className="text-error-500">*</span>
-                </Label>
-                <Input
-                  {...register("fname")}
-                  placeholder="Enter your first name"
-                  // className="h-12" - to increase height of input
-                />
-                {errors.fname && (
-                  <p className="text-sm text-red-500">{errors.fname.message}</p>
-                )}
-              </div>
-
-              {/* Father Name */}
-              <div>
-                <Label>
-                  Father Name<span className="text-error-500">*</span>
-                </Label>
-                <Input
-                  {...register("fathername")}
-                  placeholder="Enter your father name"
-                />
-                {errors.fathername && (
-                  <p className="text-sm text-red-500">
-                    {errors.fathername.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Last Name + Birthdate */}
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {/* Last Name */}
-              <div>
-                <Label>
-                  Last Name<span className="text-error-500">*</span>
-                </Label>
-                <Input
-                  {...register("lname")}
-                  placeholder="Enter your last name"
-                />
-                {errors.lname && (
-                  <p className="text-sm text-red-500">{errors.lname.message}</p>
-                )}
-              </div>
-
-              {/* Birthdate */}
-              <div>
-                <Label>
-                  Birthdate<span className="text-error-500">*</span>
-                </Label>
-                <Controller
-                  name="birthDate"
-                  control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      id="birthDate"
-                      mode="single"
-                      placeholder="dd/MM/yyyy"
-                      defaultDate={field.value ?? undefined}
-                      onChange={([date]) => field.onChange(date)}
-                      maxDate={new Date()}
-                    />
-                  )}
-                />
-                {errors.birthDate && (
-                  <p className="text-sm text-red-500">
-                    {errors.birthDate.message}
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* PersonalId */}
-            <div>
-              <Label>
-                Personal Id<span className="text-error-500">*</span>
-              </Label>
-              <Input
-                {...register("personalId")}
-                placeholder="Enter your national ID number"
-              />
-              {errors.personalId && (
-                <p className="text-sm text-red-500">
-                  {errors.personalId.message}
-                </p>
-              )}
-              {alertData?.message?.toLowerCase().includes("personal id") && (
-                <span className="text-sm text-red-500">
-                  {alertData.message}
-                </span>
-              )}
-            </div>
-
-             <div className="pt-2 pb-2 text-lg font-semibold text-gray-700 uppercase tracking-wide dark:text-white"> ACCOUNT INFORMATION</div>
-
-            {/* Role Dropdown */}
-            <Controller
-              name="role"
-              control={control}
-              rules={{ required: "Role is required" }}
-              render={({ field }) => (
-                <div>
-                  <Label>
-                    Role<span className="text-error-500">*</span>
-                  </Label>
-                  <Select
-                    options={[
-                      { label: "Individ", value: "Individ" },
-                      { label: "Police", value: "Police" },
-                      { label: "Specialist", value: "Specialist" },
-                    ]}
-                    placeholder="Select role"
-                    onChange={(value) => field.onChange(value)}
-                    defaultValue={field.value}                
-                  />
-                  {errors.role && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {errors.role.message}
-                    </p>
-                  )}
-                </div>
-              )}
-            />
-
-            {/* Specialist Number */}
-            {watch("role") === "Specialist" && (
-              <div>
-                <Label>
-                  Specialist Number<span className="text-error-500">*</span>
-                </Label>
-                <Input
-                  {...register("specialistNumber")}
-                  placeholder="Enter specialist number"
-                />
-                {errors.specialistNumber && (
-                  <p className="text-sm text-red-500">
-                    {errors.specialistNumber.message}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Directorate Dropdown */}
-            {watch("role") === "Specialist" && (
-              <Controller
-                name="directorate"
-                control={control}
-                rules={{ required: "Directorate is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Label>
-                      Directorate<span className="text-error-500">*</span>
-                    </Label>
-                    <Select
-                      options={directorateOptions}
-                      placeholder="Select directorate"
-                      onChange={field.onChange}
-                      value={field.value}
-                    />
-
-                    {errors.directorate && (
-                      <p className="text-sm text-red-500 mt-1">
-                        {errors.directorate.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
-            )}
-
-            {/* Email */}
-            <div>
-              <Label>
-                Email<span className="text-error-500">*</span>
-              </Label>
-              <Input
-                {...register("email")}
-                type="email"
-                placeholder="example@domain.com"
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-              {alertData?.message?.toLowerCase().includes("email") && (
-                <span className="text-sm text-red-500">
-                  {alertData.message}
-                </span>
-              )}
-            </div>
-
-            {/* Password */}
-            <div>
-              <Label>
-                Password<span className="text-error-500">*</span>
-              </Label>
-              <div className="relative">
-                <Input
-                  {...register("password")}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                >
-                  {showPassword ? (
-                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
-                  ) : (
-                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
-                  )}
-                </span>
-              </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <Label>
-                Confirm Password<span className="text-error-500">*</span>
-              </Label>
-              <div className="relative">
-                <Input
-                  {...register("confirmPassword")}
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Confirm your password"
-                />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                >
-                  {showPassword ? (
-                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
-                  ) : (
-                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
-                  )}
-                </span>
-              </div>
-              {errors.confirmPassword && (
-                <p className="text-sm text-red-500">
-                  {errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-
-            {/* Terms Checkbox */}
-            <div className="flex items-center gap-3 pt-1 pb-2">
-              <input
-                type="checkbox"
-                {...register("acceptedTerms")}
-                id="acceptedTerms"
-                className="w-5 h-5"
-              />
-              <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
-                By creating an account, you agree to the{" "}
-                <Link to="/terms" className="text-brand-500 font-semibold hover:underline">
-                  <span className="font-semibold text-brand-500">Terms and Privacy Policy</span>
-                </Link>
-                .
-              </label>
-            </div>
-            {errors.acceptedTerms && (
-              <p className="text-sm text-red-500">
-                {errors.acceptedTerms.message}
-              </p>
-            )}
-
-            {/* Submit */}
-            <div>
-              <button
-                type="submit"
-                className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
-              >
-                Sign Up
-              </button>
-            </div>
-          </div>
-        </form>
-
-        <div className="mt-5">
-          <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-300 sm:text-start">
-            Already have an account?{" "}
-            <Link
-              to="/signin"
-              className="text-brand-500 hover:text-brand-600 dark:text-brand-300"
-            >
-              Sign In
-            </Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  );
+  };
 }
