@@ -21,14 +21,23 @@ export default function UserApprovalModal({
 }: Props) {
   if (!user || !action) return null;
 
-  const actionText =
-    action === "approve"
-      ? "approve"
-      : action === "deactivate"
-      ? "deactivate"
-      : "reject";
+  const actionText = {
+    approve: "approve",
+    reject: "reject",
+    deactivate: "deactivate",
+  }[action];
 
-  const actionColor = action === "approve" ? "text-green-600" : "text-red-600";
+  const actionColor = {
+    approve: "text-green-600",
+    reject: "text-red-600",
+    deactivate: "text-yellow-600",
+  }[action];
+
+  const actionButtonStyle = {
+    approve: "bg-green-600 hover:bg-green-700",
+    reject: "bg-red-600 hover:bg-red-700",
+    deactivate: "bg-yellow-500 hover:bg-yellow-600",
+  }[action];
 
   return (
     <Modal
@@ -42,13 +51,7 @@ export default function UserApprovalModal({
           <HiX className="text-red-600 w-5 h-5" />
         )
       }
-      title={
-        action === "approve"
-          ? "Approve User"
-          : action === "deactivate"
-          ? "Deactivate User"
-          : "Reject User"
-      }
+      title={`${actionText.charAt(0).toUpperCase() + actionText.slice(1)} User`}
     >
       <div className="p-6">
         <div className="mb-6">
@@ -61,31 +64,21 @@ export default function UserApprovalModal({
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
             <div className="space-y-2">
               <div className="flex justify-between">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  Name:
-                </span>
-                <span className="text-gray-900 dark:text-white">{`${user.firstName} ${user.fatherName} ${user.lastName}`}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  Email:
-                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Name:</span>
                 <span className="text-gray-900 dark:text-white">
-                  {user.email}
+                  {`${user.firstName} ${user.fatherName} ${user.lastName}`}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  Role:
-                </span>
-                <span className="text-gray-900 dark:text-white">
-                  {user.role}
-                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Email:</span>
+                <span className="text-gray-900 dark:text-white">{user.email}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-gray-700 dark:text-gray-300">
-                  Current Status:
-                </span>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Role:</span>
+                <span className="text-gray-900 dark:text-white">{user.role}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-gray-700 dark:text-gray-300">Current Status:</span>
                 <Badge
                   size="sm"
                   color={
@@ -103,36 +96,13 @@ export default function UserApprovalModal({
           </div>
         </div>
 
-        {/* <div className="flex justify-end space-x-3">
-          <Button 
-            variant={action === "approve" ? "primary" : "outline"} 
-            onClick={onConfirm} 
-            className="px-4 py-2">
-            {action === "approve" ? "Approve" : action === "deactivate" ? "Deactivate" : "Reject"}
-          </Button>
-          <Button variant="outline" onClick={onCancel} className="px-4 py-2">
-            Cancel
-          </Button>
-        </div> */}
-
         <div className="flex justify-end space-x-3">
           <Button
             onClick={onConfirm}
-            className={`px-4 py-2 text-white ${
-              action === "approve"
-                ? "bg-green-600 hover:bg-green-700"
-                : action === "deactivate"
-                ? "bg-yellow-500 hover:bg-yellow-600"
-                : "bg-red-600 hover:bg-red-700"
-            }`}
+            className={`px-4 py-2 text-white ${actionButtonStyle}`}
           >
-            {action === "approve"
-              ? "Approve"
-              : action === "deactivate"
-              ? "Deactivate"
-              : "Reject"}
+            {actionText.charAt(0).toUpperCase() + actionText.slice(1)}
           </Button>
-
           <Button variant="outline" onClick={onCancel} className="px-4 py-2">
             Cancel
           </Button>

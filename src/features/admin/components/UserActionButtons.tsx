@@ -3,7 +3,7 @@ import { User } from "../../../types/User";
 
 interface Props {
   user: User;
-  onAction: (id: string, action: "approve" | "reject" | "deactivate") => void;
+  onAction: (user: User, action: "approve" | "reject" | "deactivate") => void;
 }
 
 export default function UserActionButtons({ user, onAction }: Props) {
@@ -16,14 +16,14 @@ export default function UserActionButtons({ user, onAction }: Props) {
         <>
           <button
             title="Approve User"
-            onClick={() => onAction(user.id, "approve")}
+           onClick={() => onAction(user, "approve")}
             className={`${baseButtonClass} bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-800/50`}
           >
             <HiCheck className="w-4 h-4" />
           </button>
           <button
             title="Reject User"
-            onClick={() => onAction(user.id, "reject")}
+            onClick={() => onAction(user, "reject")}
             className={`${baseButtonClass} bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-800/50`}
           >
             <HiX className="w-4 h-4" />
@@ -42,7 +42,7 @@ export default function UserActionButtons({ user, onAction }: Props) {
           </button>
           <button
             title="Deactivate User"
-            onClick={() => onAction(user.id, "deactivate")}
+            onClick={() => onAction(user, "deactivate")}
             className={`${baseButtonClass} bg-red-100 text-red-600 hover:bg-red-200 hover:text-red-700 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-800/50`}
           >
             <HiX className="w-4 h-4" />
@@ -54,7 +54,7 @@ export default function UserActionButtons({ user, onAction }: Props) {
         <>
           <button
             title="Approve User"
-            onClick={() => onAction(user.id, "approve")}
+            onClick={() => onAction(user, "approve")}
             className={`${baseButtonClass} bg-green-100 text-green-600 hover:bg-green-200 hover:text-green-700 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-800/50`}
           >
             <HiCheck className="w-4 h-4" />
