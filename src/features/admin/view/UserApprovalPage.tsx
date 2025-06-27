@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
@@ -9,6 +8,7 @@ import { User } from "../../../types/User";
 import { fetchUsers, updateUserStatus } from "../../../services/adminApi";
 import UserApprovalTable from "../components/UserApprovalTable";
 import UserApprovalModal from "../components/UserApprovalModal";
+import { useCallback, useEffect, useState } from "react";
 
 export default function UserApprovalPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -24,30 +24,31 @@ export default function UserApprovalPage() {
 
   const [alert, setAlert] = useState<{ variant: "success" | "error"; title: string; message: string } | null>(null);
 
-  const loadUsers = async () => {
-    try {
-      const res = await fetchUsers({
-        page,
-        pageSize,
-        search: submittedSearch,
-        sortField: "CreatedOn",
-        sortOrder: "desc",
-      });
-      setUsers(res.items);
-      setHasNextPage(res.hasNextPage);
-    } catch (err) {
-      console.error("Error fetching users:", err);
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to load users.",
-      });
-    }
-  };
+const loadUsers = useCallback(async () => {
+  try {
+    const res = await fetchUsers({
+      page,
+      pageSize,
+      search: submittedSearch,
+      sortField: "CreatedOn",
+      sortOrder: "desc",
+    });
+    setUsers(res.items);
+    setHasNextPage(res.hasNextPage);
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    setAlert({
+      variant: "error",
+      title: "Error",
+      message: "Failed to load users.",
+    });
+  }
+}, [page, pageSize, submittedSearch]); 
 
-  useEffect(() => {
-    loadUsers();
-  }, [page, submittedSearch]);
+useEffect(() => {
+  loadUsers();
+}, [loadUsers]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => setAlert(null), 3000);
