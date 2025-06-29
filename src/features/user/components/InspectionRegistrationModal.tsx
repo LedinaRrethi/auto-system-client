@@ -8,14 +8,11 @@ import Form from "../../../components/form/Form";
 import Input from "../../../components/form/input/InputField";
 import DatePicker from "../../../components/form/date-picker";
 import { TimeIcon } from "../../../assets/icons";
-import {
-  InspectionRequestInput,
-  inspectionRequestSchema,
-} from "../../../utils/validations/inspectionRequestSchema";
+import { InspectionRequestInput, inspectionRequestSchema } from "../../../utils/validations/inspectionRequestSchema";
 import { getDirectorates } from "../../../services/directoryService";
 import { fetchMyVehiclePlates } from "../../../services/inspectionService";
-import { MyVehiclePlate } from "../../../types/MyVehiclePlate";
 import { Directorate } from "../../../types/Directorate";
+import { MyVehiclePlate } from "../../../types/MyVehiclePlate";
 
 interface Props {
   isOpen: boolean;
@@ -25,13 +22,7 @@ interface Props {
   successMsg?: string | null;
 }
 
-export default function InspectionRegistrationModal({
-  isOpen,
-  onClose,
-  onSubmit,
-  errorMsg,
-  successMsg,
-}: Props) {
+export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit, errorMsg, successMsg }: Props) {
   const {
     handleSubmit,
     setValue,
@@ -54,10 +45,7 @@ export default function InspectionRegistrationModal({
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const [vehicles, directorates] = await Promise.all([
-          fetchMyVehiclePlates(),
-          getDirectorates(),
-        ]);
+        const [vehicles, directorates] = await Promise.all([fetchMyVehiclePlates(), getDirectorates()]);
         setVehicleOptions(vehicles);
         setDirectorateOptions(directorates);
       } catch (err) {
@@ -84,14 +72,15 @@ export default function InspectionRegistrationModal({
       if (!selectedDate) return;
       setValue("requestedDate", selectedDate);
 
-      updateDateTime((prev) =>
-        new Date(
-          selectedDate.getFullYear(),
-          selectedDate.getMonth(),
-          selectedDate.getDate(),
-          prev.getHours(),
-          prev.getMinutes()
-        )
+      updateDateTime(
+        (prev) =>
+          new Date(
+            selectedDate.getFullYear(),
+            selectedDate.getMonth(),
+            selectedDate.getDate(),
+            prev.getHours(),
+            prev.getMinutes()
+          )
       );
     },
     [updateDateTime, setValue]
@@ -101,15 +90,7 @@ export default function InspectionRegistrationModal({
     (timeStr: string) => {
       const [hour, minute] = timeStr.split(":").map(Number);
       if (!isNaN(hour) && !isNaN(minute)) {
-        updateDateTime((prev) =>
-          new Date(
-            prev.getFullYear(),
-            prev.getMonth(),
-            prev.getDate(),
-            hour,
-            minute
-          )
-        );
+        updateDateTime((prev) => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), hour, minute));
       }
     },
     [updateDateTime]
@@ -149,19 +130,13 @@ export default function InspectionRegistrationModal({
       <div className="p-5 sm:p-6 w-full max-w-md">
         <Form onSubmit={handleSubmit(handleSubmitWithValidation)} className="space-y-5">
           {successMsg && (
-            <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
-              {successMsg}
-            </div>
+            <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">{successMsg}</div>
           )}
           {errorMsg && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
-              {errorMsg}
-            </div>
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">{errorMsg}</div>
           )}
           {localError && (
-            <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">
-              {localError}
-            </div>
+            <div className="text-red-600 text-sm bg-red-50 p-3 rounded border border-red-200">{localError}</div>
           )}
 
           <div>
@@ -210,12 +185,7 @@ export default function InspectionRegistrationModal({
           <div>
             <Label htmlFor="time-input">Time</Label>
             <div className="relative">
-              <Input
-                type="time"
-                id="time-input"
-                onChange={(e) => handleTimeChange(e.target.value)}
-                className="pr-12"
-              />
+              <Input type="time" id="time-input" onChange={(e) => handleTimeChange(e.target.value)} className="pr-12" />
               <span className="absolute text-gray-500 right-3 top-1/2 -translate-y-1/2 pointer-events-none">
                 <TimeIcon className="size-6" />
               </span>

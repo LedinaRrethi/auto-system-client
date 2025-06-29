@@ -6,8 +6,8 @@ import Button from "../../../components/ui/button/Button";
 import { useEffect, useState } from "react";
 import { HiX, HiCheck } from "react-icons/hi";
 import { Modal } from "./Modal";
+import { Vehicle } from "../../../types/Vehicle/Vehicle";
 import { fetchVehicles } from "../../../services/vehicleService";
-import { Vehicle } from "../../../types/Vehicle";
 
 interface Props {
   isOpen: boolean;
@@ -25,22 +25,14 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
   useEffect(() => {
     setLocalFilter(initialFilter);
 
-    setFromDate(
-      initialFilter.fromDate
-        ? new Date(new Date(initialFilter.fromDate).setHours(0, 0, 0, 0))
-        : null
-    );
+    setFromDate(initialFilter.fromDate ? new Date(new Date(initialFilter.fromDate).setHours(0, 0, 0, 0)) : null);
 
-    setToDate(
-      initialFilter.toDate
-        ? new Date(new Date(initialFilter.toDate).setHours(23, 59, 59, 999))
-        : null
-    );
+    setToDate(initialFilter.toDate ? new Date(new Date(initialFilter.toDate).setHours(23, 59, 59, 999)) : null);
   }, [initialFilter, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
-      fetchVehicles().then((vehicles : Vehicle[]) => {
+      fetchVehicles().then((vehicles: Vehicle[]) => {
         const plates = vehicles.map((v) => v.plateNumber).filter(Boolean);
         setPlateOptions(plates);
       });
@@ -102,7 +94,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
               defaultDate={toDate ?? undefined}
               onChange={(d) => setToDate(d[0] || null)}
               minDate={fromDate ?? undefined}
-             // maxDate={new Date()}
+              // maxDate={new Date()}
             />
           </div>
         </div>
