@@ -1,3 +1,5 @@
+import { VehicleStatus } from "../enums";
+
 export interface Vehicle {
   idpk_Vehicle: string;
   plateNumber: string;
@@ -5,7 +7,6 @@ export interface Vehicle {
   seatCount: number;
   doorCount: number;
   chassisNumber: string;
-  status: "Pending" | "Approved" | "Rejected";
-  approvalComment?: string | null;
+  status: VehicleStatus;
   createdOn: string;
 }

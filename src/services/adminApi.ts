@@ -1,17 +1,9 @@
+import { PaginatedResponse } from "../types/PaginatedResponse";
 import { PaginationQuery } from "../types/PaginationQuery";
 import { User } from "../types/User";
 import api from "./api";
 
-interface PaginatedResponse<T> {
-  items: T[];
-  page: number;
-  pageSize: number;
-  hasNextPage: boolean;
-}
-
-export const fetchUsers = async (
-  query: PaginationQuery
-): Promise<PaginatedResponse<User>> => {
+export const fetchUsers = async (query: PaginationQuery): Promise<PaginatedResponse<User>> => {
   try {
     const params = new URLSearchParams();
 
@@ -33,11 +25,8 @@ export const fetchUsers = async (
   }
 };
 
-
 export async function updateUserStatus(userId: string, newStatus: string) {
-  const response = await api.post(
-    `/Admin/users/${userId}/status`, 
-    JSON.stringify(newStatus), {
+  const response = await api.post(`/Admin/users/${userId}/status`, JSON.stringify(newStatus), {
     headers: {
       "Content-Type": "application/json",
     },
