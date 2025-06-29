@@ -20,14 +20,13 @@ import LineChart from "./pages/Charts/LineChart";
 import SignIn from "./features/auth/view/SignIn";
 import SignUp from "./features/auth/view/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
-
 import { Toaster } from "react-hot-toast";
-import VehicleRequestApproval from "./features/admin/view/VehicleRequestApproval";
 import FineRegistrationPage from "./features/police/view/FineRegistrationPage";
 import FinePage from "./features/user/view/FinePage";
 import InspectionPage from "./features/user/view/InspectionPage";
 import InspectionApprovalPage from "./features/specialist/view/InspectionApprovalPage";
 import TermsAndPrivacyPolicyPage from "./features/auth/TermsAndPrivacyPolicyPage";
+import VehicleRequestApprovalPage from "./features/admin/view/VehicleRequestApprovalPage";
 
 export default function App() {
   return (
@@ -37,7 +36,7 @@ export default function App() {
 
         {/* Toaster global */}
         <Toaster position="top-right" reverseOrder={false} />
-        
+
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
@@ -55,14 +54,13 @@ export default function App() {
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
             <Route path="/user-approval" element={<UserApprovalPage />} />
-            <Route path="/vehicle-request-approval" element={<VehicleRequestApproval />} />
+            <Route path="/vehicle-request-approval" element={<VehicleRequestApprovalPage />} />
             <Route path="/fine-registration" element={<FineRegistrationPage />} />
             <Route path="/my-fines" element={<FinePage />} />
             <Route path="/my-inspections" element={<InspectionPage />} />
             <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
 
-             <Route path="/terms" element={<TermsAndPrivacyPolicyPage/>}/>
-        
+            <Route path="/terms" element={<TermsAndPrivacyPolicyPage />} />
 
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />

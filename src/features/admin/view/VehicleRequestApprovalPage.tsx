@@ -3,7 +3,7 @@ import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
 import VehicleRequestApprovalTable from "../components/VehicleRequestApprovalTable";
 
-export default function UserApprovalPage() {
+export default function VehicleRequestApprovalPage() {
   return (
     <>
       <PageMeta
