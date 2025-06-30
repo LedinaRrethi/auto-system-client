@@ -1,10 +1,12 @@
-import { ChangeRequestStatus, ChangeRequestType } from "../enums";
+import { ChangeRequestType, VehicleStatus } from "../enums";
 
 export interface VehicleRequestList {
-  idpk_ChangeRequest: string;
-  idfk_Vehicle: string;
+  idpK_ChangeRequest: string;
+  idfK_Vehicle: string;
   plateNumber: string;
   requestType: ChangeRequestType;
-  status: ChangeRequestStatus;
+  status: VehicleStatus;
+  requestDataJson: string;
+  currentDataSnapshotJson: string;
   createdOn: string;
 }

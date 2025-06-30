@@ -15,9 +15,3 @@ export enum ChangeRequestType {
   Update = "Update",
   Delete = "Delete",
 }
-
-export enum ChangeRequestStatus {
-  Pending = "Pending",
-  Approved = "Approved",
-  Rejected = "Rejected",
-}

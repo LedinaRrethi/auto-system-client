@@ -1,7 +1,7 @@
 import { VehicleStatus } from "../enums";
 
 export interface Vehicle {
-  idpk_Vehicle: string;
+  idpK_Vehicle: string;
   plateNumber: string;
   color: string;
   seatCount: number;
