@@ -20,12 +20,6 @@ export async function registerUser(user: RegisterDTO) {
   return response.data;
 }
 
-// export async function login(email: string, password: string) {
-//   const response = await api.post("/Auth/login", { email, password });
-//   saveToken(response.data.token);
-//   return response.data;
-// }
-
 export async function login(email: string, password: string) {
   try {
     const response = await api.post("/Auth/login", { email, password });
@@ -35,20 +29,14 @@ export async function login(email: string, password: string) {
     let message = "Login failed. Please try again.";
     console.error("ERR FULL:", error);
 
-
-    if (
-      typeof error === "object" &&
-      error !== null &&
-      "response" in error &&
-      (error as AxiosError).response
-    ) {
+    if (typeof error === "object" && error !== null && "response" in error && (error as AxiosError).response) {
       const axiosErr = error as AxiosError<{ error: string }>;
-     if (axiosErr.response?.data?.error) {
+      if (axiosErr.response?.data?.error) {
         message = axiosErr.response.data.error;
       }
     }
 
-    throw new Error(message); 
+    throw new Error(message);
   }
 }
 

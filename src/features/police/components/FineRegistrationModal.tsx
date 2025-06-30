@@ -104,8 +104,6 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
       });
     }
   });
-  
-
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
@@ -127,7 +125,8 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             <Label>Personal ID</Label>
             <Input
               {...register("personalId")}
-              disabled={isDisabled}
+              readOnly={isDisabled}
+              //disabled={isDisabled}
               error={!!errors.personalId}
               hint={errors.personalId?.message}
             />
