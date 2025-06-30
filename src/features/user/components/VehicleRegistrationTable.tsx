@@ -5,7 +5,7 @@ import { Vehicle } from "../../../types/Vehicle/Vehicle";
 
 interface Props {
   vehicles: Vehicle[];
-  onEdit: (data: any, vehicleId: string) => void;
+  onEdit: (vehicleId: string) => void;
   onDelete: (vehicleId: string) => void;
 }
 
@@ -42,7 +42,7 @@ export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }:
 
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {vehicles.map((vehicle) => (
-              <TableRow key={vehicle.idpk_Vehicle}>
+              <TableRow key={vehicle.idpK_Vehicle}>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.plateNumber}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.color}</TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.seatCount}</TableCell>
@@ -64,16 +64,14 @@ export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }:
                   <div className="flex items-center gap-3">
                     <button
                       title="Edit"
-                      onClick={() =>
-                        onEdit({ plateNumber: vehicle.plateNumber, color: vehicle.color }, vehicle.idpk_Vehicle)
-                      }
+                      onClick={() => onEdit(vehicle.idpK_Vehicle)}
                       className="text-blue-600 hover:text-blue-800 text-xl"
                     >
                       <HiPencilAlt />
                     </button>
                     <button
                       title="Delete"
-                      onClick={() => onDelete(vehicle.idpk_Vehicle)}
+                      onClick={() => onDelete(vehicle.idpK_Vehicle)}
                       className="text-red-600 hover:text-red-800 text-xl"
                     >
                       <HiTrash />

@@ -7,8 +7,13 @@ import Pagination from "../../../components/ui/pagination/Pagination";
 import { VehicleInput } from "../../../utils/validations/vehicleSchema";
 import VehicleRegistrationTable from "../components/VehicleRegistrationTable";
 import VehicleRegistrationModal from "../components/VehicleRegistrationModal";
-import { deleteVehicle, fetchVehicles, registerVehicle, updateVehicle } from "../../../services/vehicleService";
-import { VehicleRequestList } from "../../../types/Vehicle/VehicleRequestList";
+import {
+  deleteVehicle,
+  fetchVehicleById,
+  fetchVehicles,
+  registerVehicle,
+  updateVehicle,
+} from "../../../services/vehicleService";
 import { PaginatedResponse } from "../../../types/PaginatedResponse";
 import Button from "../../../components/ui/button/Button";
 import { HiPlus, HiSearch } from "react-icons/hi";
@@ -28,43 +33,65 @@ export default function VehicleRegistrationPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
 
+  const [vehicleIdToEdit, setVehicleIdToEdit] = useState<string | null>(null);
+
+  const loadVehicles = async () => {
+    try {
+      const response: PaginatedResponse<Vehicle> = await fetchVehicles({
+        page,
+        pageSize,
+        search: submittedSearch,
+      });
+      setVehicles(response.items);
+      setHasNextPage(response.hasNextPage);
+      if (response.items.length === 0) setInfoMsg("You have no vehicle requests.");
+    } catch {
+      setErrorMsg("Failed to load vehicle requests.");
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response: PaginatedResponse<Vehicle> = await fetchVehicles({
-          page,
-          pageSize,
-          search: submittedSearch,
-        });
-        setVehicles(response.items);
-        setHasNextPage(response.hasNextPage);
-        if (response.items.length === 0) setInfoMsg("You have no vehicle requests.");
-      } catch {
-        setErrorMsg("Failed to load vehicle requests.");
-      }
-    };
-    fetchData();
+    loadVehicles();
   }, [page, pageSize, submittedSearch]);
 
   const handleAddClick = () => {
     setEditData(null);
+    setVehicleIdToEdit(null);
     setMode("add");
     setIsModalOpen(true);
     setSuccessMsg(null);
     setErrorMsg(null);
   };
 
-  const handleEditClick = (data: VehicleInput, vehicleId: string) => {
-    setEditData(data);
-    setMode("edit");
-    setIsModalOpen(true);
+  const handleEditClick = async (vehicleId: string) => {
+    if (!vehicleId) {
+      setErrorMsg("Invalid vehicle ID.");
+      return;
+    }
+
+    try {
+      const vehicle = await fetchVehicleById(vehicleId);
+      setEditData({
+        plateNumber: "",
+        color: "",
+        seatCount: vehicle.seatCount,
+        doorCount: vehicle.doorCount,
+        chassisNumber: vehicle.chassisNumber,
+      });
+      setVehicleIdToEdit(vehicleId);
+      setMode("edit");
+      setIsModalOpen(true);
+    } catch (err) {
+      setErrorMsg("Failed to load vehicle data.");
+      console.error(err);
+    }
   };
 
   const handleDeleteClick = async (vehicleId: string) => {
     try {
       await deleteVehicle(vehicleId);
-      setSuccessMsg("Delete request submitted.");
-      setVehicles((prev) => prev.filter((v) => v.idpk_Vehicle !== vehicleId));
+      setSuccessMsg("Delete request sent to administrator for approval.");
+      await loadVehicles();
     } catch (err) {
       setErrorMsg("Failed to submit delete request.");
       console.error(err);
@@ -75,16 +102,27 @@ export default function VehicleRegistrationPage() {
     try {
       if (mode === "add") {
         await registerVehicle(data);
-        setSuccessMsg("Vehicle registration request submitted.");
+        setSuccessMsg("Vehicle registration request sent to administrator.");
       } else {
-        const vehicleToUpdate = vehicles.find((v) => v.plateNumber === data.plateNumber);
-        if (!vehicleToUpdate) return setErrorMsg("Vehicle not found.");
-        await updateVehicle(vehicleToUpdate.idpk_Vehicle, data);
-        setSuccessMsg("Update request submitted.");
+        if (!vehicleIdToEdit) {
+          setErrorMsg("Missing vehicle ID for update.");
+          return;
+        }
+
+        await updateVehicle(vehicleIdToEdit, {
+          plateNumber: data.plateNumber,
+          color: data.color,
+          seatCount: data.seatCount,
+          doorCount: data.doorCount,
+          chassisNumber: data.chassisNumber,
+        });
+
+        setSuccessMsg("Update request sent to administrator for approval.");
       }
-      const response = await fetchVehicles({ page, pageSize, search: submittedSearch });
-      setVehicles(response.items);
+
+      await loadVehicles();
       setIsModalOpen(false);
+      setVehicleIdToEdit(null);
     } catch (err) {
       setErrorMsg("Submission failed.");
       console.error(err);
@@ -128,7 +166,7 @@ export default function VehicleRegistrationPage() {
                     setPage(1);
                   }
                 }}
-                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
               />
             </div>
             <Button
@@ -141,13 +179,15 @@ export default function VehicleRegistrationPage() {
           </div>
 
           <VehicleRegistrationTable vehicles={vehicles} onEdit={handleEditClick} onDelete={handleDeleteClick} />
-
           <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
         </ComponentCard>
 
         <VehicleRegistrationModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setVehicleIdToEdit(null);
+          }}
           onSubmit={handleSubmit}
           initialValues={editData ?? undefined}
           mode={mode}

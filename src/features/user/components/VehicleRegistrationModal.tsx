@@ -20,87 +20,128 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<VehicleInput>({
     resolver: zodResolver(vehicleSchema),
     mode: "onSubmit",
-    defaultValues: initialValues,
   });
 
-  //  Reset form fields whenever initialValues change
   useEffect(() => {
-    if (initialValues) {
-      reset(initialValues);
-    } else {
-      reset(); // Reset to default values if no initialValues are provided
+    if (isOpen) {
+      if (initialValues) {
+        console.log("Modal - Setting initial values:", initialValues); // Debug log
+        reset({
+          plateNumber: mode === "edit" ? initialValues.plateNumber : initialValues.plateNumber,
+          color: mode === "edit" ? initialValues.color : initialValues.color,
+          seatCount: initialValues.seatCount,
+          doorCount: initialValues.doorCount,
+          chassisNumber: initialValues.chassisNumber,
+        });
+      } else {
+        console.log("Modal - Resetting form for new vehicle");
+        reset({
+          plateNumber: "",
+          color: "",
+          seatCount: 0,
+          doorCount: 0,
+          chassisNumber: "",
+        });
+      }
     }
-  }, [initialValues, reset]);
+  }, [initialValues, mode, reset, isOpen]);
 
-  const submitHandler = (data: VehicleInput) => {
-    onSubmit(data, mode);
-    if (mode === "add") reset();
+  const submitHandler = async (data: VehicleInput) => {
+    try {
+      console.log("Modal - Submitting data:", data);
+      onSubmit(data, mode);
+
+      if (mode === "add") {
+        reset();
+      }
+    } catch (error) {
+      console.error("Modal - Submit error:", error);
+    }
+  };
+
+  const handleClose = () => {
+    reset();
     onClose();
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={handleClose}>
       <div className="p-5 sm:p-6 w-full max-w-md">
         <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
-          {mode === "edit" ? "Edit Vehicle" : "Register a New Vehicle"}
+          {mode === "edit" ? "Update Vehicle Details" : "Register a New Vehicle"}
         </h2>
 
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
           <div>
-            <Label>Plate Number</Label>
+            <Label>Plate Number *</Label>
             <Input
               {...register("plateNumber")}
               placeholder="e.g. AB123CD"
               error={!!errors.plateNumber}
               hint={errors.plateNumber?.message}
+              disabled={isSubmitting}
             />
           </div>
 
           <div>
-            <Label>Color</Label>
-            <Input {...register("color")} placeholder="e.g. Red" error={!!errors.color} hint={errors.color?.message} />
+            <Label>Color *</Label>
+            <Input
+              {...register("color")}
+              placeholder="e.g. Red"
+              error={!!errors.color}
+              hint={errors.color?.message}
+              disabled={isSubmitting}
+            />
           </div>
 
           <div>
-            <Label>Seat Count</Label>
+            <Label>Seat Count *</Label>
             <Input
               type="number"
-              min={1}
+              disabled={mode === "edit" || isSubmitting}
               {...register("seatCount", { valueAsNumber: true })}
               error={!!errors.seatCount}
               hint={errors.seatCount?.message}
+              min="1"
+              max="50"
             />
           </div>
 
           <div>
-            <Label>Doors</Label>
+            <Label>Door Count *</Label>
             <Input
               type="number"
-              min={1}
+              disabled={mode === "edit" || isSubmitting}
               {...register("doorCount", { valueAsNumber: true })}
               error={!!errors.doorCount}
               hint={errors.doorCount?.message}
+              min="1"
+              max="10"
             />
           </div>
 
           <div>
-            <Label>Chassis Number</Label>
+            <Label>Chassis Number *</Label>
             <Input
+              disabled={mode === "edit" || isSubmitting}
               {...register("chassisNumber")}
-              placeholder="e.g. XYZ123456789"
+              placeholder="Enter chassis number"
               error={!!errors.chassisNumber}
               hint={errors.chassisNumber?.message}
             />
           </div>
 
-          <div className="pt-2">
-            <Button type="submit" className="w-full">
-              {mode === "edit" ? "Save Changes" : "Submit Vehicle"}
+          <div className="pt-2 flex gap-3">
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting} className="flex-1">
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? "Submitting..." : mode === "edit" ? "Submit Update Request" : "Submit Vehicle"}
             </Button>
           </div>
         </Form>
