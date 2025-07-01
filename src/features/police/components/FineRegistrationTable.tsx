@@ -1,46 +1,75 @@
 import { useEffect, useState } from "react";
 import { HiPlus, HiSearch, HiFilter } from "react-icons/hi";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
-import Pagination from "../../../components/ui/pagination/Pagination";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../../components/ui/table";
 import Button from "../../../components/ui/button/Button";
-import { getPoliceFines } from "../../../services/fineService";
+import { getAllFines } from "../../../services/fineService";
 import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
-import FineFilterModal from "./FineFilterModal";
 
 interface Props {
   onAdd: () => void;
   filters: FineFilter;
   onFilterChange: (f: FineFilter) => void;
+  page: number;
+  setPage: (p: number) => void;
+  pageSize: number;
+  searchTerm: string;
+  submittedSearch: string;
+  onSearchChange: (val: string) => void;
+  onSearchSubmit: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  setHasNextPage: (b: boolean) => void;
+  plateOptions: string[];
+  setPlateOptions: (options: string[]) => void;
+  onOpenFilterModal: () => void;
 }
 
-export default function FineRegistrationTable({ onAdd, filters, onFilterChange }: Props) {
+export default function FineRegistrationTable({
+  onAdd,
+  filters,
+  page,
+  pageSize,
+  searchTerm,
+  submittedSearch,
+  onSearchChange,
+  onSearchSubmit,
+  setHasNextPage,
+  setPlateOptions,
+  onOpenFilterModal,
+}: Props) {
   const [fines, setFines] = useState<FineResponse[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const [plateOptions, setPlateOptions] = useState<string[]>([]);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchFines = async () => {
       try {
-        const data = await getPoliceFines(filters, currentPage, itemsPerPage);
+        const data = await getAllFines({
+          ...filters,
+          search: submittedSearch,
+          page,
+          pageSize,
+          sortField: "CreatedOn",
+          sortOrder: "desc",
+        });
         setFines(data.items);
+        setHasNextPage(data.hasNextPage);
+
         const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
           (plate): plate is string => typeof plate === "string"
         );
         setPlateOptions(uniquePlates);
       } catch {
         setFines([]);
+        setHasNextPage(false);
       }
     };
 
     fetchFines();
-  }, [filters, currentPage]);
-
-  const totalPages = Math.ceil(fines.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage + 1;
-  const endIndex = Math.min(currentPage * itemsPerPage, fines.length);
+  }, [filters, submittedSearch, page, pageSize, setHasNextPage, setPlateOptions]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -51,14 +80,16 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
             <input
               type="text"
               placeholder="Search by plate..."
+              value={searchTerm}
+              onChange={(e) => onSearchChange(e.target.value)}
+              onKeyDown={onSearchSubmit}
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-              disabled
             />
           </div>
 
           <Button
             startIcon={<HiFilter />}
-            onClick={() => setIsFilterModalOpen(true)}
+            onClick={onOpenFilterModal}
             className="!text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
             Filter
@@ -87,6 +118,9 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
                 Recipient
               </TableCell>
               <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                Police
+              </TableCell>
+              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                 Amount
               </TableCell>
               <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
@@ -97,14 +131,23 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
               </TableCell>
             </TableRow>
           </TableHeader>
+
+          
           <TableBody>
             {fines.map((fine) => (
               <TableRow key={fine.idpk_Fine}>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.plateNumber}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {fine.plateNumber}
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {fine.recipientFullName ?? "-"}
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.fineAmount} ALL</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {fine.policeFullName ?? "-"}
+                </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {fine.fineAmount} ALL
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {fine.fineReason ?? "-"}
                 </TableCell>
@@ -116,17 +159,6 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
           </TableBody>
         </Table>
       </div>
-
-      <FineFilterModal
-        isOpen={isFilterModalOpen}
-        onClose={() => setIsFilterModalOpen(false)}
-        onApply={(newFilter) => {
-          onFilterChange(newFilter);
-          setIsFilterModalOpen(false);
-        }}
-        plateOptions={plateOptions}
-        initialFilter={filters}
-      />
     </div>
   );
 }
