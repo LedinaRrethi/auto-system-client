@@ -77,13 +77,17 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
                   {item.comment || "-"}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  <button
-                    onClick={() => handleDownloadDocuments(item.documents)}
-                    className="flex items-center gap-1 text-blue-600 hover:underline"
-                  >
-                    <HiDownload className="w-4 h-4" />
-                    Download
-                  </button>
+                  {item.documents && item.documents.length > 0 ? (
+                    <button
+                      onClick={() => handleDownloadDocuments(item.documents)}
+                      className="flex items-center gap-1 text-blue-600 hover:underline"
+                    >
+                      <HiDownload className="w-4 h-4" />
+                      Download
+                    </button>
+                  ) : (
+                    "-"
+                  )}
                 </TableCell>
               </TableRow>
             ))}
