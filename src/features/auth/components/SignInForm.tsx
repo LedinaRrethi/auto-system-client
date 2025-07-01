@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   SignInFormData,
@@ -19,7 +19,7 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   const { search } = useLocation();
   const params = new URLSearchParams(search);
@@ -40,7 +40,8 @@ export default function SignInForm() {
   setIsSubmitting(true);
   try {
     await login(data.email, data.password);
-    navigate("/");
+    window.location.href = "/";
+    //navigate("/");
   } catch (err: unknown) {
     if (err instanceof Error) {
       setLoginError(err.message);
