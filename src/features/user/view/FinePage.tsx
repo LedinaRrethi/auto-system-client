@@ -30,6 +30,7 @@ export default function FineRegistrationPage() {
   setFilters(newFilter);
   setSubmittedSearch(""); 
   setPage(1);
+  setIsFilterModalOpen(false);
 };
 
   return (
@@ -58,7 +59,8 @@ export default function FineRegistrationPage() {
             onSearchSubmit={handleSearchKeyDown}
             setHasNextPage={setHasNextPage}
             plateOptions={plateOptions}
-            setPlateOptions={setPlateOptions}                 
+            setPlateOptions={setPlateOptions}
+            onOpenFilterModal={() => setIsFilterModalOpen(true)}                 
             />
         </ComponentCard>
       </div>

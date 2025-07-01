@@ -82,7 +82,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
         <div className="flex justify-end gap-2 pt-4">
           <Button onClick={onClose} variant="outline" startIcon={<HiX />}>
             Cancel
-          </Button>3
+          </Button>
           <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
             Apply
           </Button>
