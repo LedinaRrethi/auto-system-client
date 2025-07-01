@@ -50,9 +50,14 @@ export const getMyFines = async (
 //   return response.data;
 // };
 
+
 // 4. Get all fines (Police)
 export const getAllFines = async (
-  query: PaginationQuery
+  query: PaginationQuery & {
+    fromDate?: string;
+    toDate?: string;
+    plateNumber?: string;
+  }
 ): Promise<PaginatedResponse<FineResponse>> => {
   const response = await api.get("/Fine/all", {
     params: {
@@ -61,6 +66,9 @@ export const getAllFines = async (
       search: query.search ?? "",
       sortField: query.sortField ?? "CreatedOn",
       sortOrder: query.sortOrder ?? "desc",
+      fromDate: query.fromDate,
+      toDate: query.toDate,
+      plateNumber: query.plateNumber,
     },
   });
 

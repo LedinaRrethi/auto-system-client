@@ -48,13 +48,16 @@ export default function FineRegistrationTable({
     const fetchFines = async () => {
       try {
         const data = await getAllFines({
-          ...filters,
-          search: submittedSearch,
-          page,
-          pageSize,
-          sortField: "CreatedOn",
-          sortOrder: "desc",
-        });
+        page,
+        pageSize,
+      search: submittedSearch,
+      sortField: "CreatedOn",
+      sortOrder: "desc",
+      fromDate: filters.fromDate,
+      toDate: filters.toDate,
+      plateNumber: filters.plateNumber,
+});
+
         setFines(data.items);
         setHasNextPage(data.hasNextPage);
 

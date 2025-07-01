@@ -4,17 +4,15 @@ import DatePicker from "../../../components/form/date-picker";
 import Button from "../../../components/ui/button/Button";
 import { HiX, HiCheck } from "react-icons/hi";
 import { Modal } from "./Modal";
-import Select from "../../../components/form/Select";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   onApply: (filters: FineFilter) => void;
-  plateOptions: string[];
   initialFilter: FineFilter;
 }
 
-export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions, initialFilter }: Props) {
+export default function FineFilterModal({ isOpen, onClose, onApply, initialFilter }: Props) {
   const [localFilter, setLocalFilter] = useState<FineFilter>(initialFilter);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
@@ -26,27 +24,35 @@ export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions
   }, [initialFilter, isOpen]);
 
   const handleApply = () => {
-    onApply({
+    const appliedFilter: FineFilter = {
       ...localFilter,
       fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
       toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
-    });
+    };
+
+    onApply(appliedFilter);
     onClose();
   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
       <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
+        {/* Plate Number */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 dark:text-white">Plate Number</label>
-          <Select
-            options={plateOptions.map((plate) => ({ value: plate, label: plate }))}
+          <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
+            Plate Number
+          </label>
+          <input
+            id="plateNumber"
+            type="text"
             value={localFilter.plateNumber || ""}
-            onChange={(value) => setLocalFilter((prev) => ({ ...prev, plateNumber: value }))}
-            placeholder="Select plate number"
+            onChange={(e) => setLocalFilter((prev) => ({ ...prev, plateNumber: e.target.value }))}
+            placeholder="Search by plate number"
+            className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
           />
         </div>
 
+        {/* Date Range */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
             <DatePicker
@@ -72,6 +78,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions
           </div>
         </div>
 
+        {/* Buttons */}
         <div className="flex justify-end gap-2 pt-4">
           <Button onClick={onClose} variant="outline" startIcon={<HiX />}>
             Cancel

@@ -45,10 +45,12 @@ export default function FineRegistrationPage() {
   };
 
   const handleApplyFilter = (newFilter: FineFilter) => {
-    setFilters(newFilter);
-    setPage(1);
-    setIsFilterModalOpen(false);
-  };
+  setFilters(newFilter);
+  setSubmittedSearch(""); 
+  setPage(1);
+  setIsFilterModalOpen(false);
+};
+
 
   return (
     <>
@@ -80,7 +82,6 @@ export default function FineRegistrationPage() {
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onApply={handleApplyFilter}
-        plateOptions={plateOptions}
         initialFilter={filters}
       />
 
