@@ -1,3 +1,4 @@
+import Badge from "../../../components/ui/badge/Badge";
 import {
   Table,
   TableCell,
@@ -72,7 +73,18 @@ export default function InspectionApprovalTable({
                   {item.inspectionTime}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  <Badge
+                  size="sm"
+                  color={
+                    item.status === "Approved"
+                      ? "success"
+                      : item.status === "Rejected"
+                      ? "error"
+                      : "warning"
+                  }
+                >
                   {item.status}
+                  </Badge>
                 </TableCell>
 
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
