@@ -1,19 +1,33 @@
-import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { JSX } from "react";
+import { jwtDecode } from "jwt-decode";
+import { Navigate, Outlet } from "react-router-dom";
 
 interface Props {
-  children: JSX.Element;
-  roles: string[];
+  allowedRoles: string[];
 }
 
-const ProtectedRoute = ({ children, roles }: Props) => {
-  const { user, isAuthenticated } = useAuth();
+const ProtectedRoute = ({ allowedRoles }: Props) => {
+  
+  const token = sessionStorage.getItem("authToken");
 
-  if (!isAuthenticated) return <Navigate to="/signin" replace />;
-  if (!user || !roles.includes(user.role)) return <Navigate to="/unauthorized" replace />;
+  if (!token) return <Navigate to="/signin" replace />;
 
-  return children;
+  try {
+    // const decoded = jwtDecode<DecodedToken>(token);
+    // const userRole = decoded.role;
+
+    const decoded = jwtDecode<{ [key: string] :string }>(token);
+    const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+
+    
+    if (!allowedRoles.includes(userRole)) {
+      return <Navigate to="/unauthorized" replace />;
+    }
+
+    return <Outlet />;
+  } catch {
+    return <Navigate to="/signin" replace />;
+  }
 };
 
 export default ProtectedRoute;
