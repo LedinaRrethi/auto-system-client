@@ -41,15 +41,12 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/" element={<Home />} />
-
             {/* Others Page */}
             <Route path="/profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<FullCalendar />} />
             <Route path="/blank" element={<Blank />} />
-
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />
-
             {/* Tables */}
             <Route path="/basic-tables" element={<BasicTables />} />
             <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
@@ -59,9 +56,9 @@ export default function App() {
             <Route path="/my-fines" element={<FinePage />} />
             <Route path="/my-inspections" element={<InspectionPage />} />
             <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
+            {/* <Route path="/unauthorized" element={<UnauthorizedPage />} /> */}
 
             <Route path="/terms" element={<TermsAndPrivacyPolicyPage />} />
-
             {/* Ui Elements */}
             <Route path="/alerts" element={<Alerts />} />
             <Route path="/avatars" element={<Avatars />} />
@@ -69,7 +66,6 @@ export default function App() {
             <Route path="/buttons" element={<Buttons />} />
             <Route path="/images" element={<Images />} />
             <Route path="/videos" element={<Videos />} />
-
             {/* Charts */}
             <Route path="/line-chart" element={<LineChart />} />
             <Route path="/bar-chart" element={<BarChart />} />

@@ -1,11 +1,10 @@
+import { useEffect, useState } from "react";
 import { FineFilter } from "../../../types/Fine/FineFilter";
-import Autocomplete from "@mui/material/Autocomplete";
-import TextField from "@mui/material/TextField";
 import DatePicker from "../../../components/form/date-picker";
 import Button from "../../../components/ui/button/Button";
-import { useEffect, useState } from "react";
 import { HiX, HiCheck } from "react-icons/hi";
 import { Modal } from "./Modal";
+import Select from "../../../components/form/Select";
 
 interface Props {
   isOpen: boolean;
@@ -20,36 +19,17 @@ export default function FineFilterModal({ isOpen, onClose, onApply, plateOptions
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
 
-  // useEffect(() => {
-  //   setLocalFilter(initialFilter);
-  //   setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
-  //   setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
-  // }, [initialFilter, isOpen]);
-
- useEffect(() => {
-  setLocalFilter(initialFilter);
-  setFromDate(
-    initialFilter.fromDate
-      ? new Date(initialFilter.fromDate + "T00:00:00")
-      : null
-  );
-
-  setToDate(
-    initialFilter.toDate
-      ? new Date(initialFilter.toDate + "T23:59:59")
-      : null
-  );
-}, [initialFilter, isOpen]);
-
-
-
+  useEffect(() => {
+    setLocalFilter(initialFilter);
+    setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate + "T00:00:00") : null);
+    setToDate(initialFilter.toDate ? new Date(initialFilter.toDate + "T23:59:59") : null);
+  }, [initialFilter, isOpen]);
 
   const handleApply = () => {
     onApply({
       ...localFilter,
       fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
-toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
-
+      toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
     });
     onClose();
   };
@@ -59,23 +39,11 @@ toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
       <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700 dark:text-white">Plate Number</label>
-          <Autocomplete
-            options={plateOptions}
+          <Select
+            options={plateOptions.map((plate) => ({ value: plate, label: plate }))}
             value={localFilter.plateNumber || ""}
-            onInputChange={(_, value) => setLocalFilter((prev) => ({ ...prev, plateNumber: value }))}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder="Type plate number..."
-                variant="standard"
-                InputProps={{
-                  ...params.InputProps,
-                  disableUnderline: true,
-                  className:
-                    "h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 px-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-none focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-800 dark:text-white dark:placeholder:text-white/30 dark:focus:border-brand-600",
-                }}
-              />
-            )}
+            onChange={(value) => setLocalFilter((prev) => ({ ...prev, plateNumber: value }))}
+            placeholder="Select plate number"
           />
         </div>
 
@@ -100,7 +68,6 @@ toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
               defaultDate={toDate ?? undefined}
               onChange={(d) => setToDate(d[0] || null)}
               minDate={fromDate ?? undefined}
-              // maxDate= {new Date()}
             />
           </div>
         </div>

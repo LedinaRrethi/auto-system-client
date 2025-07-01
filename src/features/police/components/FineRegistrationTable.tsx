@@ -8,7 +8,6 @@ import { FineResponse } from "../../../types/Fine/FineResponse";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineFilterModal from "./FineFilterModal";
 
-
 interface Props {
   onAdd: () => void;
   filters: FineFilter;
@@ -117,15 +116,6 @@ export default function FineRegistrationTable({ onAdd, filters, onFilterChange }
           </TableBody>
         </Table>
       </div>
-
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        startIndex={startIndex}
-        endIndex={endIndex}
-        totalItems={fines.length}
-        onPageChange={setCurrentPage}
-      />
 
       <FineFilterModal
         isOpen={isFilterModalOpen}
