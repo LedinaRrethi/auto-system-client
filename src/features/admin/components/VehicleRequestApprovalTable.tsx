@@ -46,33 +46,7 @@ export default function VehicleRequestApprovalTable({ vehicles, onAction }: Prop
               </TableCell>
 
               <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.requestType}</TableCell>
-              {/* 
-              <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                {vehicle.currentDataSnapshotJson && vehicle.currentDataSnapshotJson !== "null"
-                  ? (() => {
-                      try {
-                        const current = JSON.parse(vehicle.currentDataSnapshotJson);
-                        return `${current?.PlateNumber ?? "—"} | ${current?.Color ?? "—"}`;
-                      } catch {
-                        return "Invalid data";
-                      }
-                    })()
-                  : "—"}
-              </TableCell>
-
-              <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                {vehicle.requestDataJson && vehicle.requestDataJson !== "null"
-                  ? (() => {
-                      try {
-                        const requested = JSON.parse(vehicle.requestDataJson);
-                        return `${requested?.PlateNumber ?? "—"} | ${requested?.Color ?? "—"}`;
-                      } catch {
-                        return "Invalid data";
-                      }
-                    })()
-                  : "—"}
-              </TableCell> */}
-
+             
               <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                 {vehicle.currentDataSnapshotJson && vehicle.currentDataSnapshotJson !== "null"
                   ? (() => {
@@ -85,15 +59,6 @@ export default function VehicleRequestApprovalTable({ vehicles, onAction }: Prop
                             </div>
                             <div>
                               <strong>Color:</strong> {current.Color}
-                            </div>
-                            <div>
-                              <strong>Seats:</strong> {current.SeatCount}
-                            </div>
-                            <div>
-                              <strong>Doors:</strong> {current.DoorCount}
-                            </div>
-                            <div>
-                              <strong>Chassis:</strong> {current.ChassisNumber}
                             </div>
                           </>
                         );
@@ -116,15 +81,6 @@ export default function VehicleRequestApprovalTable({ vehicles, onAction }: Prop
                             </div>
                             <div>
                               <strong>Color:</strong> {requested.Color}
-                            </div>
-                            <div>
-                              <strong>Seats:</strong> {requested.SeatCount}
-                            </div>
-                            <div>
-                              <strong>Doors:</strong> {requested.DoorCount}
-                            </div>
-                            <div>
-                              <strong>Chassis:</strong> {requested.ChassisNumber}
                             </div>
                           </>
                         );
