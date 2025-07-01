@@ -1,5 +1,4 @@
 import { FineCreate } from "../types/Fine/FineCreate";
-import { FineFilter } from "../types/Fine/FineFilter";
 import { FineResponse } from "../types/Fine/FineResponse";
 import { PaginationQuery } from "../types/PaginationQuery";
 import { PaginatedResponse } from "../types/PaginatedResponse";
@@ -12,7 +11,11 @@ export async function createFine(data: FineCreate): Promise<void> {
 
 // 2. Get fines for logged-in Individ
 export const getMyFines = async (
-  query: PaginationQuery & FineFilter
+  query: PaginationQuery & {
+    fromDate?: string;
+    toDate?: string;
+    plateNumber?: string;
+  }
 ): Promise<PaginatedResponse<FineResponse>> => {
   const response = await api.get("/Fine/my-fines", {
     params: {
@@ -21,9 +24,9 @@ export const getMyFines = async (
       search: query.search ?? "",
       sortField: query.sortField ?? "CreatedOn",
       sortOrder: query.sortOrder ?? "desc",
-      PlateNumber: query.plateNumber ?? "",
-      FromDate: query.fromDate ?? "",
-      ToDate: query.toDate ?? "",
+      fromDate: query.fromDate,
+      toDate: query.toDate,
+      plateNumber: query.plateNumber,
     },
   });
 
