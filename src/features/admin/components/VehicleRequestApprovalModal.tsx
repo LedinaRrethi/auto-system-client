@@ -2,7 +2,6 @@ import { Modal } from "../../../components/ui/modal";
 import TextArea from "../../../components/form/input/TextArea";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
-import { HiCheckCircle, HiExclamationTriangle } from "react-icons/hi2";
 
 interface VehicleApprovalModalProps {
   isOpen: boolean;
@@ -31,15 +30,6 @@ export default function VehicleApprovalModal({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle}>
-      <div className="flex items-center gap-2 mb-3">
-        {isApprove ? (
-          <HiCheckCircle className="text-green-600 w-6 h-6" />
-        ) : (
-          <HiExclamationTriangle className="text-red-600 w-6 h-6" />
-        )}
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{modalTitle}</h2>
-      </div>
-
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">
         <p className="font-semibold text-base">
           {isApprove
