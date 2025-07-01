@@ -8,6 +8,7 @@ import {
 } from "../../../components/ui/table";
 import { MyInspectionsRequest } from "../../../types/Inspection/MyInspectionsRequest";
 import { handleDownloadDocuments } from "../hooks/handleDownloadDocuments";
+import Badge from "../../../components/ui/badge/Badge";
 
 interface Props {
   inspections: MyInspectionsRequest[];
@@ -70,9 +71,20 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.directorateName}
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+               <TableCell className="px-5 py-4 text-sm">
+                <Badge
+                  size="sm"
+                  color={
+                    item.status === "Approved"
+                      ? "success"
+                      : item.status === "Rejected"
+                      ? "error"
+                      : "warning"
+                  }
+                >
                   {item.status}
-                </TableCell>
+                </Badge>
+              </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.comment || "-"}
                 </TableCell>
