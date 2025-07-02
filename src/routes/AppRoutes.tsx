@@ -27,7 +27,7 @@ const AppRoutes = () => {
         <Route
           element={
             <ProtectedRoute
-              allowedRoles={["Admin", "Polic", "Specialist", "Individ"]}
+              allowedRoles={["Admin", "Police", "Specialist", "Individ"]}
             />
           }
         >
@@ -45,7 +45,7 @@ const AppRoutes = () => {
         </Route>
 
         {/* Polic */}
-        <Route element={<ProtectedRoute allowedRoles={["Polic"]} />}>
+        <Route element={<ProtectedRoute allowedRoles={["Police"]} />}>
           <Route path="/fine-registration" element={<FineRegistrationPage />} />
         </Route>
 

@@ -21,6 +21,7 @@ const ProtectedRoute = ({ allowedRoles }: Props) => {
 
     
     if (!allowedRoles.includes(userRole)) {
+      sessionStorage.removeItem("authToken");
       return <Navigate to="/unauthorized" replace />;
     }
 
