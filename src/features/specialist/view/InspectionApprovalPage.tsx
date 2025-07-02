@@ -16,7 +16,7 @@ import InspectionApprovalModal from "../components/InspectionApprovalModal";
 export default function InspectionPage() {
   const [inspections, setInspections] = useState<InspectionRequestList[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -66,6 +66,8 @@ export default function InspectionPage() {
       });
 
       setSuccessMsg(`Inspection ${action}d successfully.`);
+
+      await fetchInspections(); 
       setSubmittedSearch(searchTerm);
     } catch {
       setErrorMsg("Failed to update inspection.");
@@ -88,30 +90,26 @@ export default function InspectionPage() {
       reader.readAsDataURL(file);
     });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetchMyInspections({
-          page,
-          pageSize,
-          search: submittedSearch,
-        });
-        setInspections(res.items);
-        setHasNextPage(res.hasNextPage);
-        if (!res.items || res.items.length === 0) {
-          setInfoMsg("You have no requests.");
-        } else {
-          setInfoMsg("");
-        }
-        console.log("Fetched inspections:", res.items);
-      } catch {
-        console.error("Error fetching inspections");
-        setErrorMsg("Failed to load inspections.");
-      }
-    };
+  const fetchInspections = async () => {
+  try {
+    const res = await fetchMyInspections({
+      page,
+      pageSize,
+      search: submittedSearch,
+    });
+    setInspections(res.items);
+    setHasNextPage(res.hasNextPage);
+    setInfoMsg(res.items.length === 0 ? "You have no requests." : "");
+  } catch {
+    console.error("Error fetching inspections");
+    setErrorMsg("Failed to load inspections.");
+  }
+};
 
-    fetchData();
-  }, [page, pageSize, submittedSearch]);
+useEffect(() => {
+  fetchInspections();
+}, [page, pageSize, submittedSearch]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
