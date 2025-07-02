@@ -30,7 +30,6 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
   useEffect(() => {
     if (isOpen) {
       if (initialValues) {
-        console.log("Modal - Setting initial values:", initialValues); // Debug log
         reset({
           plateNumber: mode === "edit" ? initialValues.plateNumber : initialValues.plateNumber,
           color: mode === "edit" ? initialValues.color : initialValues.color,
@@ -70,12 +69,9 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose}>
+    <Modal isOpen={isOpen} onClose={handleClose} title={mode === "edit" ? "Update Vehicle Details" : "Register a New Vehicle"} >
       <div className="p-5 sm:p-6 w-full max-w-md">
-        <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">
-          {mode === "edit" ? "Update Vehicle Details" : "Register a New Vehicle"}
-        </h2>
-
+      
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
           <div>
             <Label>Plate Number *</Label>
