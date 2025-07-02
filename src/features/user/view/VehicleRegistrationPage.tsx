@@ -18,6 +18,7 @@ import { PaginatedResponse } from "../../../types/PaginatedResponse";
 import Button from "../../../components/ui/button/Button";
 import { HiPlus, HiSearch } from "react-icons/hi";
 import { Vehicle } from "../../../types/Vehicle/Vehicle";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
 export default function VehicleRegistrationPage() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -35,6 +36,9 @@ export default function VehicleRegistrationPage() {
 
   const [vehicleIdToEdit, setVehicleIdToEdit] = useState<string | null>(null);
 
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
+
   const loadVehicles = async () => {
     try {
       const response: PaginatedResponse<Vehicle> = await fetchVehicles({
@@ -44,7 +48,11 @@ export default function VehicleRegistrationPage() {
       });
       setVehicles(response.items);
       setHasNextPage(response.hasNextPage);
-      if (response.items.length === 0) setInfoMsg("You have no vehicle requests.");
+      if (response.items.length === 0) {
+        setInfoMsg("You have no vehicle requests.");
+      } else {
+        setInfoMsg(null);
+      }
     } catch {
       setErrorMsg("Failed to load vehicle requests.");
     }
@@ -87,9 +95,16 @@ export default function VehicleRegistrationPage() {
     }
   };
 
-  const handleDeleteClick = async (vehicleId: string) => {
+  const handleDeleteClick = (vehicle: Vehicle) => {
+    setVehicleToDelete(vehicle);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!vehicleToDelete) return;
+
     try {
-      await deleteVehicle(vehicleId);
+      await deleteVehicle(vehicleToDelete.idpK_Vehicle);
       setSuccessMsg("Delete request sent to administrator for approval.");
       await loadVehicles();
     } catch (err) {
@@ -147,11 +162,16 @@ export default function VehicleRegistrationPage() {
       <PageBreadcrumb pageTitle="Vehicle Registration" />
 
       <div className="space-y-6">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        <ComponentCard title="Vehicle Requests" desc="View and manage your submitted vehicle requests.">
+        <ComponentCard
+          title="Vehicle Requests"
+          desc="View and manage your submitted vehicle requests."
+        >
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full sm:w-80">
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
@@ -178,8 +198,16 @@ export default function VehicleRegistrationPage() {
             </Button>
           </div>
 
-          <VehicleRegistrationTable vehicles={vehicles} onEdit={handleEditClick} onDelete={handleDeleteClick} />
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <VehicleRegistrationTable
+            vehicles={vehicles}
+            onEdit={handleEditClick}
+            onDelete={handleDeleteClick}
+          />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
 
         <VehicleRegistrationModal
@@ -191,6 +219,13 @@ export default function VehicleRegistrationPage() {
           onSubmit={handleSubmit}
           initialValues={editData ?? undefined}
           mode={mode}
+        />
+
+        <ConfirmDeleteModal
+          isOpen={isDeleteModalOpen}
+          onClose={() => setIsDeleteModalOpen(false)}
+          onConfirm={confirmDelete}
+          plateNumber={vehicleToDelete?.plateNumber}
         />
       </div>
     </>

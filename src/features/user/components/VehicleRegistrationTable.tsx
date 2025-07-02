@@ -6,7 +6,7 @@ import { Vehicle } from "../../../types/Vehicle/Vehicle";
 interface Props {
   vehicles: Vehicle[];
   onEdit: (vehicleId: string) => void;
-  onDelete: (vehicleId: string) => void;
+  onDelete: (vehicle: Vehicle) => void;
 }
 
 export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }: Props) {
@@ -71,7 +71,7 @@ export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }:
                     </button>
                     <button
                       title="Delete"
-                      onClick={() => onDelete(vehicle.idpK_Vehicle)}
+                      onClick={() => onDelete(vehicle)}
                       className="text-red-600 hover:text-red-800 text-xl"
                     >
                       <HiTrash />
