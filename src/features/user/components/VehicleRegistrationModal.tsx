@@ -27,6 +27,9 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
     mode: "onSubmit",
   });
 
+  const isDisabled = mode === "edit" || isSubmitting;
+
+
   useEffect(() => {
     if (isOpen) {
       if (initialValues) {
@@ -99,7 +102,8 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
             <Label>Seat Count *</Label>
             <Input
               type="number"
-              disabled={mode === "edit" || isSubmitting}
+              disabled={isDisabled}
+              className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
               {...register("seatCount", { valueAsNumber: true })}
               error={!!errors.seatCount}
               hint={errors.seatCount?.message}
@@ -112,7 +116,8 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
             <Label>Door Count *</Label>
             <Input
               type="number"
-              disabled={mode === "edit" || isSubmitting}
+              disabled={isDisabled}
+              className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
               {...register("doorCount", { valueAsNumber: true })}
               error={!!errors.doorCount}
               hint={errors.doorCount?.message}
@@ -124,7 +129,8 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
           <div>
             <Label>Chassis Number *</Label>
             <Input
-              disabled={mode === "edit" || isSubmitting}
+              disabled={isDisabled}
+              className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
               {...register("chassisNumber")}
               placeholder="Enter chassis number"
               error={!!errors.chassisNumber}
