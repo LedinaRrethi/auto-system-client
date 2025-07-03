@@ -10,7 +10,7 @@ import FineFilterModal from "../components/FineFilterModal";
 export default function FineRegistrationPage() {
  const [filters, setFilters] = useState<FineFilter>({});
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(10);
+  const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
