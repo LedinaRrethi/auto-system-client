@@ -11,21 +11,25 @@ interface DecodedToken {
 export function useAuth() {
   const [user, setUser] = useState<DecodedToken | null>(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = getToken();
-    if (!token) {
+    const storedToken = getToken();
+    setToken(storedToken);
+
+    if (!storedToken) {
       setLoading(false);
       return;
     }
 
     try {
-      const decoded = jwtDecode<{ [key: string]: string }>(token);
-
+      const decoded = jwtDecode<{ [key: string]: string }>(storedToken);
       const exp = Number(decoded.exp);
       if (exp * 1000 > Date.now()) {
         const role = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-        setUser({ ...decoded, role, exp }); 
+        setUser({ ...decoded, role, exp });
+      } else {
+        setUser(null);
       }
     } catch {
       setUser(null);
@@ -38,5 +42,6 @@ export function useAuth() {
     user,
     isAuthenticated: !!user,
     loading,
+    token, 
   };
 }
