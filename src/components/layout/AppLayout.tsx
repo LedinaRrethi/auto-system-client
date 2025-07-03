@@ -9,23 +9,22 @@ import toast from "react-hot-toast";
 import { X } from "lucide-react";
 
 const LayoutContent = () => {
-
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
   const { token, loading } = useAuth();
 
-  useNotificationHub(token, (notification) => { 
+  useNotificationHub(token, (notification) => {
     toast.custom((t) => (
       <div
-        className="bg-white border border-gray-200 shadow-lg rounded-md p-4 mb-3 pr-6 max-w-sm w-full flex justify-between items-start"
+        className="bg-orange-50 border border-orange-200 shadow-lg rounded-md p-4 mb-3 pr-6 max-w-sm w-full flex justify-between items-start"
         role="alert"
       >
         <div className="flex flex-col">
-          <p className="font-semibold text-gray-800">{notification.title}</p>
-          <p className="text-sm text-gray-600 mt-1">{notification.message}</p>
+          <p className="font-semibold text-orange-800">{notification.title}</p>
+          <p className="text-sm text-orange-700 mt-1">{notification.message}</p>
         </div>
         <button
-          onClick={() => toast.dismiss(t.id)}
-          className="ml-4 text-gray-400 hover:text-gray-800 transition"
+          onClick={() => toast.remove(t.id)} 
+          className="ml-4 text-orange-400 hover:text-orange-800 transition"
         >
           <X size={18} />
         </button>
@@ -33,6 +32,7 @@ const LayoutContent = () => {
     ), {
       duration: 8000,
       position: "bottom-right",
+      id: notification.id || undefined,
     });
   });
 
@@ -44,6 +44,7 @@ const LayoutContent = () => {
         <AppSidebar />
         <Backdrop />
       </div>
+
       <div
         className={`flex-1 transition-all duration-300 ease-in-out ${
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
@@ -59,7 +60,6 @@ const LayoutContent = () => {
 };
 
 const AppLayout = () => {
-
   return (
     <SidebarProvider>
       <LayoutContent />
