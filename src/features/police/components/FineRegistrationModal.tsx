@@ -7,7 +7,6 @@ import Button from "../../../components/ui/button/Button";
 import { Modal } from "../../../components/ui/modal";
 import { fineSchema, FineCreateFormInput } from "../../../utils/validations/fineSchema";
 import { fetchVehicleOwnerDetails } from "../../../services/fineService";
-import Alert from "../../../components/ui/alert/Alert";
 
 interface Props {
   isOpen: boolean;
@@ -39,11 +38,10 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
   const [isDisabled, setIsDisabled] = useState(false);
   const plateNumber = watch("plateNumber");
-  const [alert, setAlert] = useState<{ variant: "success" | "error"; title: string; message: string } | null>(null);
-
+ 
   const handlePlateCheck = async () => {
     if (!plateNumber.trim()) return;
-    try {
+
       const data = await fetchVehicleOwnerDetails(plateNumber.trim());
 
       if (data.isFrom !== "Manual") {
@@ -61,13 +59,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
         setValue("phoneNumber", "");
         setValue("personalId", "");
       }
-    } catch {
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to fetch vehicle owner data.",
-      });
-    }
+    
   };
 
   const handlePlateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -78,37 +70,17 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
   };
 
   const submitHandler = handleSubmit(async (data) => {
-    try {
       const success = await onSubmit(data);
       if (success) {
-        setAlert({
-          variant: "success",
-          title: "Fine Registered",
-          message: "The fine has been successfully submitted.",
-        });
         reset();
         setIsDisabled(false);
         onClose();
-      } else {
-        setAlert({
-          variant: "error",
-          title: "Submission Failed",
-          message: "Could not submit the fine. Please try again.",
-        });
       }
-    } catch {
-      setAlert({
-        variant: "error",
-        title: "Unexpected Error",
-        message: "Something went wrong while submitting the fine.",
-      });
-    }
   });
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
       <div className="p-5 sm:p-6 w-full max-w-md">
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
         <form onSubmit={submitHandler} className="space-y-3">
           <div>
             <Label>Plate Number</Label>

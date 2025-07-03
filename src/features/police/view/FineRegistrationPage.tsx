@@ -9,6 +9,7 @@ import { FineFilter } from "../../../types/Fine/FineFilter";
 import { FineCreate } from "../../../types/Fine/FineCreate";
 import { createFine } from "../../../services/fineService";
 import Pagination from "../../../components/ui/pagination/Pagination";
+import Alert from "../../../components/ui/alert/Alert";
 
 export default function FineRegistrationPage() {
   const [filters, setFilters] = useState<FineFilter>({});
@@ -22,6 +23,12 @@ export default function FineRegistrationPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
+  const [alert, setAlert] = useState<{
+    variant: "success" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
+
   const handleAddClick = () => {
     setModalOpen(true);
   };
@@ -30,9 +37,21 @@ export default function FineRegistrationPage() {
     try {
       await createFine(data);
       setModalOpen(false);
+      setAlert({
+        variant: "success",
+        title: "Fine Registered",
+        message: "The fine has been successfully submitted.",
+      });
+
+      setSubmittedSearch((prev) => prev + " ");
       return true;
     } catch (err) {
       console.error("Error creating fine:", err);
+      setAlert({
+        variant: "error",
+        title: "Submission Failed",
+        message: "Could not submit the fine. Please try again.",
+      });
       return false;
     }
   };
@@ -45,20 +64,35 @@ export default function FineRegistrationPage() {
   };
 
   const handleApplyFilter = (newFilter: FineFilter) => {
-  setFilters(newFilter);
-  setSubmittedSearch(""); 
-  setPage(1);
-  setIsFilterModalOpen(false);
-};
-
+    setFilters(newFilter);
+    setSubmittedSearch("");
+    setPage(1);
+    setIsFilterModalOpen(false);
+  };
 
   return (
     <>
-      <PageMeta title="Fine Registration | AutoSystem" description="Manage and monitor fines." />
+      <PageMeta
+        title="Fine Registration | AutoSystem"
+        description="Manage and monitor fines."
+      />
       <PageBreadcrumb pageTitle="Fine Registration" />
 
+      {alert && (
+        <div className="mb-4">
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        </div>
+      )}
+
       <div className="space-y-6">
-        <ComponentCard title="Fine registration" desc="Here you can add fines, search and filter.">
+        <ComponentCard
+          title="Fine registration"
+          desc="Here you can add fines, search and filter."
+        >
           <FineRegistrationTable
             onAdd={handleAddClick}
             filters={filters}
@@ -85,9 +119,17 @@ export default function FineRegistrationPage() {
         initialFilter={filters}
       />
 
-      <FineRegistrationModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleModalSubmit} />
+      <FineRegistrationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        onSubmit={handleModalSubmit}
+      />
 
-        <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        hasNextPage={hasNextPage}
+        onPageChange={setPage}
+      />
     </>
   );
 }
