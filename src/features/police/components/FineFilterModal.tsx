@@ -19,18 +19,41 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
   useEffect(() => {
     setLocalFilter(initialFilter);
-    setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate + "T00:00:00") : null);
-    setToDate(initialFilter.toDate ? new Date(initialFilter.toDate + "T23:59:59") : null);
+    setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
+    setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
   }, [initialFilter, isOpen]);
+
+  const formatDate = (date: Date | null): string | undefined => {
+    if (!date) return undefined;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
 
   const handleApply = () => {
     const appliedFilter: FineFilter = {
       ...localFilter,
-      fromDate: fromDate ? fromDate.toISOString().split("T")[0] : undefined,
-      toDate: toDate ? toDate.toISOString().split("T")[0] : undefined,
+      fromDate: formatDate(fromDate),
+      toDate: formatDate(toDate),
     };
 
     onApply(appliedFilter);
+    onClose();
+  };
+
+  const handleClear = () => {
+    const clearedFilter: FineFilter = {
+      plateNumber: "",
+      fromDate: undefined,
+      toDate: undefined,
+    };
+
+    setLocalFilter(clearedFilter);
+    setFromDate(null);
+    setToDate(null);
+
+    onApply(clearedFilter);
     onClose();
   };
 
@@ -46,7 +69,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
             id="plateNumber"
             type="text"
             value={localFilter.plateNumber || ""}
-            onChange={(e) => setLocalFilter((prev) => ({ ...prev, plateNumber: e.target.value }))}
+            onChange={(e) => setLocalFilter(prev => ({ ...prev, plateNumber: e.target.value }))}
             placeholder="Search by plate number"
             className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
           />
@@ -80,8 +103,8 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
         {/* Buttons */}
         <div className="flex justify-end gap-2 pt-4">
-          <Button onClick={onClose} variant="outline" startIcon={<HiX />}>
-            Cancel
+          <Button onClick={handleClear} variant="outline" startIcon={<HiX />}>
+            Clear
           </Button>
           <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
             Apply
