@@ -99,6 +99,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
               {...register("personalId")}
               readOnly={isDisabled}
               disabled={isDisabled}
+              className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
               error={!!errors.personalId}
               hint={errors.personalId?.message}
             />
@@ -126,7 +127,9 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
           <div>
             <Label>First Name</Label>
-            <Input {...register("firstName")} disabled={isDisabled} 
+            <Input {...register("firstName")} 
+            disabled={isDisabled}
+            className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
             error={!!errors.firstName}
             hint={errors.firstName?.message}
             />
@@ -134,7 +137,9 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
           <div>
             <Label>Last Name</Label>
-            <Input {...register("lastName")} disabled={isDisabled}
+            <Input {...register("lastName")} 
+            disabled={isDisabled}
+            className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
             error={!!errors.lastName}
             hint={errors.lastName?.message} 
             />
@@ -142,7 +147,9 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
           <div>
             <Label>Father Name</Label>
-            <Input {...register("fatherName")} disabled={isDisabled} 
+            <Input {...register("fatherName")} 
+            disabled={isDisabled}
+            className={isDisabled ? "bg-gray-300 text-gray-900" : ""}  
             error={!!errors.fatherName}
             hint={errors.fatherName?.message}
             />
