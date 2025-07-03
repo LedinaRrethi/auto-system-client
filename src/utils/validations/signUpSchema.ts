@@ -9,14 +9,17 @@ export const signUpSchema = z
     fname: z
       .string()
       .min(1, "First name is required")
+      .max(50, "First name cannot exceed 50 characters")
       .regex(simpleNameRegex, "Only letters allowed"),
     fathername: z
       .string()
       .min(1, "Father name is required")
+      .max(50, "Father name cannot exceed 50 characters")
       .regex(simpleNameRegex, "Only letters allowed"),
     lname: z
       .string()
       .min(1, "Last name is required")
+      .max(50, "Last name cannot exceed 50 characters")
       .regex(simpleNameRegex, "Only letters allowed"),
 
     email: z.string().email("Invalid email format"),
@@ -47,6 +50,7 @@ export const signUpSchema = z
 
     specialistNumber: z
       .string()
+      .max(20, "Specialist number cannot exceed 50 characters")
       .optional()
       .refine((val) => !val || !val.includes(" "), {
         message: "Specialist number must not contain spaces",
@@ -57,7 +61,7 @@ export const signUpSchema = z
     personalId: z
       .string()
       .min(1, "Personal ID is required")
-      .length(10, "Personal ID must be exactly 10 characters")
+      .max(20, "Personal ID cannot exceed 20 characters")
       .regex(/^[A-Za-z0-9]+$/, "Only letters and numbers are allowed"),
   })
 
