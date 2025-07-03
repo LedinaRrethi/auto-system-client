@@ -184,7 +184,7 @@ export default function SignUpForm() {
               {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
             </div>
 
-            <div className="flex items-center gap-3 pt-1 pb-2">
+            <div className="flex items-center gap-3 pt-1 ">
               <input type="checkbox" {...register("acceptedTerms")} id="acceptedTerms" className="w-5 h-5" />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
