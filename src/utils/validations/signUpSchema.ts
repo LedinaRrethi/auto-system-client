@@ -2,25 +2,25 @@ import { z } from "zod";
 
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
-const simpleNameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË'-]+$/;
+const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË'-]+$/;
 
 export const signUpSchema = z
   .object({
-    fname: z
+    firstName: z
       .string()
       .min(1, "First name is required")
       .max(50, "First name cannot exceed 50 characters")
-      .regex(simpleNameRegex, "Only letters allowed"),
-    fathername: z
+      .regex(nameRegex, "Only letters allowed"),
+    fatherName: z
       .string()
       .min(1, "Father name is required")
       .max(50, "Father name cannot exceed 50 characters")
-      .regex(simpleNameRegex, "Only letters allowed"),
-    lname: z
+      .regex(nameRegex, "Only letters allowed"),
+    lastName: z
       .string()
       .min(1, "Last name is required")
       .max(50, "Last name cannot exceed 50 characters")
-      .regex(simpleNameRegex, "Only letters allowed"),
+      .regex(nameRegex, "Only letters allowed"),
 
     email: z.string().email("Invalid email format"),
 

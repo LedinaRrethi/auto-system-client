@@ -62,9 +62,9 @@ export function useSignUpForm() {
   const onSubmit = async (data: SignUpFormData) => {
     try {
       await registerUser({
-        firstName: data.fname.trim(),
-        fatherName: data.fathername.trim(),
-        lastName: data.lname.trim(),
+        firstName: data.firstName.trim(),
+        fatherName: data.fatherName.trim(),
+        lastName: data.lastName.trim(),
         birthDate: data.birthDate?.toISOString() ?? "",
         email: data.email,
         password: data.password,
@@ -96,9 +96,9 @@ export function useSignUpForm() {
         { keyword: "email", field: "email" },
         { keyword: "personal id", field: "personalId" },
         { keyword: "specialist number", field: "specialistNumber" },
-        { keyword: "first name", field: "fname" },
-        { keyword: "father name", field: "fathername" },
-        { keyword: "last name", field: "lname" },
+        { keyword: "first name", field: "firstName" },
+        { keyword: "father name", field: "fatherName" },
+        { keyword: "last name", field: "lastName" },
       ];
 
       for (const { keyword, field } of fieldMappings) {

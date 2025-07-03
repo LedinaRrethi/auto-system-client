@@ -98,7 +98,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             <Input
               {...register("personalId")}
               readOnly={isDisabled}
-              //disabled={isDisabled}
+              disabled={isDisabled}
               error={!!errors.personalId}
               hint={errors.personalId?.message}
             />
@@ -118,22 +118,34 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
           <div>
             <Label>Fine Reason</Label>
-            <Input {...register("fineReason")} />
+            <Input {...register("fineReason")}
+            error={!!errors.plateNumber}
+            hint={errors.fineReason?.message}
+             />
           </div>
 
           <div>
             <Label>First Name</Label>
-            <Input {...register("firstName")} disabled={isDisabled} />
+            <Input {...register("firstName")} disabled={isDisabled} 
+            error={!!errors.plateNumber}
+            hint={errors.firstName?.message}
+            />
           </div>
 
           <div>
             <Label>Last Name</Label>
-            <Input {...register("lastName")} disabled={isDisabled} />
+            <Input {...register("lastName")} disabled={isDisabled}
+            error={!!errors.plateNumber}
+            hint={errors.lastName?.message} 
+            />
           </div>
 
           <div>
             <Label>Father Name</Label>
-            <Input {...register("fatherName")} disabled={isDisabled} />
+            <Input {...register("fatherName")} disabled={isDisabled} 
+            error={!!errors.plateNumber}
+            hint={errors.fatherName?.message}
+            />
           </div>
 
           <div className="pt-2">
