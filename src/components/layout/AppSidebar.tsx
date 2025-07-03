@@ -1,12 +1,12 @@
 import { useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Gavel,
   ClipboardCheck,
   Car,
-  FileText,
   Shield,
   UserCheck,
+  ReceiptText,
+  FileSignature,
 } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useAuth } from "../../hooks/useAuth";
@@ -43,7 +43,7 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
     case ROLES.POLICE:
       return [
         {
-          icon: <FileText size={18} />,
+          icon: <FileSignature  size={18} />,
           name: "Fine Registration",
           path: "/fine-registration",
         },
@@ -64,7 +64,7 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
           path: "/vehicle-registration",
         },
         {
-          icon: <Gavel size={18} />,
+          icon: <ReceiptText  size={18} />,
           name: "My Fines",
           path: "/my-fines",
         },
