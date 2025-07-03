@@ -5,9 +5,10 @@ const useGoBack = () => {
 
   const goBack = () => {
     if (window.history.state && window.history.state.idx > 0) {
-      navigate(-1); // Go back to the previous page
+      navigate(-1);
     } else {
-      navigate("/"); // Redirect to home if no history exists
+      const token = sessionStorage.getItem("authToken");
+      navigate(token ? "/" : "/signin");
     }
   };
 
