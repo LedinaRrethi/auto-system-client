@@ -24,10 +24,11 @@ export function useSignUpForm() {
     control,
     watch,
     reset,
+    setError,
     formState: { errors },
   } = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
-    mode: "onBlur",
+    mode: "onSubmit",
     defaultValues: {
       birthDate: undefined,
       acceptedTerms: false,
@@ -35,12 +36,9 @@ export function useSignUpForm() {
   });
 
   useEffect(() => {
-    const subscription = watch((_value, { name }) => {
-      if (name && alertData?.message?.toLowerCase().includes(name)) {
-        setAlertData(null);
-      }
+    const subscription = watch(() => {
+      if (alertData) setAlertData(null);
     });
-
     return () => subscription.unsubscribe();
   }, [watch, alertData]);
 
@@ -88,14 +86,36 @@ export function useSignUpForm() {
         window.location.href = "/signin?registered=true";
       }, 2000);
     } catch (err: unknown) {
-      const axiosErr = err as AxiosError<{ error?: string }>;
-      const message = axiosErr?.response?.data?.error ?? "Registration failed. Please try again.";
+      const axiosErr = err as AxiosError<{ message?: string }>;
+      const message = axiosErr?.response?.data?.message?.trim() ?? "Registration failed. Please try again.";
+      const lowerMessage = message.toLowerCase();
 
-      setAlertData({
-        variant: "error",
-        title: "Registration Error",
-        message,
-      });
+      let fieldMatched = false;
+
+      const fieldMappings: { keyword: string; field: keyof SignUpFormData }[] = [
+        { keyword: "email", field: "email" },
+        { keyword: "personal id", field: "personalId" },
+        { keyword: "specialist number", field: "specialistNumber" },
+        { keyword: "first name", field: "fname" },
+        { keyword: "father name", field: "fathername" },
+        { keyword: "last name", field: "lname" },
+      ];
+
+      for (const { keyword, field } of fieldMappings) {
+        if (lowerMessage.includes(keyword)) {
+          setError(field, { type: "manual", message });
+          fieldMatched = true;
+          break;
+        }
+      }
+
+      if (!fieldMatched) {
+        setAlertData({
+          variant: "error",
+          title: "Registration Error",
+          message,
+        });
+      }
     }
   };
 
@@ -105,6 +125,7 @@ export function useSignUpForm() {
     control,
     watch,
     errors,
+    setError,
     reset,
     alertData,
     setAlertData,
