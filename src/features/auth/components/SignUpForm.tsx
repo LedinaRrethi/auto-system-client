@@ -41,11 +41,7 @@ export default function SignUpForm() {
 
         {alertData && (
           <div className="mb-4">
-            <Alert
-              variant={alertData.variant}
-              title={alertData.title}
-              message={alertData.message}
-            />
+            <Alert variant={alertData.variant} title={alertData.title} message={alertData.message} />
           </div>
         )}
 
@@ -57,27 +53,35 @@ export default function SignUpForm() {
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <Label>First Name<span className="text-error-500">*</span></Label>
-                <Input {...register("fname")} placeholder="Enter your first name" />
-                {errors.fname && <p className="text-sm text-red-500">{errors.fname.message}</p>}
+                <Label>
+                  First Name<span className="text-error-500">*</span>
+                </Label>
+                <Input {...register("firstName")} placeholder="Enter your first name" />
+                {errors.fatherName && <p className="text-sm text-red-500">{errors.fatherName.message}</p>}
               </div>
 
               <div>
-                <Label>Father Name<span className="text-error-500">*</span></Label>
-                <Input {...register("fathername")} placeholder="Enter your father name" />
-                {errors.fathername && <p className="text-sm text-red-500">{errors.fathername.message}</p>}
+                <Label>
+                  Father Name<span className="text-error-500">*</span>
+                </Label>
+                <Input {...register("fatherName")} placeholder="Enter your father name" />
+                {errors.fatherName && <p className="text-sm text-red-500">{errors.fatherName.message}</p>}
               </div>
             </div>
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
-                <Label>Last Name<span className="text-error-500">*</span></Label>
-                <Input {...register("lname")} placeholder="Enter your last name" />
-                {errors.lname && <p className="text-sm text-red-500">{errors.lname.message}</p>}
+                <Label>
+                  Last Name<span className="text-error-500">*</span>
+                </Label>
+                <Input {...register("lastName")} placeholder="Enter your last name" />
+                {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
               </div>
 
               <div>
-                <Label>Birthdate<span className="text-error-500">*</span></Label>
+                <Label>
+                  Birthdate<span className="text-error-500">*</span>
+                </Label>
                 <Controller
                   name="birthDate"
                   control={control}
@@ -97,7 +101,9 @@ export default function SignUpForm() {
             </div>
 
             <div>
-              <Label>Personal Id<span className="text-error-500">*</span></Label>
+              <Label>
+                Personal Id<span className="text-error-500">*</span>
+              </Label>
               <Input {...register("personalId")} placeholder="Enter your national ID number" />
               {errors.personalId && <p className="text-sm text-red-500">{errors.personalId.message}</p>}
             </div>
@@ -112,7 +118,9 @@ export default function SignUpForm() {
               rules={{ required: "Role is required" }}
               render={({ field }) => (
                 <div>
-                  <Label>Role<span className="text-error-500">*</span></Label>
+                  <Label>
+                    Role<span className="text-error-500">*</span>
+                  </Label>
                   <Select
                     options={[
                       { label: "Individ", value: "Individ" },
@@ -130,7 +138,9 @@ export default function SignUpForm() {
 
             {watch("role") === "Specialist" && (
               <div>
-                <Label>Specialist Number<span className="text-error-500">*</span></Label>
+                <Label>
+                  Specialist Number<span className="text-error-500">*</span>
+                </Label>
                 <Input {...register("specialistNumber")} placeholder="Enter specialist number" />
                 {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
               </div>
@@ -143,7 +153,9 @@ export default function SignUpForm() {
                 rules={{ required: "Directorate is required" }}
                 render={({ field }) => (
                   <div>
-                    <Label>Directorate<span className="text-error-500">*</span></Label>
+                    <Label>
+                      Directorate<span className="text-error-500">*</span>
+                    </Label>
                     <Select
                       options={directorateOptions}
                       placeholder="Select directorate"
@@ -157,28 +169,56 @@ export default function SignUpForm() {
             )}
 
             <div>
-              <Label>Email<span className="text-error-500">*</span></Label>
+              <Label>
+                Email<span className="text-error-500">*</span>
+              </Label>
               <Input {...register("email")} type="email" placeholder="example@domain.com" />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
             <div>
-              <Label>Password<span className="text-error-500">*</span></Label>
+              <Label>
+                Password<span className="text-error-500">*</span>
+              </Label>
               <div className="relative">
-                <Input {...register("password")} type={showPassword ? "text" : "password"} placeholder="Enter your password" />
-                <span onClick={() => setShowPassword(!showPassword)} className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2">
-                  {showPassword ? <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" /> : <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />}
+                <Input
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                >
+                  {showPassword ? (
+                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
+                  ) : (
+                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
+                  )}
                 </span>
               </div>
               {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
             </div>
 
             <div>
-              <Label>Confirm Password<span className="text-error-500">*</span></Label>
+              <Label>
+                Confirm Password<span className="text-error-500">*</span>
+              </Label>
               <div className="relative">
-                <Input {...register("confirmPassword")} type={showPassword ? "text" : "password"} placeholder="Confirm your password" />
-                <span onClick={() => setShowPassword(!showPassword)} className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2">
-                  {showPassword ? <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" /> : <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />}
+                <Input
+                  {...register("confirmPassword")}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Confirm your password"
+                />
+                <span
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                >
+                  {showPassword ? (
+                    <EyeIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
+                  ) : (
+                    <EyeCloseIcon className="fill-gray-500 dark:fill-gray-300 size-5" />
+                  )}
                 </span>
               </div>
               {errors.confirmPassword && <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>}
@@ -188,15 +228,22 @@ export default function SignUpForm() {
               <input type="checkbox" {...register("acceptedTerms")} id="acceptedTerms" className="w-5 h-5" />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
-                <span onClick={() => setShowTerms(true)} className="text-brand-500 font-semibold hover:underline cursor-pointer">
+                <span
+                  onClick={() => setShowTerms(true)}
+                  className="text-brand-500 font-semibold hover:underline cursor-pointer"
+                >
                   Terms and Privacy Policy
-                </span>.
+                </span>
+                .
               </label>
             </div>
             {errors.acceptedTerms && <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>}
 
             <div>
-              <button type="submit" className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+              <button
+                type="submit"
+                className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+              >
                 Sign Up
               </button>
             </div>
