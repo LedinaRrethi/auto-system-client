@@ -44,6 +44,9 @@ export default function FineRegistrationPage() {
       });
 
       setSubmittedSearch((prev) => prev + " ");
+
+      setTimeout(() => setAlert(null), 3000);
+
       return true;
     } catch (err) {
       console.error("Error creating fine:", err);
@@ -52,6 +55,8 @@ export default function FineRegistrationPage() {
         title: "Submission Failed",
         message: "Could not submit the fine. Please try again.",
       });
+      setTimeout(() => setAlert(null), 3000);
+
       return false;
     }
   };
