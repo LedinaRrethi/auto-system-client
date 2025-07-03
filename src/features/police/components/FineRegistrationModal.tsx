@@ -119,7 +119,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           <div>
             <Label>Fine Reason</Label>
             <Input {...register("fineReason")}
-            error={!!errors.plateNumber}
+            error={!!errors.fineReason}
             hint={errors.fineReason?.message}
              />
           </div>
@@ -127,7 +127,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           <div>
             <Label>First Name</Label>
             <Input {...register("firstName")} disabled={isDisabled} 
-            error={!!errors.plateNumber}
+            error={!!errors.firstName}
             hint={errors.firstName?.message}
             />
           </div>
@@ -135,7 +135,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           <div>
             <Label>Last Name</Label>
             <Input {...register("lastName")} disabled={isDisabled}
-            error={!!errors.plateNumber}
+            error={!!errors.lastName}
             hint={errors.lastName?.message} 
             />
           </div>
@@ -143,7 +143,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           <div>
             <Label>Father Name</Label>
             <Input {...register("fatherName")} disabled={isDisabled} 
-            error={!!errors.plateNumber}
+            error={!!errors.fatherName}
             hint={errors.fatherName?.message}
             />
           </div>
