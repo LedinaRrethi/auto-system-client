@@ -8,6 +8,8 @@ import Select from "../../../components/form/Select";
 import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
 
 import { useSignUpForm } from "../hooks/useSignUpForm";
+import TermsModal from "../TermsModal";
+import { useState } from "react";
 
 export default function SignUpForm() {
   const {
@@ -22,6 +24,8 @@ export default function SignUpForm() {
     directorateOptions,
     onSubmit,
   } = useSignUpForm();
+
+  const [showTerms, setShowTerms] = useState(false);
 
   return (
     <div className="flex flex-col justify-center flex-1 w-full max-w-lg mx-auto">
@@ -312,9 +316,16 @@ export default function SignUpForm() {
               />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
-                <Link to="/terms" className="text-brand-500 font-semibold hover:underline">
+                {/* <Link to="/terms" className="text-brand-500 font-semibold hover:underline">
                   <span className="font-semibold text-brand-500">Terms and Privacy Policy</span>
-                </Link>
+                </Link> */}
+                <span
+  onClick={() => setShowTerms(true)}
+  className="text-brand-500 font-semibold hover:underline cursor-pointer"
+>
+  Terms and Privacy Policy
+</span>
+
                 .
               </label>
             </div>
@@ -348,6 +359,10 @@ export default function SignUpForm() {
           </p>
         </div>
       </div>
+      <TermsModal isOpen={showTerms} onClose={() => setShowTerms(false)} />
+
     </div>
+
+    
   );
 }

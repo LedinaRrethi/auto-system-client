@@ -21,7 +21,7 @@ const AppRoutes = () => {
       <Route path="/signin" element={<SignIn />} />
       <Route path="/signup" element={<SignUp />} />
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
-
+     
       {/* Protected routes with layout */}
       <Route element={<AppLayout />}>
         <Route
