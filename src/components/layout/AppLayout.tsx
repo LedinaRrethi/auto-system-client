@@ -4,6 +4,7 @@ import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
 import { useNotificationHub } from "../../hooks/useNotificationHub";
+import { useAuth } from "../../hooks/useAuth";
 import toast from "react-hot-toast";
 import { X } from "lucide-react";
 
@@ -31,8 +32,9 @@ const LayoutContent = () => {
 };
 
 const AppLayout = () => {
+  const { token, loading } = useAuth();
 
- useNotificationHub((notification) => {
+  useNotificationHub(token, (notification) => { 
     toast.custom((t) => (
       <div
         className="bg-white border border-gray-200 shadow-lg rounded-md p-4 pr-6 max-w-sm w-full flex justify-between items-start"
@@ -54,7 +56,9 @@ const AppLayout = () => {
       position: "top-right",
     });
   });
-  
+
+  if (loading) return <div>Loading...</div>;
+
   return (
     <SidebarProvider>
       <LayoutContent />
