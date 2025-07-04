@@ -60,7 +60,7 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
       return [
         {
           icon: <Car size={18} />,
-          name: "Vehicle Registration",
+          name: "My Vehicle Requests",
           path: "/vehicle-registration",
         },
         {
