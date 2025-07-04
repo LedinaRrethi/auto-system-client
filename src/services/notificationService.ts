@@ -1,12 +1,13 @@
+import { Notificationn } from "../types/Notification/Notificationn";
 import api from "./api";
 
-export const getAllNotifications = async (): Promise<Notification[]> => {
-  const response = await api.get<Notification[]>("/Notification/all");
+export const getAllNotifications = async (): Promise<Notificationn[]> => {
+  const response = await api.get<Notificationn[]>("/Notification/all");
   return response.data;
 };
 
-export const getUnseenNotifications = async (): Promise<Notification[]> => {
-  const response = await api.get<Notification[]>("/Notification/unseen");
+export const getUnseenNotifications = async (): Promise<Notificationn[]> => {
+  const response = await api.get<Notificationn[]>("/Notification/unseen");
   return response.data;
 };
 
