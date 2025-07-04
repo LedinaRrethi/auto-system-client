@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
@@ -39,28 +39,28 @@ export default function VehicleRegistrationPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
 
-  const loadVehicles = async () => {
-    try {
-      const response: PaginatedResponse<Vehicle> = await fetchVehicles({
-        page,
-        pageSize,
-        search: submittedSearch,
-      });
-      setVehicles(response.items);
-      setHasNextPage(response.hasNextPage);
-      if (response.items.length === 0) {
-        setInfoMsg("You have no vehicle requests.");
-      } else {
-        setInfoMsg(null);
-      }
-    } catch {
-      setErrorMsg("Failed to load vehicle requests.");
+  const loadVehicles = useCallback(async () => {
+  try {
+    const response: PaginatedResponse<Vehicle> = await fetchVehicles({
+      page,
+      pageSize,
+      search: submittedSearch,
+    });
+    setVehicles(response.items);
+    setHasNextPage(response.hasNextPage);
+    if (response.items.length === 0) {
+      setInfoMsg("You have no vehicle requests.");
+    } else {
+      setInfoMsg(null);
     }
-  };
+  } catch {
+    setErrorMsg("Failed to load vehicle requests.");
+  }
+}, [page, pageSize, submittedSearch]);
 
-  useEffect(() => {
-    loadVehicles();
-  }, [page, pageSize, submittedSearch]);
+useEffect(() => {
+  loadVehicles();
+}, [loadVehicles]);
 
   const handleAddClick = () => {
     setEditData(null);
