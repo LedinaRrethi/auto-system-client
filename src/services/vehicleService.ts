@@ -20,8 +20,9 @@ export const fetchVehicles = async (query: PaginationQuery): Promise<PaginatedRe
 };
 
 export const registerVehicle = async (data: VehicleRegister): Promise<void> => {
-  await api.post("/VehicleRequest/register", data);
+  return await api.post("/VehicleRequest/register", data);
 };
+
 
 export const updateVehicle = async (vehicleId: string, data: VehicleUpdate): Promise<void> => {
   if (!vehicleId) throw new Error("Invalid vehicle IDD");

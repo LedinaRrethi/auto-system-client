@@ -34,17 +34,17 @@ export default function InspectionApprovalModal({
 
   return (
     <Modal
-  isOpen={isOpen}
-  onClose={onClose}
-  title={isApprove ? "Approve Request" : "Reject Request"}
-  titleIcon={
-    isApprove ? (
-      <HiCheckCircle className="text-green-600 w-5 h-5" />
-    ) : (
-      <HiExclamationTriangle className="text-red-600 w-5 h-5" />
-    )
-  }
->
+      isOpen={isOpen}
+      onClose={onClose}
+      title={isApprove ? "Approve Request" : "Reject Request"}
+      titleIcon={
+        isApprove ? (
+          <HiCheckCircle className="text-green-600 w-5 h-5" />
+        ) : (
+          <HiExclamationTriangle className="text-red-600 w-5 h-5" />
+        )
+      }
+    >
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5">
         <p className="font-semibold">
           {isApprove

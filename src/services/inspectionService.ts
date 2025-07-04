@@ -15,12 +15,6 @@ export const createInspectionRequest = async (data: InspectionRequestCreateDTO):
   await api.post("/InspectionRequest/request", data);
 };
 
-
-// export const getMyInspectionRequests = async (): Promise<MyInspectionsRequest[]> => {
-//   const response = await api.get("/InspectionRequest/my-requests-paged");
-//   return response.data;
-// };
-
 export const getMyInspectionRequests = async (
   query: PaginationQuery
 ): Promise<PagedResponse<MyInspectionsRequest>> => {
