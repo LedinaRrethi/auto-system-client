@@ -72,26 +72,28 @@ export default function VehicleRegistrationPage() {
     setModalErrorMsg(null);
   };
 
-  const handleEditClick = async (vehicleId: string) => {
-    if (!vehicleId) return;
+const handleEditClick = async (vehicleId: string) => {
+  if (!vehicleId) return;
 
-    try {
-      const vehicle = await fetchVehicleById(vehicleId);
-      setEditData({
-        plateNumber: "",
-        color: "",
-        seatCount: vehicle.seatCount,
-        doorCount: vehicle.doorCount,
-        chassisNumber: vehicle.chassisNumber,
-      });
-      setVehicleIdToEdit(vehicleId);
-      setMode("edit");
-      setIsModalOpen(true);
-      setModalErrorMsg(null);
-    } catch {
-      setModalErrorMsg("Failed to load vehicle data.");
-    }
-  };
+  try {
+    const vehicle = await fetchVehicleById(vehicleId);  
+
+    setEditData({
+      plateNumber: vehicle.plateNumber || "",
+      color: vehicle.color || "",
+      seatCount: vehicle.seatCount,
+      doorCount: vehicle.doorCount,
+      chassisNumber: vehicle.chassisNumber || "",
+    });
+
+    setVehicleIdToEdit(vehicleId);
+    setMode("edit");
+    setIsModalOpen(true);
+    setModalErrorMsg(null);
+  } catch {
+    setModalErrorMsg("Failed to load vehicle data.");
+  }
+};
 
   const handleDeleteClick = (vehicle: Vehicle) => {
     setVehicleToDelete(vehicle);
@@ -230,6 +232,7 @@ export default function VehicleRegistrationPage() {
           mode={mode}
           errorMessage={modalErrorMsg}
         />
+
 
         <ConfirmDeleteModal
           isOpen={isDeleteModalOpen}

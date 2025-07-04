@@ -19,40 +19,37 @@ interface Props {
 }
 
 export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClose, onSubmit, initialValues, mode }: Props) {
+
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-  } = useForm<VehicleInput>({
-    resolver: zodResolver(vehicleSchema),
-    mode: "onSubmit",
-  });
+  register,
+  handleSubmit,
+  formState: { errors, isSubmitting },
+  reset,
+} = useForm<VehicleInput>({
+  resolver: zodResolver(vehicleSchema),
+  defaultValues: initialValues ?? {
+    plateNumber: "",
+    color: "",
+    seatCount: 0,
+    doorCount: 0,
+    chassisNumber: "",
+  },
+});
 
-  const isDisabled = mode === "edit" || isSubmitting;
-
+const isDisabled = mode === "edit" || isSubmitting;
 
   useEffect(() => {
-    if (isOpen) {
-      if (initialValues) {
-        reset({
-          plateNumber: mode === "edit" ? initialValues.plateNumber : initialValues.plateNumber,
-          color: mode === "edit" ? initialValues.color : initialValues.color,
-          seatCount: initialValues.seatCount,
-          doorCount: initialValues.doorCount,
-          chassisNumber: initialValues.chassisNumber,
-        });
-      } else {
-        reset({
-          plateNumber: "",
-          color: "",
-          seatCount: 0,
-          doorCount: 0,
-          chassisNumber: "",
-        });
-      }
-    }
-  }, [initialValues, mode, reset, isOpen]);
+  if (isOpen) {
+    reset(initialValues ?? {
+      plateNumber: "",
+      color: "",
+      seatCount: 0,
+      doorCount: 0,
+      chassisNumber: "",
+    });
+  }
+}, [initialValues, isOpen, reset]);
+
 
   const submitHandler = async (data: VehicleInput) => {
     try {
