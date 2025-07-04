@@ -121,7 +121,7 @@ export default function FineRegistrationTable({
                 Recipient
               </TableCell>
               <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Police
+                Police Personal No
               </TableCell>
               <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
                 Amount
