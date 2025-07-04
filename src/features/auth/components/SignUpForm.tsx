@@ -57,7 +57,7 @@ export default function SignUpForm() {
                   First Name<span className="text-error-500">*</span>
                 </Label>
                 <Input {...register("firstName")} placeholder="Enter your first name" />
-                {errors.fatherName && <p className="text-sm text-red-500">{errors.fatherName.message}</p>}
+                {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
               </div>
 
               <div>
