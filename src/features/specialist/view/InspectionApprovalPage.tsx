@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
@@ -90,7 +90,7 @@ export default function InspectionPage() {
       reader.readAsDataURL(file);
     });
 
-  const fetchInspections = async () => {
+  const fetchInspections = useCallback(async () => {
   try {
     const res = await fetchMyInspections({
       page,
@@ -104,11 +104,12 @@ export default function InspectionPage() {
     console.error("Error fetching inspections");
     setErrorMsg("Failed to load inspections.");
   }
-};
+}, [page, pageSize, submittedSearch]);
+
 
 useEffect(() => {
   fetchInspections();
-}, [page, pageSize, submittedSearch]);
+}, [fetchInspections]);
 
 
   useEffect(() => {
