@@ -7,6 +7,7 @@ export interface Vehicle {
   seatCount: number;
   doorCount: number;
   chassisNumber: string;
+  approvalComment: string | null;
   status: VehicleStatus;
   createdOn: string;
 }

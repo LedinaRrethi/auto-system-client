@@ -1,4 +1,10 @@
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../../components/ui/table";
 import Badge from "../../../components/ui/badge/Badge";
 import { HiPencilAlt, HiTrash } from "react-icons/hi";
 import { Vehicle } from "../../../types/Vehicle/Vehicle";
@@ -9,32 +15,63 @@ interface Props {
   onDelete: (vehicle: Vehicle) => void;
 }
 
-export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }: Props) {
+export default function VehicleRegistrationTable({
+  vehicles,
+  onEdit,
+  onDelete,
+}: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Plate
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Color
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Seats
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Doors
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Chassis
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Status
               </TableCell>
-              <TableCell isHeader className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                Approval Comment
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Actions
               </TableCell>
             </TableRow>
@@ -43,10 +80,18 @@ export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }:
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
             {vehicles.map((vehicle) => (
               <TableRow key={vehicle.idpK_Vehicle}>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.plateNumber}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.color}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.seatCount}</TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{vehicle.doorCount}</TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.plateNumber}
+                </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.color}
+                </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.seatCount}
+                </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.doorCount}
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {vehicle.chassisNumber}
                 </TableCell>
@@ -54,12 +99,20 @@ export default function VehicleRegistrationTable({ vehicles, onEdit, onDelete }:
                   <Badge
                     size="sm"
                     color={
-                      vehicle.status === "Approved" ? "success" : vehicle.status === "Rejected" ? "error" : "warning"
+                      vehicle.status === "Approved"
+                        ? "success"
+                        : vehicle.status === "Rejected"
+                        ? "error"
+                        : "warning"
                     }
                   >
                     {vehicle.status}
                   </Badge>
                 </TableCell>
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {vehicle.approvalComment}
+                </TableCell>
+
                 <TableCell className="px-5 py-4 text-sm text-left">
                   <div className="flex items-center gap-3">
                     <button
