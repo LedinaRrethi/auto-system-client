@@ -1,7 +1,13 @@
 import { z } from "zod";
 
 export const vehicleSchema = z.object({
-  plateNumber: z.string().min(1, "Plate number is required"),
+  plateNumber: z.string()
+      .min(5, "Plate number must have at least 5 characters")
+      .max(10, "Plate number cannot exceed 10 characters")
+      .regex(
+        /^[\p{L}\p{N}\- ]+$/u,
+        "Plate number must contain only letters, numbers, spaces, or hyphens"
+      ),
   chassisNumber: z.string().min(1, "Chassis number is required"),
   color: z.string()
     .min(3, "Color must be at least 3 characters")
