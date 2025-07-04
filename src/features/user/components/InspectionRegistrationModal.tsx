@@ -180,6 +180,7 @@ export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit,
           <div>
             <Label>Date</Label>
             <DatePicker id="date-picker" onChange={handleDateChange} />
+            {errors.requestedDate && <p className="text-red-500 text-xs mt-1">{errors.requestedDate.message}</p>}
           </div>
 
           <div>
@@ -190,6 +191,7 @@ export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit,
                 <TimeIcon className="size-6" />
               </span>
             </div>
+            {errors.requestedDate && <p className="text-red-500 text-xs mt-1">{errors.requestedDate.message}</p>}
           </div>
 
           <Button type="submit" className="w-full" disabled={isLoading}>
