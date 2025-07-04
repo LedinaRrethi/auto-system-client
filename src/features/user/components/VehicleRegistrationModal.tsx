@@ -7,16 +7,18 @@ import Button from "../../../components/ui/button/Button";
 import { Modal } from "../../../components/ui/modal";
 import { VehicleInput, vehicleSchema } from "../../../utils/validations/vehicleSchema";
 import Form from "../../../components/form/Form";
+import Alert from "../../../components/ui/alert/Alert";
 
 interface Props {
   isOpen: boolean;
+  errorMessage?: string | null;
   onClose: () => void;
   onSubmit: (data: VehicleInput, mode: "add" | "edit") => void;
   initialValues?: VehicleInput;
   mode: "add" | "edit";
 }
 
-export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, initialValues, mode }: Props) {
+export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClose, onSubmit, initialValues, mode }: Props) {
   const {
     register,
     handleSubmit,
@@ -74,6 +76,13 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={mode === "edit" ? "Update Vehicle Details" : "Register a New Vehicle"} >
       <div className="p-5 sm:p-6 w-full max-w-md">
+
+        {errorMessage && (
+      <div className="mb-4">
+        <Alert variant="error" title="Error" message={errorMessage} />
+      </div>
+    )}
+
       
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
           <div>
