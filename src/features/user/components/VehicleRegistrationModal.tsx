@@ -106,9 +106,7 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
               className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
               {...register("seatCount", { valueAsNumber: true })}
               error={!!errors.seatCount}
-              hint={errors.seatCount?.message}
-              min="1"
-              max="50"
+              hint={errors.seatCount?.message}  
             />
           </div>
 
@@ -121,8 +119,6 @@ export default function VehicleRegistrationModal({ isOpen, onClose, onSubmit, in
               {...register("doorCount", { valueAsNumber: true })}
               error={!!errors.doorCount}
               hint={errors.doorCount?.message}
-              min="1"
-              max="10"
             />
           </div>
 
