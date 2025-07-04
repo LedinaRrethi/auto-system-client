@@ -43,7 +43,6 @@ export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClos
           chassisNumber: initialValues.chassisNumber,
         });
       } else {
-        console.log("Modal - Resetting form for new vehicle");
         reset({
           plateNumber: "",
           color: "",
@@ -57,7 +56,6 @@ export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClos
 
   const submitHandler = async (data: VehicleInput) => {
     try {
-      console.log("Modal - Submitting data:", data);
       onSubmit(data, mode);
 
       if (mode === "add") {

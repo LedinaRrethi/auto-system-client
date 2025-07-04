@@ -29,7 +29,7 @@ export default function VehicleRegistrationPage() {
   const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -49,11 +49,11 @@ export default function VehicleRegistrationPage() {
       });
       setVehicles(response.items);
       setHasNextPage(response.hasNextPage);
-       if (response.items.length === 0) {
-      setInfoMsg("You have no vehicle requests.");
-    } else {
-      setInfoMsg(null);
-    }
+      if (response.items.length === 0) {
+        setInfoMsg("You have no vehicle requests.");
+      } else {
+        setInfoMsg(null);
+      }
     } catch {
       setErrorMsg("Failed to load vehicle requests.");
     }
@@ -136,8 +136,19 @@ export default function VehicleRegistrationPage() {
       setIsModalOpen(false);
       setVehicleIdToEdit(null);
       setModalErrorMsg(null);
-    } catch  {
-      setModalErrorMsg("Submission failed. Please try again.");
+    } catch (error: unknown) {
+      const err = error as {
+        response?: { data?: { error?: string; message?: string } };
+        message?: string;
+      };
+
+      const message =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Something went wrong. Please try again.";
+
+      setModalErrorMsg(message);
     }
   };
 
@@ -148,7 +159,7 @@ export default function VehicleRegistrationPage() {
       setInfoMsg(null);
     }, 3000);
     return () => clearTimeout(timeout);
-  }, [successMsg , infoMsg, errorMsg]);
+  }, [successMsg, infoMsg, errorMsg]);
 
   return (
     <>
