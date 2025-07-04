@@ -26,8 +26,10 @@ export default function VehicleRegistrationPage() {
   const [editData, setEditData] = useState<VehicleInput | null>(null);
   const [mode, setMode] = useState<"add" | "edit">("add");
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -35,32 +37,31 @@ export default function VehicleRegistrationPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
 
   const [vehicleIdToEdit, setVehicleIdToEdit] = useState<string | null>(null);
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
 
   const loadVehicles = useCallback(async () => {
-  try {
-    const response: PaginatedResponse<Vehicle> = await fetchVehicles({
-      page,
-      pageSize,
-      search: submittedSearch,
-    });
-    setVehicles(response.items);
-    setHasNextPage(response.hasNextPage);
-    if (response.items.length === 0) {
+    try {
+      const response: PaginatedResponse<Vehicle> = await fetchVehicles({
+        page,
+        pageSize,
+        search: submittedSearch,
+      });
+      setVehicles(response.items);
+      setHasNextPage(response.hasNextPage);
+       if (response.items.length === 0) {
       setInfoMsg("You have no vehicle requests.");
     } else {
       setInfoMsg(null);
     }
-  } catch {
-    setErrorMsg("Failed to load vehicle requests.");
-  }
-}, [page, pageSize, submittedSearch]);
+    } catch {
+      setErrorMsg("Failed to load vehicle requests.");
+    }
+  }, [page, pageSize, submittedSearch]);
 
-useEffect(() => {
-  loadVehicles();
-}, [loadVehicles]);
+  useEffect(() => {
+    loadVehicles();
+  }, [loadVehicles]);
 
   const handleAddClick = () => {
     setEditData(null);
@@ -68,14 +69,11 @@ useEffect(() => {
     setMode("add");
     setIsModalOpen(true);
     setSuccessMsg(null);
-    setErrorMsg(null);
+    setModalErrorMsg(null);
   };
 
   const handleEditClick = async (vehicleId: string) => {
-    if (!vehicleId) {
-      setErrorMsg("Invalid vehicle ID.");
-      return;
-    }
+    if (!vehicleId) return;
 
     try {
       const vehicle = await fetchVehicleById(vehicleId);
@@ -89,9 +87,9 @@ useEffect(() => {
       setVehicleIdToEdit(vehicleId);
       setMode("edit");
       setIsModalOpen(true);
-    } catch (err) {
-      setErrorMsg("Failed to load vehicle data.");
-      console.error(err);
+      setModalErrorMsg(null);
+    } catch {
+      setModalErrorMsg("Failed to load vehicle data.");
     }
   };
 
@@ -107,9 +105,8 @@ useEffect(() => {
       await deleteVehicle(vehicleToDelete.idpK_Vehicle);
       setSuccessMsg("Delete request sent to administrator for approval.");
       await loadVehicles();
-    } catch (err) {
+    } catch {
       setErrorMsg("Failed to submit delete request.");
-      console.error(err);
     }
   };
 
@@ -120,7 +117,7 @@ useEffect(() => {
         setSuccessMsg("Vehicle registration request sent to administrator.");
       } else {
         if (!vehicleIdToEdit) {
-          setErrorMsg("Missing vehicle ID for update.");
+          setModalErrorMsg("Missing vehicle ID for update.");
           return;
         }
 
@@ -138,9 +135,9 @@ useEffect(() => {
       await loadVehicles();
       setIsModalOpen(false);
       setVehicleIdToEdit(null);
-    } catch (err) {
-      setErrorMsg("Submission failed.");
-      console.error(err);
+      setModalErrorMsg(null);
+    } catch  {
+      setModalErrorMsg("Submission failed. Please try again.");
     }
   };
 
@@ -151,7 +148,7 @@ useEffect(() => {
       setInfoMsg(null);
     }, 3000);
     return () => clearTimeout(timeout);
-  }, [successMsg, errorMsg]);
+  }, [successMsg , infoMsg, errorMsg]);
 
   return (
     <>
@@ -215,10 +212,12 @@ useEffect(() => {
           onClose={() => {
             setIsModalOpen(false);
             setVehicleIdToEdit(null);
+            setModalErrorMsg(null);
           }}
           onSubmit={handleSubmit}
           initialValues={editData ?? undefined}
           mode={mode}
+          errorMessage={modalErrorMsg}
         />
 
         <ConfirmDeleteModal
