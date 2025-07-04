@@ -30,6 +30,7 @@ export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit,
     watch,
     formState: { errors },
     reset,
+    trigger,
   } = useForm<InspectionRequestInput>({
     resolver: zodResolver(inspectionRequestSchema),
   });
@@ -45,7 +46,10 @@ export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit,
     const loadData = async () => {
       setIsLoading(true);
       try {
-        const [vehicles, directorates] = await Promise.all([fetchMyVehiclePlates(), getDirectorates()]);
+        const [vehicles, directorates] = await Promise.all([
+          fetchMyVehiclePlates(),
+          getDirectorates()
+        ]);
         setVehicleOptions(vehicles);
         setDirectorateOptions(directorates);
       } catch (err) {
@@ -58,70 +62,58 @@ export default function InspectionRegistrationModal({ isOpen, onClose, onSubmit,
     loadData();
   }, [isOpen]);
 
-  const updateDateTime = useCallback(
-    (modifier: (current: Date) => Date) => {
-      const current = watch("requestedDate") ?? new Date();
-      setValue("requestedDate", modifier(current));
-    },
-    [watch, setValue]
-  );
+  const updateDateTime = useCallback((modifier: (current: Date) => Date) => {
+    const current = watch("requestedDate") ?? new Date();
+    const updated = modifier(current);
+    setValue("requestedDate", updated);
+    trigger("requestedDate");
+  }, [watch, setValue, trigger]);
 
-  const handleDateChange = useCallback(
-    (dates: Date[]) => {
-      const [selectedDate] = dates;
-      if (!selectedDate) return;
-      setValue("requestedDate", selectedDate);
+  const handleDateChange = useCallback((dates: Date[]) => {
+    const [selected] = dates;
+    if (!selected) return;
+    updateDateTime(prev =>
+      new Date(
+        selected.getFullYear(),
+        selected.getMonth(),
+        selected.getDate(),
+        prev.getHours(),
+        prev.getMinutes()
+      )
+    );
+  }, [updateDateTime]);
 
-      updateDateTime(
-        (prev) =>
-          new Date(
-            selectedDate.getFullYear(),
-            selectedDate.getMonth(),
-            selectedDate.getDate(),
-            prev.getHours(),
-            prev.getMinutes()
-          )
-      );
-    },
-    [updateDateTime, setValue]
-  );
-
-  const handleTimeChange = useCallback(
-    (timeStr: string) => {
-      const [hour, minute] = timeStr.split(":").map(Number);
-      if (!isNaN(hour) && !isNaN(minute)) {
-        updateDateTime((prev) => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), hour, minute));
-      }
-    },
-    [updateDateTime]
-  );
+  const handleTimeChange = useCallback((timeStr: string) => {
+    const [hour, minute] = timeStr.split(":").map(Number);
+    if (!isNaN(hour) && !isNaN(minute)) {
+      updateDateTime(prev => new Date(prev.getFullYear(), prev.getMonth(), prev.getDate(), hour, minute));
+    }
+  }, [updateDateTime]);
 
   const handleSubmitWithValidation = (data: InspectionRequestInput) => {
-    const selectedDate = new Date(data.requestedDate);
-    if (!data.requestedDate || isNaN(selectedDate.getTime())) {
-      setLocalError("Please select a valid date.");
+    const selected = data.requestedDate;
+    if (!selected || isNaN(new Date(selected).getTime())) {
+      setLocalError("Please select a valid date and time.");
       return;
     }
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    const isPast = selectedDate < today;
-    const isWeekend = [0, 6].includes(selectedDate.getDay());
-
-    if (isPast) {
-      setLocalError("You cannot select a past date.");
+    const now = new Date();
+    if (selected < now) {
+      setLocalError("Date and time cannot be in the past.");
       return;
     }
 
-    if (isWeekend) {
+    const day = selected.getDay();
+    if (day === 0 || day === 6) {
       setLocalError("Inspections cannot be scheduled on weekends.");
       return;
     }
 
+    const utcDate = new Date(selected.getTime() - selected.getTimezoneOffset() * 60000);
+    const payload: InspectionRequestInput = { ...data, requestedDate: utcDate };
+
     setLocalError(null);
-    onSubmit(data);
+    onSubmit(payload);
     reset();
   };
 

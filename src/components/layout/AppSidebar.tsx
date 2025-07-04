@@ -110,7 +110,7 @@ const AppSidebar = () => {
   }
 
   const renderMenuItems = (items: NavItem[]) => (
-    <ul className="flex flex-col gap-2"> {/* Reduced gap for better spacing */}
+    <ul className="flex flex-col gap-2">
       {items.map((item) => (
         <li key={item.name}>
           <Link

@@ -66,25 +66,32 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
                   {item.plateNumber}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {new Date(item.requestedDate).toLocaleDateString()}
+                  {new Date(item.requestedDate).toLocaleString(undefined, {
+                    year: "numeric",
+                    month: "numeric",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  })}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.directorateName}
                 </TableCell>
-               <TableCell className="px-5 py-4 text-sm">
-                <Badge
-                  size="sm"
-                  color={
-                    item.status === "Approved"
-                      ? "success"
-                      : item.status === "Rejected"
-                      ? "error"
-                      : "warning"
-                  }
-                >
-                  {item.status}
-                </Badge>
-              </TableCell>
+                <TableCell className="px-5 py-4 text-sm">
+                  <Badge
+                    size="sm"
+                    color={
+                      item.status === "Approved"
+                        ? "success"
+                        : item.status === "Rejected"
+                        ? "error"
+                        : "warning"
+                    }
+                  >
+                    {item.status}
+                  </Badge>
+                </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.comment || "-"}
                 </TableCell>
