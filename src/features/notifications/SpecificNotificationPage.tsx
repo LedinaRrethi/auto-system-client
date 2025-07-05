@@ -87,7 +87,12 @@ export default function SpecificNotificationPage() {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return {
-      date: date.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" }),
+      date: date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }),
       time: date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
     };
   };
@@ -146,11 +151,23 @@ export default function SpecificNotificationPage() {
                     <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
                       {notification.title || "Notification"}
                     </h1>
-                    <span
-                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${colors.badge}`}
-                    >
-                      {notification.type}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${colors.badge}`}
+                      >
+                        {notification.type}
+                      </span>
+                      <span
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
+                          notification.isSeen
+                            ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                            : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                        }`}
+                      >
+                        {notification.isSeen ? <Eye size={14} /> : <Mail size={14} />}
+                        {notification.isSeen ? "Read" : "Unread"}
+                      </span>
+                    </div>
                   </div>
                   <p className="text-gray-600 dark:text-gray-300 mb-3">{notification.message}</p>
                   <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
@@ -159,14 +176,6 @@ export default function SpecificNotificationPage() {
                     </span>
                     <span className="flex items-center gap-1">
                       <Clock size={16} /> {time}
-                    </span>
-                    <span
-                      className={`flex items-center gap-1 ${
-                        notification.isSeen ? "text-gray-500" : "text-blue-600 dark:text-blue-400"
-                      }`}
-                    >
-                      {notification.isSeen ? <Eye size={16} /> : <Mail size={16} />}
-                      {notification.isSeen ? "Read" : "Unread"}
                     </span>
                   </div>
                 </div>

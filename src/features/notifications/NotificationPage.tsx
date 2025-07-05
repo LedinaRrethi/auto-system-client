@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, CheckCircle, FileText, AlertTriangle } from "lucide-react";
+import { Bell, CheckCircle, FileText, AlertTriangle, Mail, Eye } from "lucide-react";
 import ComponentCard from "../../components/common/ComponentCard";
 import Switch from "../../components/form/switch/Switch";
 import {
@@ -135,14 +135,29 @@ export default function NotificationPage() {
                     </h3>
                     <span className="text-xs text-gray-500">{new Date(notification.createdOn).toLocaleString()}</span>
                   </div>
+
                   <p className="text-sm text-gray-600 dark:text-gray-300">{notification.message ?? ""}</p>
-                  <span
-                    className={`inline-block mt-2 text-xs px-2 py-1 rounded-full ${getNotificationColor(
-                      notification.type
-                    )}`}
-                  >
-                    {notification.type}
-                  </span>
+
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <span
+                      className={`inline-block text-xs px-2 py-1 rounded-full ${getNotificationColor(
+                        notification.type
+                      )}`}
+                    >
+                      {notification.type}
+                    </span>
+
+                    <span
+                      className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                        notification.isSeen
+                          ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                      }`}
+                    >
+                      {notification.isSeen ? <Eye size={14} /> : <Mail size={14} />}
+                      {notification.isSeen ? "Read" : "Unread"}
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
