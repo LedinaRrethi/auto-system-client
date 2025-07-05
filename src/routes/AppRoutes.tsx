@@ -14,11 +14,12 @@ import VehicleRequestApprovalPage from "../features/admin/view/VehicleRequestApp
 import NotFound from "../pages/OtherPage/NotFound";
 import UnauthorizedPage from "../pages/OtherPage/UnauthorizedPage";
 import Home from "../pages/Dashboard/Home";
+import NotificationPage from "../features/notifications/NotificationPage";
+import SpecificNotificationPage from "../features/notifications/SpecificNotificationPage";
 
 const AppRoutes = () => {
   return (
     <Routes>
-
       <Route path="/" element={<Navigate to="/signin" replace />} />
 
       <Route
@@ -40,23 +41,16 @@ const AppRoutes = () => {
       <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       <Route element={<AppLayout />}>
-        <Route
-          element={
-            <ProtectedRoute
-              allowedRoles={["Admin", "Police", "Specialist", "Individ"]}
-            />
-          }
-        >
+        <Route element={<ProtectedRoute allowedRoles={["Admin", "Police", "Specialist", "Individ"]} />}>
           <Route index element={<Home />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Individ"]} />}>
-          <Route 
-          path="/vehicle-registration" 
-          element={<VehicleRegistrationPage />} 
-          />
+          <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
           <Route path="/my-fines" element={<FinePage />} />
           <Route path="/my-inspections" element={<InspectionPage />} />
+          <Route path="/notifications" element={<NotificationPage />} />
+          <Route path="/notifications/:id" element={<SpecificNotificationPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Police"]} />}>
@@ -64,18 +58,12 @@ const AppRoutes = () => {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Specialist"]} />}>
-          <Route 
-          path="/inspection-approval" 
-          element={<InspectionApprovalPage />} 
-          />
+          <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
           <Route path="/user-approval" element={<UserApprovalPage />} />
-          <Route 
-          path="/vehicle-request-approval" 
-          element={<VehicleRequestApprovalPage />} 
-          />
+          <Route path="/vehicle-request-approval" element={<VehicleRequestApprovalPage />} />
         </Route>
       </Route>
 
