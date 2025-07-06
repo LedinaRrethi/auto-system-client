@@ -43,14 +43,14 @@ const AppRoutes = () => {
       <Route element={<AppLayout />}>
         <Route element={<ProtectedRoute allowedRoles={["Admin", "Police", "Specialist", "Individ"]} />}>
           <Route index element={<Home />} />
+          <Route path="/notifications" element={<NotificationPage />} />
+          <Route path="/notifications/:id" element={<SpecificNotificationPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Individ"]} />}>
           <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
           <Route path="/my-fines" element={<FinePage />} />
           <Route path="/my-inspections" element={<InspectionPage />} />
-          <Route path="/notifications" element={<NotificationPage />} />
-          <Route path="/notifications/:id" element={<SpecificNotificationPage />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={["Police"]} />}>
