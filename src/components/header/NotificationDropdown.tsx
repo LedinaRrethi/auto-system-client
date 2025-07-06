@@ -134,9 +134,10 @@ export default function NotificationDropdown() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
                       {notification.message || "No message"}
                     </p>
+
                     <div className="flex items-center justify-between mt-1 text-[10px] text-gray-400 dark:text-gray-500">
                       <span>{getTimeAgo(notification.createdOn)}</span>
-                      {!notification.isSeen && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>}
+                      {/* {!notification.isSeen && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>} */}
                     </div>
                   </div>
                 </DropdownItem>
