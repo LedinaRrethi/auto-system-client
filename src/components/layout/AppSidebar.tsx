@@ -1,13 +1,6 @@
 import { useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  ClipboardCheck,
-  Car,
-  Shield,
-  UserCheck,
-  ReceiptText,
-  FileSignature,
-} from "lucide-react";
+import { ClipboardCheck, Car, Shield, UserCheck, ReceiptText, FileSignature, LayoutDashboard } from "lucide-react";
 import { useSidebar } from "../../context/SidebarContext";
 import { useAuth } from "../../hooks/useAuth";
 import { HorizontaLDots } from "../../assets/icons";
@@ -15,20 +8,29 @@ import { HorizontaLDots } from "../../assets/icons";
 type NavItem = {
   name: string;
   icon: React.ReactNode;
-  path: string; 
+  path: string;
 };
 
 const ROLES = {
   ADMIN: "Admin",
-  POLICE: "Police", 
+  POLICE: "Police",
   SPECIALIST: "Specialist",
-  INDIVID: "Individ", 
+  INDIVID: "Individ",
 } as const;
 
 const getNavItemsByRole = (role: string | undefined): NavItem[] => {
+  const commonItems: NavItem[] = [
+    {
+      icon: <LayoutDashboard size={18} />,
+      name: "Dashboard",
+      path: "/",
+    },
+  ];
+
   switch (role) {
     case ROLES.ADMIN:
       return [
+        ...commonItems,
         {
           icon: <UserCheck size={18} />,
           name: "User Approval",
@@ -42,14 +44,16 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
       ];
     case ROLES.POLICE:
       return [
+        ...commonItems,
         {
-          icon: <FileSignature  size={18} />,
+          icon: <FileSignature size={18} />,
           name: "Fine Registration",
           path: "/fine-registration",
         },
       ];
     case ROLES.SPECIALIST:
       return [
+        ...commonItems,
         {
           icon: <Shield size={18} />,
           name: "Inspection Approval",
@@ -58,13 +62,14 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
       ];
     case ROLES.INDIVID:
       return [
+        ...commonItems,
         {
           icon: <Car size={18} />,
           name: "My Vehicle Requests",
           path: "/vehicle-registration",
         },
         {
-          icon: <ReceiptText  size={18} />,
+          icon: <ReceiptText size={18} />,
           name: "My Fines",
           path: "/my-fines",
         },
@@ -82,15 +87,12 @@ const getNavItemsByRole = (role: string | undefined): NavItem[] => {
 const AppSidebar = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
-  const { user, loading } = useAuth(); 
+  const { user, loading } = useAuth();
 
   const role = user?.role;
   const navItems = getNavItemsByRole(role);
-  
-  const isActive = useCallback(
-    (path: string) => location.pathname === path,
-    [location.pathname]
-  );
+
+  const isActive = useCallback((path: string) => location.pathname === path, [location.pathname]);
 
   if (loading) {
     return (
@@ -99,7 +101,6 @@ const AppSidebar = () => {
       </aside>
     );
   }
-
 
   if (!role) {
     return (
@@ -122,13 +123,9 @@ const AppSidebar = () => {
                   : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
               }`}
           >
-            <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">
-              {item.icon}
-            </span>
+            <span className="w-5 h-5 flex items-center justify-center flex-shrink-0">{item.icon}</span>
             {(isExpanded || isHovered || isMobileOpen) && (
-              <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                {item.name}
-              </span>
+              <span className="font-medium text-sm whitespace-nowrap overflow-hidden text-ellipsis">{item.name}</span>
             )}
           </Link>
         </li>
@@ -170,20 +167,22 @@ const AppSidebar = () => {
         </Link>
       </div>
 
-      {/* Navigation Section */}
+      {/* Navigation Items */}
       <div className="flex flex-col flex-1 overflow-y-auto duration-300 ease-linear no-scrollbar">
         <nav className="mb-6">
           <div className="flex flex-col gap-4">
             <div>
-              <h2 className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 font-semibold ${!isExpanded && !isHovered ? "lg:justify-center" : "justify-start"}`}>
+              <h2
+                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 font-semibold ${
+                  !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
+                }`}
+              >
                 {isExpanded || isHovered || isMobileOpen ? "Menu" : <HorizontaLDots className="size-6" />}
               </h2>
               {navItems.length > 0 ? (
                 renderMenuItems(navItems)
               ) : (
-                <div className="text-gray-400 text-sm p-3">
-                  No menu items available
-                </div>
+                <div className="text-gray-400 text-sm p-3">No menu items available</div>
               )}
             </div>
           </div>
