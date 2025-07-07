@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import { Bell, CheckCircle, FileText, AlertTriangle, Mail, Eye } from "lucide-react";
-import ComponentCard from "../../components/common/ComponentCard";
-import Switch from "../../components/form/switch/Switch";
-import {
-  getAllNotifications,
-  getUnseenNotifications,
-  markAllAsSeen,
-  markOneAsSeen,
-} from "../../services/notificationService";
 import { useNavigate } from "react-router-dom";
+import ComponentCard from "../../components/common/ComponentCard";
+import PageMeta from "../../components/common/PageMeta";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import Alert from "../../components/ui/alert/Alert";
+import Button from "../../components/ui/button/Button";
+import Switch from "../../components/form/switch/Switch";
+import { getAllNotifications, getUnseenNotifications, markAllAsSeen, markOneAsSeen } from "../../services/notificationService";
 import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
 
 export default function NotificationPage() {
   const [notifications, setNotifications] = useState<Notificationn[]>([]);
   const [showOnlyUnread, setShowOnlyUnread] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
   const navigate = useNavigate();
 
   const fetchData = async () => {
@@ -22,8 +24,8 @@ export default function NotificationPage() {
     try {
       const data = showOnlyUnread ? await getUnseenNotifications() : await getAllNotifications();
       setNotifications(data);
-    } catch (error) {
-      console.error("Error fetching notifications:", error);
+    } catch {
+      setErrorMsg("Failed to load notifications.");
     } finally {
       setLoading(false);
     }
@@ -33,12 +35,21 @@ export default function NotificationPage() {
     fetchData();
   }, [showOnlyUnread]);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSuccessMsg(null);
+      setErrorMsg(null);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, [successMsg, errorMsg]);
+
   const handleMarkAllAsRead = async () => {
     try {
       await markAllAsSeen();
+      setSuccessMsg("All notifications marked as read.");
       fetchData();
-    } catch (error) {
-      console.error("Error marking all as read:", error);
+    } catch {
+      setErrorMsg("Failed to mark all as read.");
     }
   };
 
@@ -48,20 +59,20 @@ export default function NotificationPage() {
         await markOneAsSeen(notification.idpK_Notification);
       }
       navigate(`/notifications/${notification.idpK_Notification}`);
-    } catch (error) {
-      console.error("Error handling notification click:", error);
+    } catch {
+      setErrorMsg("Failed to update notification status.");
     }
   };
 
   const getNotificationIcon = (type: NotificationnType) => {
     switch (type) {
       case NotificationnType.FineIssued:
-        return <AlertTriangle size={20} className="text-red-500" />;
+        return <AlertTriangle size={18} className="text-red-500" />;
       case NotificationnType.InspectionResult:
-        return <CheckCircle size={20} className="text-green-500" />;
+        return <CheckCircle size={18} className="text-green-500" />;
       case NotificationnType.General:
       default:
-        return <FileText size={20} className="text-blue-500" />;
+        return <FileText size={18} className="text-blue-500" />;
     }
   };
 
@@ -78,27 +89,34 @@ export default function NotificationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
-      <div className="max-w-4xl mx-auto">
+    <>
+      <PageMeta title="Notifications | AutoSystem" description="Manage and view your notifications." />
+      <PageBreadcrumb pageTitle="Notifications" />
+
+      <div className="space-y-6">
+        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+
         <ComponentCard
           title="Notifications"
-          desc="View and manage all your system notifications"
+          desc="View and manage all your system notifications."
           actionButton={{
             text: "Mark All as Read",
             onClick: handleMarkAllAsRead,
           }}
         >
-          <div className="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-            <div className="flex items-center gap-2">
+          <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative w-full sm:w-80">
               <span className="text-sm text-gray-600 dark:text-gray-400">
                 {notifications.length} notification{notifications.length !== 1 ? "s" : ""}
               </span>
               {!showOnlyUnread && (
-                <span className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-1 rounded-full">
+                <span className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-1 rounded-full ml-2">
                   {notifications.filter((n) => !n.isSeen).length} unread
                 </span>
               )}
             </div>
+
             <Switch
               label="Show only unread"
               defaultChecked={false}
@@ -115,8 +133,13 @@ export default function NotificationPage() {
                 {showOnlyUnread ? "No unread notifications" : "No notifications found"}
               </p>
               <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                {showOnlyUnread ? "All caught up!" : "You'll see new notifications here when they arrive"}
+                {showOnlyUnread ? "You're all caught up!" : "New notifications will appear here."}
               </p>
+              <div className="mt-4">
+                <Button onClick={() => navigate("/")} className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600">
+                  Back to Home
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -133,27 +156,23 @@ export default function NotificationPage() {
                       {getNotificationIcon(notification.type)}
                       {notification.title || "Notification"}
                     </h3>
-                    <span className="text-xs text-gray-500">{new Date(notification.createdOn).toLocaleString()}</span>
+                    <span className="text-xs text-gray-500">
+                      {new Date(notification.createdOn).toLocaleString()}
+                    </span>
                   </div>
 
                   <p className="text-sm text-gray-600 dark:text-gray-300">{notification.message ?? ""}</p>
 
                   <div className="flex flex-wrap items-center gap-2 mt-2">
-                    <span
-                      className={`inline-block text-xs px-2 py-1 rounded-full ${getNotificationColor(
-                        notification.type
-                      )}`}
-                    >
+                    <span className={`inline-block text-xs px-2 py-1 rounded-full ${getNotificationColor(notification.type)}`}>
                       {notification.type}
                     </span>
 
-                    <span
-                      className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-                        notification.isSeen
-                          ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                      }`}
-                    >
+                    <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                      notification.isSeen
+                        ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                        : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                    }`}>
                       {notification.isSeen ? <Eye size={14} /> : <Mail size={14} />}
                       {notification.isSeen ? "Read" : "Unread"}
                     </span>
@@ -164,6 +183,6 @@ export default function NotificationPage() {
           )}
         </ComponentCard>
       </div>
-    </div>
+    </>
   );
 }
