@@ -14,6 +14,8 @@ const ProtectedRoute = ({ allowedRoles }: Props) => {
     const decoded = jwtDecode<{ [key: string]: string }>(token);
     const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
+    sessionStorage.setItem("userRole", userRole);
+
     if (!allowedRoles.includes(userRole)) {
       return <Navigate to="/unauthorized" replace />;
     }
