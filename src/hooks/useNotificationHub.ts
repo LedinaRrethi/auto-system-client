@@ -8,7 +8,7 @@ export const useNotificationHub = (token: string | null, onNotification: (data: 
     if (!token) return; 
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("https://localhost:7134/Notify", {
+      .withUrl("http://localhost:5169/Notify", {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
