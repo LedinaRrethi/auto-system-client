@@ -91,11 +91,11 @@ export default function DashboardPage() {
 
     // Admin Cards
     if (role === "Admin" && adminData) {
-      const totalUsers = adminData.totalUsers.Approved + adminData.totalUsers.Pending + adminData.totalUsers.Rejected;
+      const totalUsers = (adminData.totalUsers.Approved ?? 0) + (adminData.totalUsers.Pending ?? 0 ) + (adminData.totalUsers.Rejected ?? 0);
       const totalVehicles =
-        adminData.totalVehicleRequests.Approved +
-        adminData.totalVehicleRequests.Pending +
-        adminData.totalVehicleRequests.Rejected;
+        (adminData.totalVehicleRequests.Approved ?? 0) +
+        (adminData.totalVehicleRequests.Pending ?? 0) +
+        (adminData.totalVehicleRequests.Rejected ?? 0);
 
       return [
         <MetricCard
@@ -145,7 +145,7 @@ export default function DashboardPage() {
     // Specialist Cards
     if (role === "Specialist" && specialistData) {
       const totalInspections =
-        specialistData.inspections.Approved + specialistData.inspections.Pending + specialistData.inspections.Rejected;
+        (specialistData.inspections.Approved ?? 0) + (specialistData.inspections.Pending ?? 0 ) + (specialistData.inspections.Rejected ?? 0);
 
       return [
         <MetricCard
@@ -168,13 +168,13 @@ export default function DashboardPage() {
     // Individual Cards
     if (role === "Individ" && userData) {
       const totalVehicles =
-        userData.myVehicleRequestsCount.Approved +
-        userData.myVehicleRequestsCount.Pending +
-        userData.myVehicleRequestsCount.Rejected;
+        (userData.myVehicleRequestsCount.Approved ?? 0) +
+        (userData.myVehicleRequestsCount.Pending ?? 0) +
+        (userData.myVehicleRequestsCount.Rejected ?? 0);
       const totalInspections =
-        userData.myInspectionRequestCount.Approved +
-        userData.myInspectionRequestCount.Pending +
-        userData.myInspectionRequestCount.Rejected;
+        (userData.myInspectionRequestCount.Approved ?? 0) +
+        (userData.myInspectionRequestCount.Pending ?? 0) +
+        (userData.myInspectionRequestCount.Rejected ?? 0);
 
       return [
         <MetricCard
@@ -189,14 +189,14 @@ export default function DashboardPage() {
           icon={Car}
           title="My Vehicle Requests"
           value={totalVehicles}
-          description={`Approved: ${userData.myVehicleRequestsCount.Approved}, Pending: ${userData.myVehicleRequestsCount.Pending}, Rejected: ${userData.myVehicleRequestsCount.Rejected}`}
+          description={`Approved: ${userData.myVehicleRequestsCount.Approved ?? 0}, Pending: ${userData.myVehicleRequestsCount.Pending ?? 0}, Rejected: ${userData.myVehicleRequestsCount.Rejected ?? 0}`}
         />,
         <MetricCard
           key="user-inspections"
           icon={FileText}
           title="My Inspections"
           value={totalInspections}
-          description={`Approved: ${userData.myInspectionRequestCount.Approved}, Pending: ${userData.myInspectionRequestCount.Pending}, Rejected: ${userData.myInspectionRequestCount.Rejected}`}
+          description={`Approved: ${userData.myInspectionRequestCount.Approved ?? 0}, Pending: ${userData.myInspectionRequestCount.Pending ?? 0}, Rejected: ${userData.myInspectionRequestCount.Rejected ?? 0}`}
         />,
         <MetricCard
           key="user-notif"
