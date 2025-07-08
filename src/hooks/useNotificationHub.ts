@@ -15,20 +15,17 @@ export const useNotificationHub = (token: string | null, onNotification: (data: 
       .build();
 
     connection.on("SendNotification", (notification: Notification) => {
-      console.log(" Notification received:", notification);
       onNotification(notification);
     });
 
     connection.start()
       .then(() => {
-        console.log("Connected to NotificationHub");
-
+      
         const decoded = jwtDecode<{ [key: string]: string }>(token);
         const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
 
         if (userId) {
           connection.invoke("GetConnectionId", userId);
-          console.log("GetConnectionId invoked with:", userId);
         } else {
           console.warn("UserId not found in token.");
         }
