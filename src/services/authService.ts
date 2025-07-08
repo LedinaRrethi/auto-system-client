@@ -12,7 +12,7 @@ export function getToken(): string | null {
 
 export function removeToken() {
   sessionStorage.removeItem("authToken");
-  sessionStorage.clear();
+  // sessionStorage.clear();
 }
 
 export async function registerUser(user: RegisterDTO) {
