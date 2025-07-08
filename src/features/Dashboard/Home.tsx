@@ -98,6 +98,7 @@ export default function DashboardPage() {
         (adminData.totalVehicleRequests.Rejected ?? 0);
 
       return [
+
         <MetricCard
           key="admin-users"
           icon={Users}
@@ -165,7 +166,7 @@ export default function DashboardPage() {
       ];
     }
 
-    // Individual Cards
+    // Individ Cards
     if (role === "Individ" && userData) {
       const totalVehicles =
         (userData.myVehicleRequestsCount.Approved ?? 0) +

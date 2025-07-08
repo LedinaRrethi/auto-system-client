@@ -13,7 +13,7 @@ import UserApprovalPage from "../features/admin/view/UserApprovalPage";
 import VehicleRequestApprovalPage from "../features/admin/view/VehicleRequestApprovalPage";
 import NotFound from "../pages/OtherPage/NotFound";
 import UnauthorizedPage from "../pages/OtherPage/UnauthorizedPage";
-import Home from "../pages/Dashboard/Home";
+import Home from "../features/Dashboard/Home";
 import NotificationPage from "../features/notifications/NotificationPage";
 import SpecificNotificationPage from "../features/notifications/SpecificNotificationPage";
 
