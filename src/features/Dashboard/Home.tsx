@@ -152,10 +152,10 @@ export default function DashboardPage() {
       {/* Header Section */}
       <div className="mb-8 sm:mb-12">
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 sm:mb-4 text-gray-800 dark:text-white">
+          <h1 className="text-3xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4 text-gray-800 dark:text-white">
             Dashboard
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300">
+          <p className="text-base sm:text-md text-gray-600 dark:text-gray-300">
             Welcome back! Here's your overview.
           </p>
         </div>
