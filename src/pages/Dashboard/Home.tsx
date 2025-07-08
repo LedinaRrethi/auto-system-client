@@ -103,14 +103,14 @@ export default function DashboardPage() {
           icon={Users}
           title="Total Users"
           value={totalUsers}
-          description={`Approved: ${adminData.totalUsers.Approved}, Pending: ${adminData.totalUsers.Pending}, Rejected: ${adminData.totalUsers.Rejected}`}
+          description={`Approved: ${adminData.totalUsers.Approved ?? 0}, Pending: ${adminData.totalUsers.Pending ?? 0}, Rejected: ${adminData.totalUsers.Rejected ?? 0}`}
         />,
         <MetricCard
           key="admin-vehicles"
           icon={Car}
           title="Vehicle Requests"
           value={totalVehicles}
-          description={`Approved: ${adminData.totalVehicleRequests.Approved}, Pending: ${adminData.totalVehicleRequests.Pending}, Rejected: ${adminData.totalVehicleRequests.Rejected}`}
+          description={`Approved: ${adminData.totalVehicleRequests.Approved ?? 0}, Pending: ${adminData.totalVehicleRequests.Pending ?? 0}, Rejected: ${adminData.totalVehicleRequests.Rejected ?? 0}`}
         />,
         <MetricCard
           key="admin-notif"
@@ -129,14 +129,14 @@ export default function DashboardPage() {
           key="police-fines"
           icon={Shield}
           title="Total Fines"
-          value={policeData.fines}
+          value={policeData.fines ?? 0}
           description="All issued fines"
         />,
         <MetricCard
           key="police-notif"
           icon={Bell}
           title="Notifications"
-          value={policeData.notifications}
+          value={policeData.notifications ?? 0}
           description="Unread notifications"
         />,
       ];
@@ -153,13 +153,13 @@ export default function DashboardPage() {
           icon={CheckCircle}
           title="Total Inspections"
           value={totalInspections}
-          description={`Approved: ${specialistData.inspections.Approved}, Pending: ${specialistData.inspections.Pending}, Rejected: ${specialistData.inspections.Rejected}`}
+          description={`Approved: ${specialistData.inspections.Approved ?? 0}, Pending: ${specialistData.inspections.Pending ?? 0}, Rejected: ${specialistData.inspections.Rejected ?? 0}`}
         />,
         <MetricCard
           key="spec-notif"
           icon={Bell}
           title="Notifications"
-          value={specialistData.notifications}
+          value={specialistData.notifications ?? 0}
           description="Unread notifications"
         />,
       ];
@@ -181,7 +181,7 @@ export default function DashboardPage() {
           key="user-fines"
           icon={AlertTriangle}
           title="My Fines"
-          value={userData.myFinesCount}
+          value={userData.myFinesCount ?? 0}
           description="Total fines issued"
         />,
         <MetricCard
