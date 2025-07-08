@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,12 +18,18 @@ export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
 
-  //const navigate = useNavigate();
-
-  const { search } = useLocation();
+   const { search } = useLocation();
   const params = new URLSearchParams(search);
   const registered = params.get("registered");
 
+
+  const [showRegisteredAlert, setShowRegisteredAlert] = useState(
+    registered === "true"
+  );
+
+  //const navigate = useNavigate();
+
+ 
   const {
     register,
     handleSubmit,
@@ -56,6 +62,16 @@ export default function SignInForm() {
     if (loginError) setLoginError("");
   };
 
+  useEffect(() => {
+    if (showRegisteredAlert) {
+      const timer = setTimeout(() => {
+        setShowRegisteredAlert(false);
+      }, 5000); // 5 sekonda
+
+      return () => clearTimeout(timer);
+    }
+  }, [showRegisteredAlert]);
+
   return (
     <>
       <div className="flex flex-col flex-1">
@@ -69,7 +85,7 @@ export default function SignInForm() {
             </p>
           </div>
 
-          {registered === "true" && (
+          {showRegisteredAlert && (
             <Alert
               variant="info"
               title="Registration Successful"
