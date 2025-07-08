@@ -16,9 +16,10 @@ interface Props {
   onSubmit: (data: VehicleInput, mode: "add" | "edit") => void;
   initialValues?: VehicleInput;
   mode: "add" | "edit";
+  onClearError?: () => void;
 }
 
-export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClose, onSubmit, initialValues, mode }: Props) {
+export default function VehicleRegistrationModal({ isOpen, errorMessage,  onClose, onSubmit, initialValues, mode , onClearError}: Props) {
 
   const {
   register,
@@ -62,6 +63,15 @@ const isDisabled = mode === "edit" || isSubmitting;
       console.error("Modal - Submit error:", error);
     }
   };
+
+  useEffect(() => {
+  if (errorMessage && onClearError) {
+    const timeout = setTimeout(() => {
+      onClearError();
+    }, 3000);
+    return () => clearTimeout(timeout);
+  }
+}, [errorMessage, onClearError]);
 
   const handleClose = () => {
     reset();

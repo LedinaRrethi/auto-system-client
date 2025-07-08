@@ -174,6 +174,11 @@ const handleEditClick = async (vehicleId: string) => {
     return () => clearTimeout(timeout);
   }, [successMsg, infoMsg, errorMsg]);
 
+  const clearModalError = () => {
+  setModalErrorMsg(null);
+};
+
+
   return (
     <>
       <PageMeta
@@ -242,6 +247,7 @@ const handleEditClick = async (vehicleId: string) => {
           initialValues={editData ?? undefined}
           mode={mode}
           errorMessage={modalErrorMsg}
+          onClearError={clearModalError}
         />
 
 
