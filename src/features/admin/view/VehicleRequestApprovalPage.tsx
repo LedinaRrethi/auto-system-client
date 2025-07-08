@@ -10,6 +10,7 @@ import { VehicleRequestList } from "../../../types/Vehicle/VehicleRequestList";
 import VehicleRequestApprovalTable from "../components/VehicleRequestApprovalTable";
 import VehicleRequestApprovalModal from "../components/VehicleRequestApprovalModal";
 import { VehicleStatus } from "../../../types/enums";
+
 export default function VehicleRequestApprovalPage() {
   const [vehicles, setVehicles] = useState<VehicleRequestList[]>([]);
   const [page, setPage] = useState(1);
@@ -84,15 +85,13 @@ export default function VehicleRequestApprovalPage() {
         adminComment: comment,
       });
 
-      setVehicles((prev) =>
-        prev.map((v) => (v.idpK_ChangeRequest === selectedVehicle.idpK_ChangeRequest ? { ...v, status: newStatus } : v))
-      );
-
       setAlert({
         variant: "success",
         title: "Success",
         message: `Vehicle request ${modalAction}ed successfully.`,
       });
+      
+      await loadRequests();
     } catch {
       setAlert({
         variant: "error",
