@@ -15,7 +15,8 @@ export const fineSchema = z
 
     fineAmount: z
       .number({ invalid_type_error: "Fine amount must be a number" })
-      .min(100.01, "Fine amount must be greater than 100"),
+      .min(100.01, "Fine amount must be greater than 100")
+      .max(1000000, "Fine amount cannot exceed 100 000 000"),
 
     fineReason: z
       .string()
