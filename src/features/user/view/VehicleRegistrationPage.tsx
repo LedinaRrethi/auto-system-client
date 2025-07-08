@@ -107,8 +107,19 @@ const handleEditClick = async (vehicleId: string) => {
       await deleteVehicle(vehicleToDelete.idpK_Vehicle);
       setSuccessMsg("Delete request sent to administrator for approval.");
       await loadVehicles();
-    } catch {
-      setErrorMsg("Failed to submit delete request.");
+    } catch (error: unknown) {
+      const err = error as {
+      response?: { data?: { error?: string; message?: string } };
+      message?: string;
+    };
+
+    const message =
+      err?.response?.data?.error ||
+      err?.response?.data?.message ||
+      err?.message ||
+      "Failed to submit delete request.";
+
+    setErrorMsg(message);
     }
   };
 
