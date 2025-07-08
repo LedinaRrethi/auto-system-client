@@ -25,29 +25,53 @@ const MetricCard = ({
   description?: string;
 }) => (
   <div className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3">
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 h-full hover:shadow-lg">
-      <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-        <Icon className="text-gray-800 size-6 dark:text-white/90" />
-      </div>
-      <div className="mt-5">
-        <span className="text-sm text-gray-500 dark:text-gray-400">{title}</span>
-        {description && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{description}</p>}
-        <div className="mt-3">
-          <h4 className="font-bold text-gray-800 text-2xl dark:text-white/90">
-            {typeof value === "number" ? value.toLocaleString() : value}
-          </h4>
+    <div className="group relative overflow-hidden rounded-3xl border border-gray-200/50 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-1 dark:border-gray-800/50 dark:bg-gradient-to-br dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-sm">
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 to-purple-50/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 dark:from-blue-900/10 dark:to-purple-900/10"></div>
+      
+      {/* Content */}
+      <div className="relative z-10">
+        <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg group-hover:scale-110 transition-transform duration-300">
+          <Icon className="text-white size-8" />
+        </div>
+        
+        <div className="mt-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+            {title}
+          </h3>
+          
+          {description && (
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 leading-relaxed">
+              {description}
+            </p>
+          )}
+          
+          <div className="mt-4">
+            <div className="flex items-end gap-2">
+              <h4 className="font-bold text-gray-900 text-4xl dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                {typeof value === "number" ? value.toLocaleString() : value}
+              </h4>
+              <div className="w-2 h-2 bg-green-500 rounded-full mb-3 opacity-60 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </div>
+          </div>
         </div>
       </div>
+      
+      {/* Subtle border glow on hover */}
+      <div className="absolute inset-0 rounded-3xl border-2 border-transparent bg-gradient-to-r from-blue-500/0 via-purple-500/0 to-blue-500/0 group-hover:from-blue-500/20 group-hover:via-purple-500/20 group-hover:to-blue-500/20 transition-all duration-300 -z-10"></div>
     </div>
   </div>
 );
 
 const LoadingCard = () => (
   <div className="col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3">
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6 h-full animate-pulse">
-      <div className="w-12 h-12 bg-gray-200 rounded-xl dark:bg-gray-700 mb-4"></div>
-      <div className="w-24 h-4 bg-gray-200 rounded dark:bg-gray-700 mb-2"></div>
-      <div className="w-20 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+    <div className="rounded-3xl border border-gray-200/50 bg-white p-8 shadow-sm dark:border-gray-800/50 dark:bg-gradient-to-br dark:from-gray-900/90 dark:to-gray-800/90 backdrop-blur-sm animate-pulse">
+      <div className="w-16 h-16 bg-gradient-to-br from-gray-200 to-gray-300 dark:from-gray-700 dark:to-gray-600 rounded-2xl mb-6"></div>
+      <div className="space-y-3">
+        <div className="w-32 h-5 bg-gray-200 rounded-lg dark:bg-gray-700"></div>
+        <div className="w-24 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+        <div className="w-20 h-4 bg-gray-200 rounded dark:bg-gray-700"></div>
+      </div>
     </div>
   </div>
 );
@@ -98,7 +122,6 @@ export default function DashboardPage() {
         (adminData.totalVehicleRequests.Rejected ?? 0);
 
       return [
-
         <MetricCard
           key="admin-users"
           icon={Users}
@@ -214,18 +237,31 @@ export default function DashboardPage() {
 
   if (error) {
     return (
-      <div className="flex justify-center items-center h-screen text-center text-red-500">
-        <XCircle className="w-10 h-10 mr-2" />
-        <span>{error}</span>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex justify-center items-center">
+        <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-3xl shadow-2xl border border-red-200 dark:border-red-800">
+          <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Error</h2>
+          <p className="text-gray-600 dark:text-gray-300">{error}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Dashboard</h1>
-        <div className="grid grid-cols-12 gap-4 md:gap-6">{renderCards()}</div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50/30 to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      <div className="max-w-7xl mx-auto p-6 sm:p-8 lg:p-12">
+        <div className="mb-12">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 bg-clip-text text-transparent dark:from-white dark:via-blue-200 dark:to-purple-200 mb-4">
+            Dashboard
+          </h1>
+          <p className="text-xl text-gray-600 dark:text-gray-300">
+            Welcome back! Here's your overview at a glance.
+          </p>
+        </div>
+        
+        <div className="grid grid-cols-12 gap-6 md:gap-8">
+          {renderCards()}
+        </div>
       </div>
     </div>
   );
