@@ -2,8 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, CheckCircle, AlertTriangle, X } from "lucide-react";
 
-import { getUnseenNotifications, markOneAsSeen, countUnseenNotifications } from "../../services/notificationService";
-import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
+import {
+  getUnseenNotifications,
+  markOneAsSeen,
+  countUnseenNotifications,
+} from "../../services/notificationService";
+import {
+  Notificationn,
+  NotificationnType,
+} from "../../types/Notification/Notificationn";
 
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -32,8 +39,8 @@ export default function NotificationDropdown() {
     }
   };
 
-   useNotificationHub(token, () => {
-    fetchNotifications();  
+  useNotificationHub(token, () => {
+    fetchNotifications();
   });
 
   const handleNotificationClick = async (notification: Notificationn) => {
@@ -41,10 +48,13 @@ export default function NotificationDropdown() {
       if (!notification.isSeen) {
         await markOneAsSeen(notification.idpK_Notification);
         setNotifications((prev) =>
-          prev.map((n) => (n.idpK_Notification === notification.idpK_Notification ? { ...n, isSeen: true } : n))
+          prev.filter(
+            (n) => n.idpK_Notification !== notification.idpK_Notification
+          )
         );
         setUnreadCount((prev) => Math.max(prev - 1, 0));
       }
+
       setIsOpen(false);
       navigate(`/notifications/${notification.idpK_Notification}`);
     } catch (error) {
@@ -120,17 +130,23 @@ export default function NotificationDropdown() {
 
         <ul className="flex flex-col overflow-y-auto max-h-80 custom-scrollbar">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">No new notifications</div>
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+              No new notifications
+            </div>
           ) : (
             notifications.map((notification) => {
-              const { icon: Icon, color } = getNotificationIcon(notification.type);
+              const { icon: Icon, color } = getNotificationIcon(
+                notification.type
+              );
               return (
                 <DropdownItem
                   key={notification.idpK_Notification}
                   onItemClick={() => handleNotificationClick(notification)}
                   className="flex gap-3 items-start rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <span className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}>
+                  <span
+                    className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}
+                  >
                     <Icon size={14} className="text-white" />
                   </span>
 
