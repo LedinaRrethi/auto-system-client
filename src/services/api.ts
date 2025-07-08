@@ -28,7 +28,7 @@ if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest
     // if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        const res = await api.post(`/refresh-token`, {}, { withCredentials: true });
+        const res = await api.post(`/Auth/refresh-token`, {}, { withCredentials: true });
         const newToken = res.data.token;
         saveToken(newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;

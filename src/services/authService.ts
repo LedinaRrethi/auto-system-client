@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { RegisterDTO } from "../types/RegisterDTO";
 import api from "./api";
+import { jwtDecode } from "jwt-decode";
 
 export function saveToken(token: string) {
   sessionStorage.setItem("authToken", token);
@@ -24,6 +25,11 @@ export async function login(email: string, password: string) {
   try {
     const response = await api.post("/Auth/login", { email, password });
     saveToken(response.data.token);
+
+    const decoded = jwtDecode<{ [key: string]: string }>(response.data.token);
+    const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    
+    sessionStorage.setItem("userRole", userRole);
     return response.data;
   } catch (error: unknown) {
     let message = "Login failed. Please try again.";

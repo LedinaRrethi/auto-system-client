@@ -58,7 +58,7 @@ export function useAuth() {
 
   const silentRefresh = async () => {
     try {
-      const response = await api.post("/refresh-token", {}, { withCredentials: true });
+      const response = await api.post("/Auth/refresh-token", {}, { withCredentials: true });
       const newToken = response.data.token;
       saveToken(newToken);
       setToken(newToken);

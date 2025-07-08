@@ -1,4 +1,4 @@
-import { jwtDecode } from "jwt-decode";
+//import { jwtDecode } from "jwt-decode";
 import { Navigate, Outlet } from "react-router-dom";
 
 interface Props {
@@ -11,12 +11,14 @@ const ProtectedRoute = ({ allowedRoles }: Props) => {
   if (!token) return <Navigate to="/signin" replace />;
 
   try {
-    const decoded = jwtDecode<{ [key: string]: string }>(token);
-    const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+    // const decoded = jwtDecode<{ [key: string]: string }>(token);
+    // const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-    sessionStorage.setItem("userRole", userRole);
+    const userRole= sessionStorage.getItem("userRole");
 
-    if (!allowedRoles.includes(userRole)) {
+   // sessionStorage.setItem("userRole", userRole);
+
+    if (!allowedRoles.includes(userRole as string)) {
       return <Navigate to="/unauthorized" replace />;
     }
 
