@@ -2,7 +2,10 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SignInFormData, signInSchema } from "../../../utils/validations/signInSchema";
+import {
+  SignInFormData,
+  signInSchema,
+} from "../../../utils/validations/signInSchema";
 import Input from "../../../components/form/input/InputField";
 import Label from "../../../components/form/Label";
 import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
@@ -61,7 +64,9 @@ export default function SignInForm() {
             <h1 className="mb-2 font-semibold text-gray-800 text-title-sm dark:text-white/90 sm:text-title-md">
               Sign In
             </h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">Enter your email and password to sign in!</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Enter your email and password to sign in!
+            </p>
           </div>
 
           {registered === "true" && (
@@ -79,8 +84,17 @@ export default function SignInForm() {
                 <Label>
                   Email <span className="text-error-500">*</span>
                 </Label>
-                <Input type="email" placeholder="info@gmail.com" {...register("email")} onChange={handleFieldChange} />
-                {errors.email && <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>}
+                <Input
+                  type="email"
+                  placeholder="info@gmail.com"
+                  {...register("email")}
+                  onChange={handleFieldChange}
+                />
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.email.message}
+                  </p>
+                )}
               </div>
 
               {/* Password */}
@@ -93,7 +107,10 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     {...register("password")}
-                    onChange={handleFieldChange}
+                    onChange={(e) => {
+                      register("password").onChange(e);
+                      handleFieldChange();
+                    }}
                   />
                   <span
                     onClick={() => setShowPassword(!showPassword)}
@@ -106,10 +123,20 @@ export default function SignInForm() {
                     )}
                   </span>
                 </div>
-                {errors.password && <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>}
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-500">
+                    {errors.password.message}
+                  </p>
+                )}
               </div>
 
-              {loginError && <Alert variant="error" title="Login Failed" message={loginError} />}
+              {loginError && (
+                <Alert
+                  variant="error"
+                  title="Login Failed"
+                  message={loginError}
+                />
+              )}
 
               {/* Remember Me + Forgot */}
               {/* <div className="flex items-center justify-between">
@@ -123,7 +150,12 @@ export default function SignInForm() {
               </div> */}
 
               {/* Submit Button */}
-              <Button className="w-full" size="sm" type="submit" disabled={isSubmitting}>
+              <Button
+                className="w-full"
+                size="sm"
+                type="submit"
+                disabled={isSubmitting}
+              >
                 Sign in
               </Button>
             </div>
@@ -132,7 +164,10 @@ export default function SignInForm() {
           {/* Bottom Link */}
           <div className="mt-5 text-sm text-center text-gray-700 dark:text-gray-400">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-brand-500 hover:text-brand-600 dark:text-brand-400">
+            <Link
+              to="/signup"
+              className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
+            >
               Sign Up
             </Link>
           </div>
