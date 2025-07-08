@@ -7,12 +7,15 @@ import { Notificationn, NotificationnType } from "../../types/Notification/Notif
 
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
+import { useNotificationHub } from "../../hooks/useNotificationHub";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState<Notificationn[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const navigate = useNavigate();
+
+  const token = sessionStorage.getItem("authToken");
 
   useEffect(() => {
     fetchNotifications();
@@ -28,6 +31,10 @@ export default function NotificationDropdown() {
       console.error("Failed to load notifications:", error);
     }
   };
+
+   useNotificationHub(token, () => {
+    fetchNotifications();  
+  });
 
   const handleNotificationClick = async (notification: Notificationn) => {
     try {
