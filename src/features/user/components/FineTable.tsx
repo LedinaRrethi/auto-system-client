@@ -115,8 +115,8 @@ export default function FineTable({
           </TableHeader>
 
           <TableBody>
-            {fines.map((fine) => (
-              <TableRow key={fine.idpk_Fine}>
+            {fines.map((fine, index) => (
+              <TableRow key={fine.idpk_Fine ?? index}>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {fine.plateNumber}
                 </TableCell>
