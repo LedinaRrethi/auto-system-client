@@ -105,7 +105,7 @@ export default function VehicleRegistrationModal({
         )}
 
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-          <div className="pt-4">
+          <div >
             <Label>Plate Number *</Label>
             <Input
               {...register("plateNumber")}

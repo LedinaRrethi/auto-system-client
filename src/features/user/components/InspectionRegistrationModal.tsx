@@ -193,7 +193,7 @@ export default function InspectionRegistrationModal({
             </div>
           )}
 
-          <div className="pt-4">
+          <div>
             <Label>Vehicle Plate *</Label>
             <Controller
               name="vehicleId"

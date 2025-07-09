@@ -72,7 +72,7 @@ export default function FineFilterModal({
       <div className="w-full max-w-md mx-auto">
         <div className="flex-1 space-y-6">
           {/* Plate Number */}
-          <div className="pt-4">
+          <div>
             <label
               htmlFor="plateNumber"
               className="text-sm font-medium text-gray-700 dark:text-white"
