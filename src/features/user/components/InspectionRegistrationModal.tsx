@@ -173,10 +173,10 @@ export default function InspectionRegistrationModal({
       onClose={handleModalClose}
       title="Request Inspection Appointment"
     >
-      <div className="p-5 sm:p-6 w-full max-w-md">
+      <div className="w-full max-w-md mx-auto">
         <Form
           onSubmit={handleSubmit(handleSubmitWithValidation)}
-          className="space-y-5"
+          className="space-y-4"
         >
           {successMsg && (
             <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
@@ -194,7 +194,7 @@ export default function InspectionRegistrationModal({
             </div>
           )}
 
-          <div>
+          <div className="pt-4">
             <Label>Vehicle Plate</Label>
             <Controller
               name="vehicleId"
@@ -278,9 +278,11 @@ export default function InspectionRegistrationModal({
             )}
           </div>
 
+          <div className="pt-3 pb-3">
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Loading..." : "Submit Request"}
           </Button>
+          </div>
         </Form>
       </div>
     </Modal>

@@ -89,8 +89,8 @@ const isDisabled = mode === "edit" || isSubmitting;
     )}
 
       
-        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
-          <div className="pt-3">
+        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+          <div className="pt-4">
             <Label >Plate Number *</Label>
             <Input
               {...register("plateNumber")}
