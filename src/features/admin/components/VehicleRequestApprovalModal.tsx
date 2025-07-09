@@ -31,7 +31,7 @@ export default function VehicleApprovalModal({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle}>
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">
-        <p className="font-semibold text-base">
+        <p className="font-semibold text-base pt-3">
           {isApprove
             ? "Are you sure you want to approve this vehicle request?"
             : "Are you sure you want to reject this vehicle request?"}
