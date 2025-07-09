@@ -46,7 +46,7 @@ export default function InspectionApprovalModal({
       }
     >
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5">
-        <p className="font-semibold">
+        <p className="font-semibold pt-4">
           {isApprove
             ? "Are you sure you want to approve this inspection?"
             : "Are you sure you want to reject this inspection?"}
@@ -74,7 +74,7 @@ export default function InspectionApprovalModal({
           <DropzoneComponent files={files} setFiles={setFiles} />
         </div>
 
-        <div className="flex justify-end gap-3">
+        <div className="flex justify-end gap-3 pt-3 ">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
