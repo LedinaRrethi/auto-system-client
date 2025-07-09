@@ -5,7 +5,7 @@ import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { getAllNotifications, markOneAsSeen } from "../../services/notificationService";
 import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
-import { AlertTriangle, CheckCircle, FileText, CalendarDays, Clock, Eye, Mail } from "lucide-react";
+import { AlertTriangle, CheckCircle, FileText, CalendarDays, Eye, Mail } from "lucide-react";
 import Alert from "../../components/ui/alert/Alert";
 
 export default function SpecificNotificationPage() {
@@ -132,9 +132,9 @@ export default function SpecificNotificationPage() {
                       <span className="flex items-center gap-1">
                         <CalendarDays size={16} /> {formatDateTime(notification.createdOn).date}
                       </span>
-                      <span className="flex items-center gap-1">
+                      {/* <span className="flex items-center gap-1">
                         <Clock size={16} /> {formatDateTime(notification.createdOn).time}
-                      </span>
+                      </span> */}
                     </div>
                   </div>
                 </div>

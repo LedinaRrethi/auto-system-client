@@ -78,17 +78,17 @@ export default function NotificationDropdown() {
     }
   };
 
-  const getTimeAgo = (dateString: string) => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diff = Math.floor((now.getTime() - date.getTime()) / 60000);
-    if (diff < 1) return "Just now";
-    if (diff < 60) return `${diff}m ago`;
-    const hours = Math.floor(diff / 60);
-    if (hours < 24) return `${hours}h ago`;
-    const days = Math.floor(hours / 24);
-    return `${days}d ago`;
-  };
+  // const getTimeAgo = (dateString: string) => {
+  //   const now = new Date();
+  //   const date = new Date(dateString);
+  //   const diff = Math.floor((now.getTime() - date.getTime()) / 60000);
+  //   if (diff < 1) return "Just now";
+  //   if (diff < 60) return `${diff}m ago`;
+  //   const hours = Math.floor(diff / 60);
+  //   if (hours < 24) return `${hours}h ago`;
+  //   const days = Math.floor(hours / 24);
+  //   return `${days}d ago`;
+  // };
 
   const formatCount = (count: number) => (count > 99 ? "99+" : count);
 
@@ -158,10 +158,10 @@ export default function NotificationDropdown() {
                       {notification.message || "No message"}
                     </p>
 
-                    <div className="flex items-center justify-between mt-1 text-[10px] text-gray-400 dark:text-gray-500">
+                    {/* <div className="flex items-center justify-between mt-1 text-[10px] text-gray-400 dark:text-gray-500">
                       <span>{getTimeAgo(notification.createdOn)}</span>
-                      {/* {!notification.isSeen && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>} */}
-                    </div>
+                      {!notification.isSeen && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>}
+                    </div> */}
                   </div>
                 </DropdownItem>
               );

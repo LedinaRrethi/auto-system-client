@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { Bell, CheckCircle, FileText, AlertTriangle, Mail, Eye } from "lucide-react";
+import {
+  Bell,
+  CheckCircle,
+  FileText,
+  AlertTriangle,
+  Mail,
+  Eye,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
@@ -7,8 +14,16 @@ import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import Alert from "../../components/ui/alert/Alert";
 import Button from "../../components/ui/button/Button";
 import Switch from "../../components/form/switch/Switch";
-import { getAllNotifications, getUnseenNotifications, markAllAsSeen, markOneAsSeen } from "../../services/notificationService";
-import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
+import {
+  getAllNotifications,
+  getUnseenNotifications,
+  markAllAsSeen,
+  markOneAsSeen,
+} from "../../services/notificationService";
+import {
+  Notificationn,
+  NotificationnType,
+} from "../../types/Notification/Notificationn";
 
 export default function NotificationPage() {
   const [notifications, setNotifications] = useState<Notificationn[]>([]);
@@ -22,7 +37,9 @@ export default function NotificationPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const data = showOnlyUnread ? await getUnseenNotifications() : await getAllNotifications();
+      const data = showOnlyUnread
+        ? await getUnseenNotifications()
+        : await getAllNotifications();
       setNotifications(data);
     } catch {
       setErrorMsg("Failed to load notifications.");
@@ -90,11 +107,16 @@ export default function NotificationPage() {
 
   return (
     <>
-      <PageMeta title="Notifications | AutoSystem" description="Manage and view your notifications." />
+      <PageMeta
+        title="Notifications | AutoSystem"
+        description="Manage and view your notifications."
+      />
       <PageBreadcrumb pageTitle="Notifications" />
 
       <div className="space-y-6">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
 
         <ComponentCard
@@ -108,7 +130,8 @@ export default function NotificationPage() {
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full sm:w-80">
               <span className="text-sm text-gray-600 dark:text-gray-400">
-                {notifications.length} notification{notifications.length !== 1 ? "s" : ""}
+                {notifications.length} notification
+                {notifications.length !== 1 ? "s" : ""}
               </span>
               {!showOnlyUnread && (
                 <span className="text-xs bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 px-2 py-1 rounded-full ml-2">
@@ -125,18 +148,30 @@ export default function NotificationPage() {
           </div>
 
           {loading ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">Loading...</div>
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+              Loading...
+            </div>
           ) : notifications.length === 0 ? (
             <div className="text-center py-12">
-              <Bell size={48} className="mx-auto text-gray-400 dark:text-gray-500 mb-4" />
+              <Bell
+                size={48}
+                className="mx-auto text-gray-400 dark:text-gray-500 mb-4"
+              />
               <p className="text-gray-500 dark:text-gray-400 text-lg">
-                {showOnlyUnread ? "No unread notifications" : "No notifications found"}
+                {showOnlyUnread
+                  ? "No unread notifications"
+                  : "No notifications found"}
               </p>
               <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                {showOnlyUnread ? "You're all caught up!" : "New notifications will appear here."}
+                {showOnlyUnread
+                  ? "You're all caught up!"
+                  : "New notifications will appear here."}
               </p>
               <div className="mt-4">
-                <Button onClick={() => navigate("/")} className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600">
+                <Button
+                  onClick={() => navigate("/")}
+                  className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
+                >
                   Back to Home
                 </Button>
               </div>
@@ -148,7 +183,9 @@ export default function NotificationPage() {
                   key={notification.idpK_Notification}
                   onClick={() => handleCardClick(notification)}
                   className={`p-4 rounded-lg shadow cursor-pointer transition-all ${
-                    notification.isSeen ? "bg-gray-50 dark:bg-gray-800" : "bg-blue-50 dark:bg-blue-900/10"
+                    notification.isSeen
+                      ? "bg-gray-50 dark:bg-gray-800"
+                      : "bg-blue-50 dark:bg-blue-900/10"
                   }`}
                 >
                   <div className="flex justify-between items-center mb-1">
@@ -156,24 +193,39 @@ export default function NotificationPage() {
                       {getNotificationIcon(notification.type)}
                       {notification.title || "Notification"}
                     </h3>
-                    <span className="text-xs text-gray-500">
+                    {/* <span className="text-xs text-gray-500">
                       {new Date(notification.createdOn).toLocaleString()}
+                    </span> */}
+                    <span className="text-xs text-gray-500">
+                      {new Date(notification.createdOn).toLocaleDateString()}
                     </span>
                   </div>
 
-                  <p className="text-sm text-gray-600 dark:text-gray-300">{notification.message ?? ""}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {notification.message ?? ""}
+                  </p>
 
                   <div className="flex flex-wrap items-center gap-2 mt-2">
-                    <span className={`inline-block text-xs px-2 py-1 rounded-full ${getNotificationColor(notification.type)}`}>
+                    <span
+                      className={`inline-block text-xs px-2 py-1 rounded-full ${getNotificationColor(
+                        notification.type
+                      )}`}
+                    >
                       {notification.type}
                     </span>
 
-                    <span className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
-                      notification.isSeen
-                        ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
-                        : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
-                    }`}>
-                      {notification.isSeen ? <Eye size={14} /> : <Mail size={14} />}
+                    <span
+                      className={`inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full ${
+                        notification.isSeen
+                          ? "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
+                          : "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300"
+                      }`}
+                    >
+                      {notification.isSeen ? (
+                        <Eye size={14} />
+                      ) : (
+                        <Mail size={14} />
+                      )}
                       {notification.isSeen ? "Read" : "Unread"}
                     </span>
                   </div>
