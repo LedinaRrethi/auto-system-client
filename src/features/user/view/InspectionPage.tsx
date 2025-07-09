@@ -124,6 +124,14 @@ export default function InspectionPage() {
     return () => clearTimeout(timeout);
   }, [successMsg, errorMsg]);
 
+   //remove that later TODO
+  useEffect(() => {
+  if (searchTerm === "") {
+    setSubmittedSearch("");
+    setPage(1);
+  }
+}, [searchTerm]);
+
   return (
     <>
       <PageMeta

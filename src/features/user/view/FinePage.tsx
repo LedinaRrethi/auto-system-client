@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
@@ -8,7 +8,7 @@ import Pagination from "../../../components/ui/pagination/Pagination";
 import FineFilterModal from "../components/FineFilterModal";
 
 export default function FineRegistrationPage() {
- const [filters, setFilters] = useState<FineFilter>({});
+  const [filters, setFilters] = useState<FineFilter>({});
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -16,10 +16,9 @@ export default function FineRegistrationPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
   const [plateOptions, setPlateOptions] = useState<string[]>([]);
 
-   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-
-   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setSubmittedSearch(searchTerm);
       setPage(1);
@@ -27,11 +26,18 @@ export default function FineRegistrationPage() {
   };
 
   const handleApplyFilter = (newFilter: FineFilter) => {
-  setFilters(newFilter);
-  setSubmittedSearch(""); 
-  setPage(1);
-  setIsFilterModalOpen(false);
-};
+    setFilters(newFilter);
+    setSubmittedSearch("");
+    setPage(1);
+    setIsFilterModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
 
   return (
     <>
@@ -42,10 +48,7 @@ export default function FineRegistrationPage() {
       <PageBreadcrumb pageTitle="My Fines" />
 
       <div className="space-y-6">
-        <ComponentCard
-          title="Fines"
-          desc="Here you can view your fines."
-        >
+        <ComponentCard title="Fines" desc="Here you can view your fines.">
           <FineTable
             onAdd={() => handleApplyFilter(filters)}
             filters={filters}
@@ -60,21 +63,23 @@ export default function FineRegistrationPage() {
             setHasNextPage={setHasNextPage}
             plateOptions={plateOptions}
             setPlateOptions={setPlateOptions}
-            onOpenFilterModal={() => setIsFilterModalOpen(true)}                 
-            />
+            onOpenFilterModal={() => setIsFilterModalOpen(true)}
+          />
         </ComponentCard>
       </div>
 
-  <FineFilterModal
+      <FineFilterModal
         isOpen={isFilterModalOpen}
         onClose={() => setIsFilterModalOpen(false)}
         onApply={handleApplyFilter}
         initialFilter={filters}
       />
 
-       <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
-
-      
+      <Pagination
+        currentPage={page}
+        hasNextPage={hasNextPage}
+        onPageChange={setPage}
+      />
     </>
   );
 }
