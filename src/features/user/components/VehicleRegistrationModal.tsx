@@ -89,8 +89,8 @@ const isDisabled = mode === "edit" || isSubmitting;
     )}
 
       
-        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-          <div className="pt-5">
+        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
+          <div className="pt-3">
             <Label >Plate Number *</Label>
             <Input
               {...register("plateNumber")}
@@ -148,7 +148,7 @@ const isDisabled = mode === "edit" || isSubmitting;
             />
           </div>
 
-          <div className="pt-2 flex gap-3">
+          <div className="pt-3 pb-3  flex gap-3">
             <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting} className="flex-1">
               Cancel
             </Button>
