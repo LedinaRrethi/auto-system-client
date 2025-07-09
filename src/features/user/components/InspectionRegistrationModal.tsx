@@ -176,7 +176,7 @@ export default function InspectionRegistrationModal({
       <div className="w-full max-w-md mx-auto">
         <Form
           onSubmit={handleSubmit(handleSubmitWithValidation)}
-          className="space-y-4"
+          className="space-y-5"
         >
           {successMsg && (
             <div className="text-green-600 text-sm bg-green-50 p-3 rounded border border-green-200">
@@ -195,7 +195,7 @@ export default function InspectionRegistrationModal({
           )}
 
           <div className="pt-4">
-            <Label>Vehicle Plate</Label>
+            <Label>Vehicle Plate *</Label>
             <Controller
               name="vehicleId"
               control={control}
@@ -222,7 +222,7 @@ export default function InspectionRegistrationModal({
           </div>
 
           <div>
-            <Label>Directorate</Label>
+            <Label>Directorate *</Label>
             <Controller
               name="directoryId"
               control={control}
@@ -249,7 +249,7 @@ export default function InspectionRegistrationModal({
           </div>
 
           <div>
-            <Label>Date</Label>
+            <Label>Date *</Label>
             <DatePicker id="date-picker" onChange={handleDateChange} />
             {errors.requestedDate && (
               <p className="text-red-500 text-xs mt-1">
@@ -259,7 +259,7 @@ export default function InspectionRegistrationModal({
           </div>
 
           <div>
-            <Label htmlFor="time-input">Time</Label>
+            <Label htmlFor="time-input">Time *</Label>
             <div className="relative">
               <Input
                 type="time"
