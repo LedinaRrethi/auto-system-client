@@ -144,14 +144,14 @@ export default function DashboardPage() {
           description={`Approved: ${adminData.totalVehicleRequests.Approved ?? 0}, Pending: ${adminData.totalVehicleRequests.Pending ?? 0}, Rejected: ${adminData.totalVehicleRequests.Rejected ?? 0}`}
           to="/vehicle-request-approval"
         />,
-        <MetricCard
-          key="admin-notif"
-          icon={Bell}
-          title="Notifications"
-          value={adminData.notifications}
-          description="Unread notifications"
-          to="/notifications"
-        />,
+        // <MetricCard
+        //   key="admin-notif"
+        //   icon={Bell}
+        //   title="Notifications"
+        //   value={adminData.notifications}
+        //   description="Unread notifications"
+        //   to="/notifications"
+        // />,
       ];
     }
 
