@@ -38,10 +38,10 @@ export const Modal: React.FC<ModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 backdrop-blur-lg">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 backdrop-blur-lg p-4">
       <div
         ref={modalRef}
-        className={`relative w-full max-w-lg h-[80vh] mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl ${className}`}
+        className={`relative w-full max-w-lg max-h-[90vh] mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl ${className}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header - sticky */}
@@ -57,8 +57,8 @@ export const Modal: React.FC<ModalProps> = ({
           <h2 className="text-lg font-semibold mb-3 text-gray-800 dark:text-white">{title ?? "Modal Title"}</h2>
         </div>
 
-        {/* Content - scrollable */}
-        <div className="overflow-visible h-[calc(80vh-72px)] px-6 sm:px-8 pb-6 custom-scroll no-scrollbar">
+        {/* Content - fits content size */}
+        <div className="overflow-y-auto max-h-[calc(90vh-72px)] px-6 sm:px-8 pb-6 custom-scroll no-scrollbar">
           {children}
         </div>
       </div>
