@@ -83,6 +83,7 @@ export default function FineFilterModal({
               id="plateNumber"
               type="text"
               value={localFilter.plateNumber || ""}
+              autoComplete="off"
               onChange={(e) =>
                 setLocalFilter((prev) => ({
                   ...prev,

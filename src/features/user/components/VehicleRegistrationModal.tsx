@@ -110,6 +110,7 @@ export default function VehicleRegistrationModal({
             <Input
               {...register("plateNumber")}
               placeholder="e.g. AB123CD"
+              autoComplete="off"
               error={!!errors.plateNumber}
               hint={errors.plateNumber?.message}
               disabled={isSubmitting}
@@ -121,6 +122,7 @@ export default function VehicleRegistrationModal({
             <Input
               {...register("color")}
               placeholder="e.g. Red"
+              autoComplete="off"
               error={!!errors.color}
               hint={errors.color?.message}
               disabled={isSubmitting}
@@ -158,6 +160,7 @@ export default function VehicleRegistrationModal({
               className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
               {...register("chassisNumber")}
               placeholder="Enter chassis number"
+              autoComplete="off"
               error={!!errors.chassisNumber}
               hint={errors.chassisNumber?.message}
             />
