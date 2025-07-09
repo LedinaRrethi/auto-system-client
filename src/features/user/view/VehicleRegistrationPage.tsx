@@ -128,6 +128,7 @@ export default function VehicleRegistrationPage() {
       if (mode === "add") {
         await registerVehicle(data);
         setSuccessMsg("Vehicle registration request sent to administrator.");
+        setInfoMsg(null);
       } else {
         if (!vehicleIdToEdit) {
           setModalErrorMsg("Missing vehicle ID for update.");
