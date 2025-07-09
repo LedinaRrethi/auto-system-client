@@ -1,6 +1,6 @@
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Modal } from "../../../components/ui/modal";
 import Label from "../../../components/form/Label";
 import Button from "../../../components/ui/button/Button";
@@ -50,11 +50,10 @@ export default function InspectionRegistrationModal({
   });
 
   const [vehicleOptions, setVehicleOptions] = useState<MyVehiclePlate[]>([]);
-  const [directorateOptions, setDirectorateOptions] = useState<Directorate[]>(
-    []
-  );
+  const [directorateOptions, setDirectorateOptions] = useState<Directorate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
+  const DateRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -248,9 +247,18 @@ export default function InspectionRegistrationModal({
             )}
           </div>
 
-          <div>
+          <div ref={DateRef}>
             <Label>Date *</Label>
-            <DatePicker id="date-picker" onChange={handleDateChange} />
+            <DatePicker 
+              id="date-picker" 
+              onChange={handleDateChange}
+              onFocus={() =>
+                  DateRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                } 
+                />
             {errors.requestedDate && (
               <p className="text-red-500 text-xs mt-1">
                 {errors.requestedDate.message}
