@@ -37,6 +37,12 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
                 isHeader
                 className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
               >
+                Inspection Time
+              </TableCell>
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
+              >
                 Directory
               </TableCell>
               <TableCell
@@ -66,15 +72,21 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
                   {item.plateNumber}
                 </TableCell>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {new Date(item.requestedDate).toLocaleString(undefined, {
+                  {new Date(item.requestedDate).toLocaleDateString(undefined, {
                     year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+                </TableCell>
+
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                  {new Date(item.requestedDate).toLocaleTimeString(undefined, {
                     hour: "numeric",
                     minute: "2-digit",
                     hour12: true,
                   })}
                 </TableCell>
+
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.directorateName}
                 </TableCell>
