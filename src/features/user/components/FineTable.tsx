@@ -93,51 +93,59 @@ export default function FineTable({
         </div>
       </div>
 
-      <div className="max-w-full overflow-x-auto">
-        <Table className="w-full min-w-[1000px]">
-          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-            <TableRow>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Plate
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Amount
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Reason
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Issued By
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Date
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {fines.map((fine, index) => (
-              <TableRow key={fine.idpk_Fine ?? index}>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.plateNumber}
+      {fines.length > 0 ? (
+        <div className="max-w-full overflow-x-auto">
+          <Table className="w-full min-w-[1000px]">
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+              <TableRow>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Plate
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.fineAmount} ALL
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Amount
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.fineReason ?? "-"}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Reason
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.policeFullName ?? "-"}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Issued By
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {new Date(fine.fineDate).toLocaleDateString()}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Date
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+
+            <TableBody>
+              {fines.map((fine, index) => (
+                <TableRow key={fine.idpk_Fine ?? index}>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.plateNumber}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.fineAmount} ALL
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.fineReason ?? "-"}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.policeFullName ?? "-"}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {new Date(fine.fineDate).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className="flex justify-center items-center py-10">
+          <p className="text-lg text-gray-500 dark:text-gray-400">
+            No fines found.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
