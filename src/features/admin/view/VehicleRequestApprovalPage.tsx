@@ -5,7 +5,10 @@ import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { HiSearch } from "react-icons/hi";
 import { useCallback, useEffect, useState } from "react";
-import { getAllVehicleRequests, updateRequestStatus } from "../../../services/vehicleAdminService";
+import {
+  getAllVehicleRequests,
+  updateRequestStatus,
+} from "../../../services/vehicleAdminService";
 import { VehicleRequestList } from "../../../types/Vehicle/VehicleRequestList";
 import VehicleRequestApprovalTable from "../components/VehicleRequestApprovalTable";
 import VehicleRequestApprovalModal from "../components/VehicleRequestApprovalModal";
@@ -20,8 +23,11 @@ export default function VehicleRequestApprovalPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(null);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleRequestList | null>(null);
+  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(
+    null
+  );
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehicleRequestList | null>(null);
   const [comment, setComment] = useState("");
 
   const [alert, setAlert] = useState<{
@@ -60,7 +66,10 @@ export default function VehicleRequestApprovalPage() {
     return () => clearTimeout(timeout);
   }, [alert]);
 
-  const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
+  const openModal = (
+    vehicle: VehicleRequestList,
+    action: "approve" | "reject"
+  ) => {
     setSelectedVehicle(vehicle);
     setModalAction(action);
     setComment("");
@@ -78,7 +87,10 @@ export default function VehicleRequestApprovalPage() {
     if (!selectedVehicle || !modalAction) return;
 
     try {
-      const newStatus = modalAction === "approve" ? VehicleStatus.Approved : VehicleStatus.Rejected;
+      const newStatus =
+        modalAction === "approve"
+          ? VehicleStatus.Approved
+          : VehicleStatus.Rejected;
 
       await updateRequestStatus(selectedVehicle.idpK_ChangeRequest, {
         newStatus,
@@ -90,7 +102,7 @@ export default function VehicleRequestApprovalPage() {
         title: "Success",
         message: `Vehicle request ${modalAction}ed successfully.`,
       });
-      
+
       await loadRequests();
     } catch {
       setAlert({
@@ -116,7 +128,13 @@ export default function VehicleRequestApprovalPage() {
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 
       <div className="space-y-4">
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="Vehicle Approval"
@@ -136,7 +154,10 @@ export default function VehicleRequestApprovalPage() {
             </div>
           </div>
 
-          <VehicleRequestApprovalTable vehicles={vehicles} onAction={openModal} />
+          <VehicleRequestApprovalTable
+            vehicles={vehicles}
+            onAction={openModal}
+          />
 
           <VehicleRequestApprovalModal
             isOpen={modalOpen}
@@ -150,9 +171,14 @@ export default function VehicleRequestApprovalPage() {
             }}
             comment={comment}
             setComment={setComment}
+            requestType={selectedVehicle?.requestType}
           />
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
       </div>
     </>
