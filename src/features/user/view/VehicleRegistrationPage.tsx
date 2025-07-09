@@ -49,11 +49,6 @@ export default function VehicleRegistrationPage() {
       });
       setVehicles(response.items);
       setHasNextPage(response.hasNextPage);
-      if (response.items.length === 0) {
-        setInfoMsg("You have no vehicle requests.");
-      } else {
-        setInfoMsg(null);
-      }
     } catch {
       setErrorMsg("Failed to load vehicle requests.");
     }
@@ -224,7 +219,13 @@ export default function VehicleRegistrationPage() {
             </Button>
           </div>
 
-          {vehicles.length === 0 ? (
+          {vehicles.length === 0 && !searchTerm ? (
+            <div className="flex justify-center items-center py-10">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                You have no vehicles.
+              </p>
+            </div>
+          ) : vehicles.length === 0 && searchTerm ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
                 No vehicles found.
