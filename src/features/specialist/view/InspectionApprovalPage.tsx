@@ -150,6 +150,7 @@ useEffect(() => {
                   type="text"
                   placeholder="Search ..."
                   value={searchTerm}
+                  autoComplete="off"
                   onChange={(e) => setSearchTerm(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
