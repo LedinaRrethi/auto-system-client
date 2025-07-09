@@ -174,6 +174,16 @@ export default function VehicleRegistrationPage() {
     setModalErrorMsg(null);
   };
 
+
+  //remove that later TODO
+  useEffect(() => {
+  if (searchTerm === "") {
+    setSubmittedSearch("");
+    setPage(1);
+  }
+}, [searchTerm]);
+
+
   return (
     <>
       <PageMeta
