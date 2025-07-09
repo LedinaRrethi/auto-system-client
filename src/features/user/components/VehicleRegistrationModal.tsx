@@ -80,7 +80,7 @@ const isDisabled = mode === "edit" || isSubmitting;
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={mode === "edit" ? "Update Vehicle Details" : "Register a New Vehicle"} >
-      <div className="p-5 sm:p-6 w-full max-w-md">
+      <div className="w-full max-w-md mx-auto">
 
         {errorMessage && (
       <div className="mb-4">
@@ -89,9 +89,9 @@ const isDisabled = mode === "edit" || isSubmitting;
     )}
 
       
-        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-3">
-          <div>
-            <Label>Plate Number *</Label>
+        <Form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
+          <div className="pt-5">
+            <Label >Plate Number *</Label>
             <Input
               {...register("plateNumber")}
               placeholder="e.g. AB123CD"
