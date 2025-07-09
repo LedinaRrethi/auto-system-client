@@ -6,11 +6,12 @@ import Button from "../../../components/ui/button/Button";
 import DropzoneComponent from "../../../components/form/form-elements/DropZone";
 import { HiCheckCircle } from "react-icons/hi";
 import { HiExclamationTriangle } from "react-icons/hi2";
+import { inspectionApprovalSchema } from "../../../utils/validations/inspectionApprovalSchema";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (comment: string, files: File[]) => void; // updated
+  onConfirm: (comment: string, files: File[]) => void;
   action: "approve" | "reject";
   loading?: boolean;
   comment: string;
@@ -27,10 +28,27 @@ export default function InspectionApprovalModal({
   setComment,
 }: Props) {
   const [files, setFiles] = useState<File[]>([]);
+  const [errors, setErrors] = useState<{ comment?: string; files?: string }>({});
 
   const isApprove = action === "approve";
-
   const btnText = isApprove ? "Yes, Approve" : "Yes, Reject";
+
+  const handleSubmit = () => {
+    const result = inspectionApprovalSchema.safeParse({ comment, files });
+
+    if (!result.success) {
+      const fieldErrors: { comment?: string; files?: string } = {};
+      result.error.errors.forEach((err) => {
+        if (err.path[0] === "comment") fieldErrors.comment = err.message;
+        if (err.path[0] === "files") fieldErrors.files = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    }
+
+    setErrors({});
+    onConfirm(comment, files);
+  };
 
   return (
     <Modal
@@ -67,21 +85,27 @@ export default function InspectionApprovalModal({
             value={comment}
             onChange={setComment}
           />
+          {errors.comment && (
+            <p className="text-xs text-red-500 mt-1">{errors.comment}</p>
+          )}
         </div>
 
         <div>
           <Label>Attach PDF Documents</Label>
           <DropzoneComponent files={files} setFiles={setFiles} />
+          {errors.files && (
+            <p className="text-xs text-red-500 mt-1">{errors.files}</p>
+          )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-3 ">
+        <div className="flex justify-end gap-3 pt-3">
           <Button variant="outline" onClick={onClose} disabled={loading}>
             Cancel
           </Button>
           <button
             type="button"
             disabled={loading}
-            onClick={() => onConfirm(comment, files)}
+            onClick={handleSubmit}
             className={`px-4 py-2 rounded-lg text-sm font-medium ${
               isApprove
                 ? "bg-green-600 text-white hover:bg-green-700"
