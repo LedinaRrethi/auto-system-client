@@ -144,10 +144,10 @@ export default function InspectionRegistrationModal({
       return;
     }
 
-    const utcDate = new Date(
-      selected.getTime() - selected.getTimezoneOffset() * 60000
-    );
-    const payload: InspectionRequestInput = { ...data, requestedDate: utcDate };
+    const payload: InspectionRequestInput = {
+      ...data,
+      requestedDate: selected,
+    };
 
     setLocalError(null);
     onSubmit(payload);
