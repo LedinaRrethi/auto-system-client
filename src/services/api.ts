@@ -17,18 +17,18 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// riprovon automatikisht nese token ka skaduar
+// riprovon automat. nese token ka skaduar
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
     const isLoginRequest = originalRequest.url?.includes("/Auth/login");
-if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest) {
+    const isRefreshRequest = originalRequest.url?.includes("/Auth/refresh-token");
 
-    // if (error.response?.status === 401 && !originalRequest._retry) {
+    if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest && !isRefreshRequest) {
       originalRequest._retry = true;
       try {
-        const res = await api.post(`/Auth/refresh-token`, {}, { withCredentials: true });
+        const res = await api.post("/Auth/refresh-token", {}, { withCredentials: true });
         const newToken = res.data.token;
         saveToken(newToken);
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -39,8 +39,16 @@ if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest
         return Promise.reject(refreshError);
       }
     }
+
+    // Nese refresh ose login kthen 401 , behet direkt logout
+    if (error.response?.status === 401 && (isLoginRequest || isRefreshRequest)) {
+      removeToken();
+      window.location.href = "/signin";
+    }
+
     return Promise.reject(error);
   }
 );
+
 
 export default api;
