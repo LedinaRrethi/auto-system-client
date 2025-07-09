@@ -72,28 +72,28 @@ export default function VehicleRegistrationPage() {
     setModalErrorMsg(null);
   };
 
-const handleEditClick = async (vehicleId: string) => {
-  if (!vehicleId) return;
+  const handleEditClick = async (vehicleId: string) => {
+    if (!vehicleId) return;
 
-  try {
-    const vehicle = await fetchVehicleById(vehicleId);  
+    try {
+      const vehicle = await fetchVehicleById(vehicleId);
 
-    setEditData({
-      plateNumber: vehicle.plateNumber || "",
-      color: vehicle.color || "",
-      seatCount: vehicle.seatCount,
-      doorCount: vehicle.doorCount,
-      chassisNumber: vehicle.chassisNumber || "",
-    });
+      setEditData({
+        plateNumber: vehicle.plateNumber || "",
+        color: vehicle.color || "",
+        seatCount: vehicle.seatCount,
+        doorCount: vehicle.doorCount,
+        chassisNumber: vehicle.chassisNumber || "",
+      });
 
-    setVehicleIdToEdit(vehicleId);
-    setMode("edit");
-    setIsModalOpen(true);
-    setModalErrorMsg(null);
-  } catch {
-    setModalErrorMsg("Failed to load vehicle data.");
-  }
-};
+      setVehicleIdToEdit(vehicleId);
+      setMode("edit");
+      setIsModalOpen(true);
+      setModalErrorMsg(null);
+    } catch {
+      setModalErrorMsg("Failed to load vehicle data.");
+    }
+  };
 
   const handleDeleteClick = (vehicle: Vehicle) => {
     setVehicleToDelete(vehicle);
@@ -109,17 +109,17 @@ const handleEditClick = async (vehicleId: string) => {
       await loadVehicles();
     } catch (error: unknown) {
       const err = error as {
-      response?: { data?: { error?: string; message?: string } };
-      message?: string;
-    };
+        response?: { data?: { error?: string; message?: string } };
+        message?: string;
+      };
 
-    const message =
-      err?.response?.data?.error ||
-      err?.response?.data?.message ||
-      err?.message ||
-      "Failed to submit delete request.";
+      const message =
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        err?.message ||
+        "Failed to submit delete request.";
 
-    setErrorMsg(message);
+      setErrorMsg(message);
     }
   };
 
@@ -175,17 +175,16 @@ const handleEditClick = async (vehicleId: string) => {
   }, [successMsg, infoMsg, errorMsg]);
 
   const clearModalError = () => {
-  setModalErrorMsg(null);
-};
-
+    setModalErrorMsg(null);
+  };
 
   return (
     <>
       <PageMeta
-        title="Vehicle Registration | AutoSystem"
-        description="Manage and request registration, updates, or deletions for your vehicles."
+        title="Vehicle Management | AutoSystem"
+        description="View, register, update, or delete your vehicles and track their approval status."
       />
-      <PageBreadcrumb pageTitle="Vehicle Registration" />
+      <PageBreadcrumb pageTitle="My Vehicles" />
 
       <div className="space-y-6">
         {successMsg && (
@@ -195,8 +194,8 @@ const handleEditClick = async (vehicleId: string) => {
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
         <ComponentCard
-          title="Vehicle Requests"
-          desc="View and manage your submitted vehicle requests."
+          title="Vehicles"
+          desc="Manage your vehicles and track the status of your registration, update, or deletion requests."
         >
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full sm:w-80">
@@ -249,7 +248,6 @@ const handleEditClick = async (vehicleId: string) => {
           errorMessage={modalErrorMsg}
           onClearError={clearModalError}
         />
-
 
         <ConfirmDeleteModal
           isOpen={isDeleteModalOpen}

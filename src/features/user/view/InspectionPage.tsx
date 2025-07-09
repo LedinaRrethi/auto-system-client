@@ -133,7 +133,7 @@ export default function InspectionPage() {
         title="Vehicle Inspections | AutoSystem"
         description="Manage and schedule vehicle inspections."
       />
-      <PageBreadcrumb pageTitle="Vehicle Inspections" />
+      <PageBreadcrumb pageTitle="My Inspections" />
 
       <div className="space-y-4">
         {successMsg && (

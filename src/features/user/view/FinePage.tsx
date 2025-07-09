@@ -39,11 +39,11 @@ export default function FineRegistrationPage() {
         title="My fines | AutoSystem"
         description="Manage and monitor fines."
       />
-      <PageBreadcrumb pageTitle="My fines" />
+      <PageBreadcrumb pageTitle="My Fines" />
 
       <div className="space-y-6">
         <ComponentCard
-          title="My fines"
+          title="Fines"
           desc="Here you can view your fines."
         >
           <FineTable
