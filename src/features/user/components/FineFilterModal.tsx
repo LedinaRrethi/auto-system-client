@@ -59,51 +59,53 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
-      <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
+
+      <div className="w-full max-w-md mx-auto flex flex-col min-h-0">
         
-        {/* Plate Number */}
-        <div className="space-y-2">
-          <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
-            Plate Number
-          </label>
-          <input
-            id="plateNumber"
-            type="text"
-            value={localFilter.plateNumber || ""}
-            onChange={(e) => setLocalFilter(prev => ({ ...prev, plateNumber: e.target.value }))}
-            placeholder="Search by plate number"
-            className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
-          />
-        </div>
-
-        {/* Date Range */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <DatePicker
-              id="fromDate"
-              label="From Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={fromDate ?? undefined}
-              onChange={(d) => setFromDate(d[0] || null)}
-              maxDate={toDate ?? new Date()}
+        <div className="flex-1 space-y-6">
+          {/* Plate Number */}
+          <div className="pt-3">
+            <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
+              Plate Number
+            </label>
+            <input
+              id="plateNumber"
+              type="text"
+              value={localFilter.plateNumber || ""}
+              onChange={(e) => setLocalFilter(prev => ({ ...prev, plateNumber: e.target.value }))}
+              placeholder="Search by plate number"
+              className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
             />
           </div>
-          <div className="space-y-2">
-            <DatePicker
-              id="toDate"
-              label="To Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={toDate ?? undefined}
-              onChange={(d) => setToDate(d[0] || null)}
-              minDate={fromDate ?? undefined}
-            />
+
+          {/* Date Range */}
+          <div className="grid grid-cols-1 gap-5 ">
+            <div className="z-99999">
+              <DatePicker
+                id="fromDate"
+                label="From Date"
+                mode="single"
+                placeholder="dd/mm/yyyy"
+                defaultDate={fromDate ?? undefined}
+                onChange={(d) => setFromDate(d[0] || null)}
+                maxDate={toDate ?? new Date()}
+              />
+            </div>
+            <div>
+              <DatePicker
+                id="toDate"
+                label="To Date"
+                mode="single"
+                placeholder="dd/mm/yyyy"
+                defaultDate={toDate ?? undefined}
+                onChange={(d) => setToDate(d[0] || null)}
+                minDate={fromDate ?? undefined}
+              />
+            </div>
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-2 pt-4">
+        <div className="flex justify-end gap-3 mt-6 pt-4 pb-4 border-t border-gray-200 dark:border-gray-700 ">
           <Button onClick={handleClear} variant="outline" startIcon={<HiX />}>
             Clear
           </Button>
