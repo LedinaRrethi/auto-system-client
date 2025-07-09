@@ -37,27 +37,27 @@ const MetricCard = ({
   to?: string;
 }) => {
   const CardContent = (
-    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[190px] flex flex-col justify-between relative overflow-hidden group cursor-pointer">
-      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-500/5 to-purple-600/5 rounded-full transform translate-x-8 -translate-y-8 group-hover:scale-110 transition-transform duration-300"></div>
+    <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 min-h-[220px] flex flex-col justify-between relative overflow-hidden group cursor-pointer">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/5 to-purple-600/5 rounded-full transform translate-x-12 -translate-y-12 group-hover:scale-110 transition-transform duration-300"></div>
 
       <div className="relative z-10">
-        <div className="flex items-center justify-center w-14 h-14 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md mb-4 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
-          <Icon className="text-white size-7" />
+        <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md mb-6 group-hover:shadow-lg group-hover:scale-105 transition-all duration-300">
+          <Icon className="text-white size-8" />
         </div>
 
-        <h3 className="text-base font-semibold text-gray-800 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
           {title}
         </h3>
 
-        <div className="mb-3">
-          <span className="font-bold dark:text-white text-2xl sm:text-3xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+        <div className="mb-4">
+          <span className="font-bold dark:text-white text-3xl sm:text-4xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
             {typeof value === "number" ? value.toLocaleString() : value}
           </span>
         </div>
       </div>
 
       {description && (
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-auto relative z-10">
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-auto relative z-10 leading-relaxed">
           {description}
         </p>
       )}
@@ -68,12 +68,12 @@ const MetricCard = ({
 };
 
 const LoadingCard = () => (
-  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-6 shadow-sm animate-pulse min-h-[190px] flex flex-col justify-between">
+  <div className="bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 p-8 shadow-sm animate-pulse min-h-[220px] flex flex-col justify-between">
     <div>
-      <div className="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-xl mb-4"></div>
-      <div className="w-3/4 h-4 bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
-      <div className="w-1/2 h-8 bg-gray-200 dark:bg-gray-700 rounded mb-3"></div>
-      <div className="w-full h-3 bg-gray-200 dark:bg-gray-700 rounded"></div>
+      <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-xl mb-6"></div>
+      <div className="w-3/4 h-5 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+      <div className="w-1/2 h-9 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
+      <div className="w-full h-4 bg-gray-200 dark:bg-gray-700 rounded"></div>
     </div>
   </div>
 );
@@ -279,7 +279,7 @@ export default function DashboardPage() {
 
       {/* Cards Grid */}
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 gap-6 sm:gap-8">
           {renderCards()}
         </div>
       </div>
