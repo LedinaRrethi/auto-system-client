@@ -15,7 +15,7 @@ export default function ConfirmDeleteModal({
 }: ConfirmDeleteModalProps) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Confirm Deletion">
-      <div className="text-sm text-gray-700 dark:text-white">
+      <div className="text-sm text-gray-700 dark:text-white pt-4">
         Are you sure you want to delete vehicle <strong>{plateNumber}</strong>?
       </div>
       <div className="flex justify-end mt-6 gap-3">
