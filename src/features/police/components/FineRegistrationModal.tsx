@@ -80,8 +80,8 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
-      <div className="p-5 sm:p-6 w-full max-w-md">
-        <form onSubmit={submitHandler} className="space-y-3">
+      <div className="w-full max-w-md mx-auto">
+        <form onSubmit={submitHandler} className="space-y-5">
           <div>
             <Label>Plate Number</Label>
             <Input
@@ -155,7 +155,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             />
           </div>
 
-          <div className="pt-2">
+          <div className="pt-3 pb-3">
             <Button type="submit" className="w-full">
               Submit Fine
             </Button>

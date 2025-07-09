@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import DatePicker from "../../../components/form/date-picker";
 import Button from "../../../components/ui/button/Button";
@@ -12,14 +12,24 @@ interface Props {
   initialFilter: FineFilter;
 }
 
-export default function FineFilterModal({ isOpen, onClose, onApply, initialFilter }: Props) {
+export default function FineFilterModal({
+  isOpen,
+  onClose,
+  onApply,
+  initialFilter,
+}: Props) {
   const [localFilter, setLocalFilter] = useState<FineFilter>(initialFilter);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
 
+  const fromDateRef = useRef<HTMLDivElement>(null);
+  const toDateRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setLocalFilter(initialFilter);
-    setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
+    setFromDate(
+      initialFilter.fromDate ? new Date(initialFilter.fromDate) : null
+    );
     setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
   }, [initialFilter, isOpen]);
 
@@ -59,54 +69,80 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
-      <div className="w-full max-w-md px-6 py-6 sm:px-8 sm:py-8 space-y-6">
-        {/* Plate Number */}
-        <div className="space-y-2">
-          <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
-            Plate Number
-          </label>
-          <input
-            id="plateNumber"
-            type="text"
-            value={localFilter.plateNumber || ""}
-            onChange={(e) => setLocalFilter(prev => ({ ...prev, plateNumber: e.target.value }))}
-            placeholder="Search by plate number"
-            className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
-          />
-        </div>
-
-        {/* Date Range */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <DatePicker
-              id="fromDate"
-              label="From Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={fromDate ?? undefined}
-              onChange={(d) => setFromDate(d[0] || null)}
-              maxDate={toDate ?? new Date()}
+      <div className="w-full max-w-md mx-auto">
+        <div className="flex-1 space-y-6">
+          {/* Plate Number */}
+          <div>
+            <label
+              htmlFor="plateNumber"
+              className="text-sm font-medium text-gray-700 dark:text-white"
+            >
+              Plate Number
+            </label>
+            <input
+              id="plateNumber"
+              type="text"
+              value={localFilter.plateNumber || ""}
+              autoComplete="off"
+              onChange={(e) =>
+                setLocalFilter((prev) => ({
+                  ...prev,
+                  plateNumber: e.target.value,
+                }))
+              }
+              placeholder="Search by plate number"
+              className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
             />
           </div>
-          <div className="space-y-2">
-            <DatePicker
-              id="toDate"
-              label="To Date"
-              mode="single"
-              placeholder="dd/mm/yyyy"
-              defaultDate={toDate ?? undefined}
-              onChange={(d) => setToDate(d[0] || null)}
-              minDate={fromDate ?? undefined}
-            />
+
+          {/* Date Range */}
+          <div className="grid grid-cols-1 gap-5 ">
+            <div ref={fromDateRef} className="z-99999">
+              <DatePicker
+                id="fromDate"
+                label="From Date"
+                mode="single"
+                placeholder="dd/mm/yyyy"
+                defaultDate={fromDate ?? undefined}
+                onChange={(d) => setFromDate(d[0] || null)}
+                maxDate={toDate ?? new Date()}
+                onFocus={() =>
+                  fromDateRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                }
+              />
+            </div>
+            <div ref={toDateRef} className="pb-20">
+              <DatePicker
+                id="toDate"
+                label="To Date"
+                mode="single"
+                placeholder="dd/mm/yyyy"
+                defaultDate={toDate ?? undefined}
+                onChange={(d) => setToDate(d[0] || null)}
+                minDate={fromDate ?? undefined}
+                onFocus={() =>
+                  toDateRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                }
+              />
+            </div>
           </div>
         </div>
 
-        {/* Buttons */}
-        <div className="flex justify-end gap-2 pt-4">
+        <div className="flex justify-end gap-3 mt-6 pt-4 pb-4 border-t border-gray-200 dark:border-gray-700 ">
           <Button onClick={handleClear} variant="outline" startIcon={<HiX />}>
             Clear
           </Button>
-          <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
+          <Button
+            onClick={handleApply}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            startIcon={<HiCheck />}
+          >
             Apply
           </Button>
         </div>
