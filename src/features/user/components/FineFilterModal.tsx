@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import DatePicker from "../../../components/form/date-picker";
 import Button from "../../../components/ui/button/Button";
@@ -12,14 +12,24 @@ interface Props {
   initialFilter: FineFilter;
 }
 
-export default function FineFilterModal({ isOpen, onClose, onApply, initialFilter }: Props) {
+export default function FineFilterModal({
+  isOpen,
+  onClose,
+  onApply,
+  initialFilter,
+}: Props) {
   const [localFilter, setLocalFilter] = useState<FineFilter>(initialFilter);
   const [fromDate, setFromDate] = useState<Date | null>(null);
   const [toDate, setToDate] = useState<Date | null>(null);
 
+  const fromDateRef = useRef<HTMLDivElement>(null);
+  const toDateRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     setLocalFilter(initialFilter);
-    setFromDate(initialFilter.fromDate ? new Date(initialFilter.fromDate) : null);
+    setFromDate(
+      initialFilter.fromDate ? new Date(initialFilter.fromDate) : null
+    );
     setToDate(initialFilter.toDate ? new Date(initialFilter.toDate) : null);
   }, [initialFilter, isOpen]);
 
@@ -28,7 +38,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`; 
+    return `${year}-${month}-${day}`;
   };
 
   const handleApply = () => {
@@ -59,20 +69,26 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Filter Fines">
-
-      <div className="w-full max-w-md mx-auto flex flex-col min-h-0">
-        
+      <div className="w-full max-w-md mx-auto">
         <div className="flex-1 space-y-6">
           {/* Plate Number */}
           <div className="pt-4">
-            <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
+            <label
+              htmlFor="plateNumber"
+              className="text-sm font-medium text-gray-700 dark:text-white"
+            >
               Plate Number
             </label>
             <input
               id="plateNumber"
               type="text"
               value={localFilter.plateNumber || ""}
-              onChange={(e) => setLocalFilter(prev => ({ ...prev, plateNumber: e.target.value }))}
+              onChange={(e) =>
+                setLocalFilter((prev) => ({
+                  ...prev,
+                  plateNumber: e.target.value,
+                }))
+              }
               placeholder="Search by plate number"
               className="w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-blue-300 dark:bg-gray-800 dark:text-white"
             />
@@ -80,7 +96,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
 
           {/* Date Range */}
           <div className="grid grid-cols-1 gap-5 ">
-            <div className="z-99999">
+            <div ref={fromDateRef} className="z-99999">
               <DatePicker
                 id="fromDate"
                 label="From Date"
@@ -89,9 +105,15 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
                 defaultDate={fromDate ?? undefined}
                 onChange={(d) => setFromDate(d[0] || null)}
                 maxDate={toDate ?? new Date()}
+                onFocus={() =>
+                  fromDateRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                }
               />
             </div>
-            <div className="pb-20">
+            <div ref={toDateRef} className="pb-20">
               <DatePicker
                 id="toDate"
                 label="To Date"
@@ -100,6 +122,12 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
                 defaultDate={toDate ?? undefined}
                 onChange={(d) => setToDate(d[0] || null)}
                 minDate={fromDate ?? undefined}
+                onFocus={() =>
+                  toDateRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start",
+                  })
+                }
               />
             </div>
           </div>
@@ -109,7 +137,11 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
           <Button onClick={handleClear} variant="outline" startIcon={<HiX />}>
             Clear
           </Button>
-          <Button onClick={handleApply} className="bg-blue-600 text-white hover:bg-blue-700" startIcon={<HiCheck />}>
+          <Button
+            onClick={handleApply}
+            className="bg-blue-600 text-white hover:bg-blue-700"
+            startIcon={<HiCheck />}
+          >
             Apply
           </Button>
         </div>
