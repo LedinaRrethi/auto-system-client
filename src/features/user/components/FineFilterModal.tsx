@@ -64,7 +64,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
         
         <div className="flex-1 space-y-6">
           {/* Plate Number */}
-          <div className="pt-3">
+          <div className="pt-4">
             <label htmlFor="plateNumber" className="text-sm font-medium text-gray-700 dark:text-white">
               Plate Number
             </label>
@@ -91,7 +91,7 @@ export default function FineFilterModal({ isOpen, onClose, onApply, initialFilte
                 maxDate={toDate ?? new Date()}
               />
             </div>
-            <div>
+            <div className="pb-20">
               <DatePicker
                 id="toDate"
                 label="To Date"
