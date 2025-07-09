@@ -224,11 +224,20 @@ export default function VehicleRegistrationPage() {
             </Button>
           </div>
 
-          <VehicleRegistrationTable
-            vehicles={vehicles}
-            onEdit={handleEditClick}
-            onDelete={handleDeleteClick}
-          />
+          {vehicles.length === 0 ? (
+            <div className="flex justify-center items-center py-10">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                No vehicles found.
+              </p>
+            </div>
+          ) : (
+            <VehicleRegistrationTable
+              vehicles={vehicles}
+              onEdit={handleEditClick}
+              onDelete={handleDeleteClick}
+            />
+          )}
+
           <Pagination
             currentPage={page}
             hasNextPage={hasNextPage}
