@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Bell,
   CheckCircle,
@@ -34,23 +34,21 @@ export default function NotificationPage() {
 
   const navigate = useNavigate();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const data = showOnlyUnread
-        ? await getUnseenNotifications()
-        : await getAllNotifications();
+      const data = showOnlyUnread ? await getUnseenNotifications() : await getAllNotifications();
       setNotifications(data);
     } catch {
       setErrorMsg("Failed to load notifications.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [showOnlyUnread]);
 
   useEffect(() => {
     fetchData();
-  }, [showOnlyUnread]);
+  }, [fetchData]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
