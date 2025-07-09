@@ -87,6 +87,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             <Input
               {...register("plateNumber")}
               placeholder="e.g. AB123CD"
+              autoComplete="off"
               onKeyDown={handlePlateKeyDown}
               error={!!errors.plateNumber}
               hint={errors.plateNumber?.message}
@@ -102,6 +103,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
               className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
               error={!!errors.personalId}
               hint={errors.personalId?.message}
+              autoComplete="off"
             />
           </div>
 
@@ -114,6 +116,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
               {...register("fineAmount", { valueAsNumber: true })}
               error={!!errors.fineAmount}
               hint={errors.fineAmount?.message}
+              autoComplete="off"
             />
           </div>
 
@@ -122,6 +125,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             <Input {...register("fineReason")}
             error={!!errors.fineReason}
             hint={errors.fineReason?.message}
+            autoComplete="off"
              />
           </div>
 
@@ -132,6 +136,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
             error={!!errors.firstName}
             hint={errors.firstName?.message}
+            autoComplete="off"
             />
           </div>
 
@@ -141,7 +146,8 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             disabled={isDisabled}
             className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
             error={!!errors.lastName}
-            hint={errors.lastName?.message} 
+            hint={errors.lastName?.message}
+            autoComplete="off" 
             />
           </div>
 
@@ -152,6 +158,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             className={isDisabled ? "bg-gray-300 text-gray-900" : ""}  
             error={!!errors.fatherName}
             hint={errors.fatherName?.message}
+            autoComplete="off"
             />
           </div>
 
