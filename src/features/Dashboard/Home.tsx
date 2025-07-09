@@ -222,7 +222,7 @@ export default function DashboardPage() {
         <MetricCard
           key="user-vehicles"
           icon={Car}
-          title="My Vehicle Requests"
+          title="My Vehicles"
           value={totalVehicles}
           description={`Approved: ${userData.myVehicleRequestsCount.Approved ?? 0}, Pending: ${userData.myVehicleRequestsCount.Pending ?? 0}, Rejected: ${userData.myVehicleRequestsCount.Rejected ?? 0}`}
           to="/vehicle-registration"
