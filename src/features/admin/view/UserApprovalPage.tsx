@@ -115,7 +115,8 @@ useEffect(() => {
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
               <input
                 type="text"
-                placeholder="Search by name, email, role..."
+                placeholder="Search by name, role, email..."
+                autoComplete="off"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearchKeyDown}

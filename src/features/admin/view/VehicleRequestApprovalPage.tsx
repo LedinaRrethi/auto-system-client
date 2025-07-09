@@ -145,7 +145,8 @@ export default function VehicleRequestApprovalPage() {
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
               <input
                 type="text"
-                placeholder="Search by plate or requester..."
+                placeholder="Search by plate ,request type , ..."
+                autoComplete="off"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearchKeyDown}

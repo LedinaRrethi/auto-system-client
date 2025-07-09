@@ -10,7 +10,6 @@ export default function VehicleRequestActionButtons({ vehicle, onAction }: Props
   const baseButtonClass = "flex items-center justify-center w-8 h-8 rounded-lg transition-all duration-200";
 
   const isPending = vehicle.status === "Pending";
-
   return (
     <div className="flex gap-2">
       <button
