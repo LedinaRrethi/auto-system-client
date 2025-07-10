@@ -31,7 +31,7 @@ export default function VehicleRequestApprovalPage() {
   const [comment, setComment] = useState("");
 
   const [alert, setAlert] = useState<{
-    variant: "success" | "error";
+    variant: "success" | "info" | "error";
     title: string;
     message: string;
   } | null>(null);
@@ -47,6 +47,16 @@ export default function VehicleRequestApprovalPage() {
       });
       setVehicles(res.items);
       setHasNextPage(res.hasNextPage);
+
+      if (res.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Requests",
+          message: res.message || "You have no vehicle requests.",
+        });
+      } else {
+        setAlert(null);
+      }
     } catch (err) {
       console.error("Error fetching vehicle requests:", err);
       setAlert({
@@ -155,10 +165,18 @@ export default function VehicleRequestApprovalPage() {
             </div>
           </div>
 
-          <VehicleRequestApprovalTable
-            vehicles={vehicles}
-            onAction={openModal}
-          />
+          {vehicles.length === 0 ? (
+            <div className="flex justify-center items-center py-10">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                No vehicles to display.
+              </p>
+            </div>
+          ) : (
+            <VehicleRequestApprovalTable
+              vehicles={vehicles}
+              onAction={openModal}
+            />
+          )}
 
           <VehicleRequestApprovalModal
             isOpen={modalOpen}
