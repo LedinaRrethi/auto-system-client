@@ -1,61 +1,34 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, CheckCircle, AlertTriangle, X } from "lucide-react";
 
-import {
-  getUnseenNotifications,
-  markOneAsSeen,
-  countUnseenNotifications,
-} from "../../services/notificationService";
-import {
-  Notificationn,
-  NotificationnType,
-} from "../../types/Notification/Notificationn";
+import { markOneAsSeen } from "../../services/notificationService";
+import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
 
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useNotificationHub } from "../../hooks/useNotificationHub";
+import { useNotificationContext } from "../../context/NotificationContext";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notificationn[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number>(0);
   const navigate = useNavigate();
+
+  const { unreadCount, notifications, fetchNotifications, markAsReadLocally } = useNotificationContext();
 
   const token = sessionStorage.getItem("authToken");
 
-  const fetchNotifications = useCallback(async () => {
-      const unseen = await getUnseenNotifications();
-      
-      const count = await countUnseenNotifications();
-      console.log("Unseen count:", count);
-      
-      setNotifications(unseen.slice(0, 6));
-      setUnreadCount(count);
-   
-  }, []);  
- 
-  useEffect(() => {
-    fetchNotifications();
-  }, [fetchNotifications]);
-
-  useNotificationHub(token, (notification) => {
-    console.log("Notification received via SignalR:", notification);
+  useNotificationHub(token, () => {
     setTimeout(() => {
-    fetchNotifications();
-  }, 1000);
+      fetchNotifications();
+    }, 1000);
   });
 
   const handleNotificationClick = async (notification: Notificationn) => {
     try {
       if (!notification.isSeen) {
         await markOneAsSeen(notification.idpK_Notification);
-        setNotifications((prev) =>
-          prev.filter(
-            (n) => n.idpK_Notification !== notification.idpK_Notification
-          )
-        );
-        setUnreadCount((prev) => Math.max(prev - 1, 0));
+        markAsReadLocally(notification.idpK_Notification);
       }
 
       setIsOpen(false);
@@ -80,18 +53,6 @@ export default function NotificationDropdown() {
         return { icon: CheckCircle, color: "bg-gray-400" };
     }
   };
-
-  // const getTimeAgo = (dateString: string) => {
-  //   const now = new Date();
-  //   const date = new Date(dateString);
-  //   const diff = Math.floor((now.getTime() - date.getTime()) / 60000);
-  //   if (diff < 1) return "Just now";
-  //   if (diff < 60) return `${diff}m ago`;
-  //   const hours = Math.floor(diff / 60);
-  //   if (hours < 24) return `${hours}h ago`;
-  //   const days = Math.floor(hours / 24);
-  //   return `${days}d ago`;
-  // };
 
   const formatCount = (count: number) => (count > 99 ? "99+" : count);
 
@@ -133,23 +94,17 @@ export default function NotificationDropdown() {
 
         <ul className="flex flex-col overflow-y-auto max-h-80 custom-scrollbar">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-              No new notifications
-            </div>
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">No new notifications</div>
           ) : (
             notifications.map((notification) => {
-              const { icon: Icon, color } = getNotificationIcon(
-                notification.type
-              );
+              const { icon: Icon, color } = getNotificationIcon(notification.type);
               return (
                 <DropdownItem
                   key={notification.idpK_Notification}
                   onItemClick={() => handleNotificationClick(notification)}
                   className="flex gap-3 items-start rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <span
-                    className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}
-                  >
+                  <span className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}>
                     <Icon size={14} className="text-white" />
                   </span>
 
@@ -160,11 +115,6 @@ export default function NotificationDropdown() {
                     <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
                       {notification.message || "No message"}
                     </p>
-
-                    {/* <div className="flex items-center justify-between mt-1 text-[10px] text-gray-400 dark:text-gray-500">
-                      <span>{getTimeAgo(notification.createdOn)}</span>
-                      {!notification.isSeen && <span className="w-2 h-2 bg-blue-500 rounded-full"></span>}
-                    </div> */}
                   </div>
                 </DropdownItem>
               );
