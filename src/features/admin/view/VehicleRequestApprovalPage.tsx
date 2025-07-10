@@ -84,7 +84,7 @@ export default function VehicleRequestApprovalPage() {
 
       await updateRequestStatus(selectedVehicle.idpK_ChangeRequest, {
         newStatus,
-        adminComment: comment,
+        approvalComment: comment,
       });
 
       setAlert({
