@@ -6,6 +6,7 @@ import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineTable from "../components/FineTable";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import FineFilterModal from "../components/FineFilterModal";
+import Alert from "../../../components/ui/alert/Alert";
 
 export default function FineRegistrationPage() {
   const [filters, setFilters] = useState<FineFilter>({});
@@ -17,6 +18,12 @@ export default function FineRegistrationPage() {
   const [plateOptions, setPlateOptions] = useState<string[]>([]);
 
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+
+  const [alert, setAlert] = useState<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -48,6 +55,16 @@ export default function FineRegistrationPage() {
       <PageBreadcrumb pageTitle="My Fines" />
 
       <div className="space-y-6">
+        {alert && (
+          <div className="mt-4">
+            <Alert
+              variant={alert.variant}
+              title={alert.title}
+              message={alert.message}
+            />
+          </div>
+        )}
+
         <ComponentCard title="Fines" desc="Here you can view your fines.">
           <FineTable
             onAdd={() => handleApplyFilter(filters)}
@@ -64,6 +81,7 @@ export default function FineRegistrationPage() {
             plateOptions={plateOptions}
             setPlateOptions={setPlateOptions}
             onOpenFilterModal={() => setIsFilterModalOpen(true)}
+            setAlert={setAlert}
           />
         </ComponentCard>
       </div>

@@ -27,6 +27,11 @@ interface Props {
   plateOptions: string[];
   setPlateOptions: (options: string[]) => void;
   onOpenFilterModal: () => void;
+  setAlert: React.Dispatch<React.SetStateAction<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>>;
 }
 
 export default function FineTable({
@@ -39,6 +44,7 @@ export default function FineTable({
   onSearchSubmit,
   setHasNextPage,
   onOpenFilterModal,
+  setAlert,
 }: Props) {
   const [fines, setFines] = useState<FineResponse[]>([]);
 
@@ -57,6 +63,18 @@ export default function FineTable({
         });
         setFines(data.items);
         setHasNextPage(data.hasNextPage ?? false);
+        
+        if (data.items.length === 0) {
+          setAlert({
+            variant: "info",
+            title: "No Fines",
+            message: data.message || "You have no fines.",
+          });
+        } else {
+          setAlert(null);
+        }
+      
+
       } catch {
         setFines([]);
         setHasNextPage(false);
@@ -64,9 +82,10 @@ export default function FineTable({
     };
 
     fetchFines();
-  }, [filters, page, pageSize, setHasNextPage, submittedSearch]);;
+  }, [filters, page, pageSize, setHasNextPage, submittedSearch, setAlert]);;
 
   return (
+    
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
