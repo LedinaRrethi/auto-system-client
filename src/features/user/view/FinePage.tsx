@@ -48,20 +48,13 @@ export default function FineRegistrationPage() {
 
   return (
     <>
-      <PageMeta
-        title="My fines | AutoSystem"
-        description="Manage and monitor fines."
-      />
+      <PageMeta title="My fines | AutoSystem" description="Manage and monitor fines." />
       <PageBreadcrumb pageTitle="My Fines" />
 
       <div className="space-y-6">
         {alert && (
           <div className="mt-4">
-            <Alert
-              variant={alert.variant}
-              title={alert.title}
-              message={alert.message}
-            />
+            <Alert variant={alert.variant} title={alert.title} message={alert.message} />
           </div>
         )}
 
@@ -93,11 +86,7 @@ export default function FineRegistrationPage() {
         initialFilter={filters}
       />
 
-      <Pagination
-        currentPage={page}
-        hasNextPage={hasNextPage}
-        onPageChange={setPage}
-      />
+      <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
     </>
   );
 }

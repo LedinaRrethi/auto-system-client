@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import PageMeta from "../../../components/common/PageMeta";
@@ -75,30 +75,26 @@ export default function FineRegistrationPage() {
     setIsFilterModalOpen(false);
   };
 
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
+
   return (
     <>
-      <PageMeta
-        title="Fine Registration | AutoSystem"
-        description="Manage and monitor fines."
-      />
+      <PageMeta title="Fine Registration | AutoSystem" description="Manage and monitor fines." />
       <PageBreadcrumb pageTitle="Fine Registration" />
 
-      {alert && (
-        <div className="mb-4">
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        </div>
-      )}
-
       <div className="space-y-6">
-        <ComponentCard
-          title="Fine registration"
-          desc="Here you can add fines, search and filter."
-        >
-          
+        {alert && (
+          <div className="mb-4">
+            <Alert variant={alert.variant} title={alert.title} message={alert.message} />
+          </div>
+        )}
+
+        <ComponentCard title="Fine registration" desc="Here you can add fines, search and filter.">
           <FineRegistrationTable
             onAdd={handleAddClick}
             filters={filters}
@@ -114,7 +110,7 @@ export default function FineRegistrationPage() {
             plateOptions={plateOptions}
             setPlateOptions={setPlateOptions}
             onOpenFilterModal={() => setIsFilterModalOpen(true)}
-            setAlert={setAlert} 
+            setAlert={setAlert}
           />
         </ComponentCard>
       </div>
@@ -126,17 +122,9 @@ export default function FineRegistrationPage() {
         initialFilter={filters}
       />
 
-      <FineRegistrationModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
-        onSubmit={handleModalSubmit}
-      />
+      <FineRegistrationModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleModalSubmit} />
 
-      <Pagination
-        currentPage={page}
-        hasNextPage={hasNextPage}
-        onPageChange={setPage}
-      />
+      <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
     </>
   );
 }

@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { HiPlus, HiSearch, HiFilter } from "react-icons/hi";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHeader,
-  TableRow,
-} from "../../../components/ui/table";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
 import Button from "../../../components/ui/button/Button";
 import { getAllFines } from "../../../services/fineService";
 import { FineResponse } from "../../../types/Fine/FineResponse";
@@ -27,13 +21,14 @@ interface Props {
   plateOptions: string[];
   setPlateOptions: (options: string[]) => void;
   onOpenFilterModal: () => void;
-  setAlert: React.Dispatch<React.SetStateAction<{
-    variant: "success" | "info" | "error";
-    title: string;
-    message: string;
-  } | null>>;
+  setAlert: React.Dispatch<
+    React.SetStateAction<{
+      variant: "success" | "info" | "error";
+      title: string;
+      message: string;
+    } | null>
+  >;
 }
-
 
 export default function FineRegistrationTable({
   onAdd,
@@ -47,7 +42,7 @@ export default function FineRegistrationTable({
   setHasNextPage,
   setPlateOptions,
   onOpenFilterModal,
-  setAlert
+  setAlert,
 }: Props) {
   const [fines, setFines] = useState<FineResponse[]>([]);
 
@@ -55,15 +50,15 @@ export default function FineRegistrationTable({
     const fetchFines = async () => {
       try {
         const data = await getAllFines({
-        page,
-        pageSize,
-      search: submittedSearch,
-      sortField: "CreatedOn",
-      sortOrder: "desc",
-      fromDate: filters.fromDate,
-      toDate: filters.toDate,
-      plateNumber: filters.plateNumber,
-});
+          page,
+          pageSize,
+          search: submittedSearch,
+          sortField: "CreatedOn",
+          sortOrder: "desc",
+          fromDate: filters.fromDate,
+          toDate: filters.toDate,
+          plateNumber: filters.plateNumber,
+        });
 
         setFines(data.items);
         setHasNextPage(data.hasNextPage);
@@ -72,8 +67,11 @@ export default function FineRegistrationTable({
           setAlert({
             variant: "info",
             title: "No Fines",
-            message: data.message || "You have no fines.",
-          });}
+            message: "No fines found.",
+          });
+        } else {
+          setAlert(null);
+        }
 
         const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
           (plate): plate is string => typeof plate === "string"
@@ -125,63 +123,59 @@ export default function FineRegistrationTable({
         </div>
       </div>
 
- {fines.length > 0 ? (
-      <div className="max-w-full overflow-x-auto">
-        <Table className="w-full min-w-[1000px]">
-          <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
-            <TableRow>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Plate
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Recipient
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Police Personal No
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Amount
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Reason
-              </TableCell>
-              <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
-                Date
-              </TableCell>
-            </TableRow>
-          </TableHeader>
-
-          
-          <TableBody>
-            {fines.map((fine , index) => (
-              <TableRow key={fine.idpk_Fine ?? index}>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.plateNumber}
+      {fines.length > 0 ? (
+        <div className="max-w-full overflow-x-auto">
+          <Table className="w-full min-w-[1000px]">
+            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+              <TableRow>
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Plate
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.recipientFullName ?? "-"}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Recipient
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.policeFullName ?? "-"}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Police Personal No
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.fineAmount} ALL
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Amount
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {fine.fineReason ?? "-"}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Reason
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {new Date(fine.fineDate).toLocaleDateString()}
+                <TableCell className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400">
+                  Date
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div> ) : (
+            </TableHeader>
+
+            <TableBody>
+              {fines.map((fine, index) => (
+                <TableRow key={fine.idpk_Fine ?? index}>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">{fine.plateNumber}</TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.recipientFullName ?? "-"}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.policeFullName ?? "-"}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.fineAmount} ALL
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {fine.fineReason ?? "-"}
+                  </TableCell>
+                  <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
+                    {new Date(fine.fineDate).toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
         <div className="flex justify-center items-center py-10">
-          <p className="text-lg text-gray-500 dark:text-gray-400">
-            No fines found.
-          </p>
+          <p className="text-lg text-gray-500 dark:text-gray-400">No fines found.</p>
         </div>
       )}
     </div>
