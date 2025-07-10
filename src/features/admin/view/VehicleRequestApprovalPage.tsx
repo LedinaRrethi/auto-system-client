@@ -128,6 +128,13 @@ export default function VehicleRequestApprovalPage() {
     }
   };
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
+
   return (
     <>
       <PageMeta

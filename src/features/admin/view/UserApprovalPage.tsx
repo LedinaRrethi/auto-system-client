@@ -116,6 +116,13 @@ export default function UserApprovalPage() {
     }
   };
 
+  useEffect(() => {
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
+
   return (
     <>
       <PageMeta
