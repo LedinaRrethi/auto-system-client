@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Bell, CheckCircle, AlertTriangle, X } from "lucide-react";
 
@@ -24,23 +24,26 @@ export default function NotificationDropdown() {
 
   const token = sessionStorage.getItem("authToken");
 
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
-
-  const fetchNotifications = async () => {
-    try {
+  const fetchNotifications = useCallback(async () => {
       const unseen = await getUnseenNotifications();
+      
       const count = await countUnseenNotifications();
+      console.log("Unseen count:", count);
+      
       setNotifications(unseen.slice(0, 6));
       setUnreadCount(count);
-    } catch (error) {
-      console.error("Failed to load notifications:", error);
-    }
-  };
-
-  useNotificationHub(token, () => {
+   
+  }, []);  
+ 
+  useEffect(() => {
     fetchNotifications();
+  }, [fetchNotifications]);
+
+  useNotificationHub(token, (notification) => {
+    console.log("Notification received via SignalR:", notification);
+    setTimeout(() => {
+    fetchNotifications();
+  }, 500);
   });
 
   const handleNotificationClick = async (notification: Notificationn) => {
