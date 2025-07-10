@@ -24,8 +24,6 @@ import Button from "../../../components/ui/button/Button";
 export default function InspectionPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [vehicles, setVehicles] = useState<MyVehiclePlate[]>([]);
   const [directorates, setDirectorates] = useState<Directorate[]>([]);
   const [page, setPage] = useState(1);
@@ -50,45 +48,42 @@ export default function InspectionPage() {
         setVehicles(vehicleData);
         setDirectorates(dirData);
       } catch {
-        setErrorMsg("Failed to load vehicles or directorates.");
+        setAlert({
+          variant: "error",
+          title: "Error",
+          message: "Failed to load vehicles or directorates.",
+        });
       }
     };
 
     loadMetaData();
   }, []);
 
+  const fetchInspections = async () => {
+    try {
+      const res = await getMyInspectionRequests({
+        page,
+        pageSize,
+        search: submittedSearch,
+      });
+      setInspections(res.items);
+      setHasNextPage(res.hasNextPage);
+    } catch {
+      setAlert({
+        variant: "error",
+        title: "Error",
+        message: "Failed to load inspections.",
+      });
+    }
+  };
+
   useEffect(() => {
-    const fetchInspections = async () => {
-      try {
-        const res = await getMyInspectionRequests({
-          page,
-          pageSize,
-          search: submittedSearch,
-        });
-        setInspections(res.items);
-        setHasNextPage(res.hasNextPage);
-
-        if (res.items.length === 0) {
-          setAlert({
-            variant: "info",
-            title: "No Requests",
-            message: res.message || "You have done no inspection requests.",
-          });
-        } else {
-          setAlert(null);
-        }
-      } catch {
-        setErrorMsg("Failed to load inspections.");
-      }
-    };
-
     fetchInspections();
   }, [page, pageSize, submittedSearch]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
-    setSuccessMsg(null);
-    setErrorMsg(null);
+    setAlert(null);
   };
 
   const handleSubmit = async (data: InspectionRequestInput) => {
@@ -119,7 +114,12 @@ export default function InspectionPage() {
       };
 
       setInspections((prev) => [newInspection, ...prev]);
-      setSuccessMsg("Inspection request submitted successfully!");
+      setAlert({
+        variant: "success",
+        title: "Success",
+        message: "Inspection request submitted successfully!",
+      });
+
       setIsModalOpen(false);
     } catch (error) {
       const err = error as AxiosError;
@@ -127,19 +127,20 @@ export default function InspectionPage() {
         err?.response?.data && typeof err.response.data === "string"
           ? err.response.data
           : "Failed to submit inspection request.";
-      setErrorMsg(backendMsg);
+      setAlert({
+        variant: "error",
+        title: "Error",
+        message: backendMsg,
+      });
     }
   };
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setSuccessMsg(null);
-      setErrorMsg(null);
-    }, 3000);
+    if (!alert) return;
+    const timeout = setTimeout(() => setAlert(null), 3000);
     return () => clearTimeout(timeout);
-  }, [successMsg, errorMsg]);
+  }, [alert]);
 
-  //remove that later TODO
   useEffect(() => {
     if (searchTerm === "") {
       setSubmittedSearch("");
@@ -156,11 +157,6 @@ export default function InspectionPage() {
       <PageBreadcrumb pageTitle="My Inspections" />
 
       <div className="space-y-4">
-        {successMsg && (
-          <Alert variant="success" title="Success" message={successMsg} />
-        )}
-        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
-
         {alert && (
           <Alert
             variant={alert.variant}
@@ -202,10 +198,10 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          {vehicles.length === 0 ? (
+          {inspections.length === 0 && !alert?.variant?.includes("success") ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
-                No inspection to display.
+                No inspection requests to display.
               </p>
             </div>
           ) : (
@@ -223,8 +219,8 @@ export default function InspectionPage() {
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleSubmit}
-          successMsg={successMsg}
-          errorMsg={errorMsg}
+          successMsg={alert?.variant === "success" ? alert.message : null}
+          errorMsg={alert?.variant === "error" ? alert.message : null}
         />
       </div>
     </>
