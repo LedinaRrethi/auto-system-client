@@ -17,20 +17,25 @@ import { InspectionRequestCreateDTO } from "../../../types/Inspection/Inspection
 import { getDirectorates } from "../../../services/directoryService";
 import { MyVehiclePlate } from "../../../types/MyVehiclePlate";
 import { Directorate } from "../../../types/Directorate";
-import { AxiosError } from "axios";
 import { HiPlus, HiSearch } from "react-icons/hi";
 import Button from "../../../components/ui/button/Button";
 
 export default function InspectionPage() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
-  const [vehicles, setVehicles] = useState<MyVehiclePlate[]>([]);
-  const [directorates, setDirectorates] = useState<Directorate[]>([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [infoMsg, setInfoMsg] = useState<string | null>(null);
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
+
+  const [, setVehicles] = useState<MyVehiclePlate[]>([]);
+  const [, setDirectorates] = useState<Directorate[]>([]);
+  const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
 
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
@@ -38,28 +43,7 @@ export default function InspectionPage() {
     message: string;
   } | null>(null);
 
-  useEffect(() => {
-    const loadMetaData = async () => {
-      try {
-        const [vehicleData, dirData] = await Promise.all([
-          fetchMyVehiclePlates(),
-          getDirectorates(),
-        ]);
-        setVehicles(vehicleData);
-        setDirectorates(dirData);
-      } catch {
-        setAlert({
-          variant: "error",
-          title: "Error",
-          message: "Failed to load vehicles or directorates.",
-        });
-      }
-    };
-
-    loadMetaData();
-  }, []);
-
-  const fetchInspections = useCallback(async () =>{
+  const fetchInspections = useCallback(async () => {
     try {
       const res = await getMyInspectionRequests({
         page,
@@ -68,22 +52,39 @@ export default function InspectionPage() {
       });
       setInspections(res.items);
       setHasNextPage(res.hasNextPage);
+      if (res.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Requests",
+          message: res.message || "You haven't done any inspection requests.",
+        });
+      } else {
+        setAlert(null);
+      }
     } catch {
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to load inspections.",
-      });
+      setErrorMsg("Failed to load inspection requests.");
     }
-  },[page,pageSize,submittedSearch])
+  }, [page, pageSize, submittedSearch]);
 
   useEffect(() => {
+    const loadMeta = async () => {
+      try {
+        const [veh, dirs] = await Promise.all([fetchMyVehiclePlates(), getDirectorates()]);
+        setVehicles(veh);
+        setDirectorates(dirs);
+      } catch {
+        setErrorMsg("Failed to load vehicles or directorates.");
+      }
+    };
+    loadMeta();
     fetchInspections();
   }, [fetchInspections]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
-    setAlert(null);
+    setModalErrorMsg(null);
+    setSuccessMsg(null);
+    setErrorMsg(null);
   };
 
   const handleSubmit = async (data: InspectionRequestInput) => {
@@ -93,53 +94,28 @@ export default function InspectionPage() {
         IDFK_Directory: data.directoryId,
         RequestedDate: data.requestedDate,
       };
-
       await createInspectionRequest(dto);
-
-      const plate =
-        vehicles.find((v) => v.id === data.vehicleId)?.plateNumber ||
-        data.vehicleId;
-      const directorate =
-        directorates.find((d) => d.id === data.directoryId)?.directoryName ||
-        data.directoryId;
-
-      const newInspection: MyInspectionsRequest = {
-        idpk_InspectionRequest: crypto.randomUUID(),
-        plateNumber: plate,
-        requestedDate: data.requestedDate.toISOString(),
-        directorateName: directorate,
-        status: "Pending",
-        comment: "",
-        documents: [],
-      };
-
-      setInspections((prev) => [newInspection, ...prev]);
-      setAlert({
-        variant: "success",
-        title: "Success",
-        message: "Inspection request submitted successfully!",
-      });
-
+      setSuccessMsg("Inspection request submitted successfully.");
       setIsModalOpen(false);
-    } catch (error) {
-      const err = error as AxiosError;
-      const backendMsg =
-        err?.response?.data && typeof err.response.data === "string"
+      await fetchInspections();
+    } catch (error: unknown) {
+      const err = error as { response?: { data?: string }; message?: string };
+      const message =
+        typeof err?.response?.data === "string"
           ? err.response.data
-          : "Failed to submit inspection request.";
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: backendMsg,
-      });
+          : err?.message || "Failed to submit inspection request.";
+      setModalErrorMsg(message);
     }
   };
 
   useEffect(() => {
-    if (!alert) return;
-    const timeout = setTimeout(() => setAlert(null), 3000);
+    const timeout = setTimeout(() => {
+      setSuccessMsg(null);
+      setErrorMsg(null);
+      setInfoMsg(null);
+    }, 3000);
     return () => clearTimeout(timeout);
-  }, [alert]);
+  }, [successMsg, errorMsg, infoMsg]);
 
   useEffect(() => {
     if (searchTerm === "") {
@@ -150,45 +126,34 @@ export default function InspectionPage() {
 
   return (
     <>
-      <PageMeta
-        title="Vehicle Inspections | AutoSystem"
-        description="Manage and schedule vehicle inspections."
-      />
+      <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." />
       <PageBreadcrumb pageTitle="My Inspections" />
 
-      <div className="space-y-4">
-        {alert && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        )}
+      <div className="space-y-6">
+        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+        {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        <ComponentCard
-          title="Inspections"
-          desc="Here you can view and manage your vehicle inspections."
-        >
+        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+
+        <ComponentCard title="Inspections" desc="Here you can view and manage your vehicle inspections.">
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
-              <div className="relative w-full sm:w-80">
-                <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-                <input
-                  type="text"
-                  placeholder="Search ..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setSubmittedSearch(searchTerm);
-                      setPage(1);
-                    }
-                  }}
-                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800  dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
+            <div className="relative w-full sm:w-80">
+              <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+              <input
+                type="text"
+                placeholder="Search ..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSubmittedSearch(searchTerm);
+                    setPage(1);
+                  }
+                }}
+                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />
             </div>
-
             <Button
               startIcon={<HiPlus />}
               onClick={handleAddClick}
@@ -198,29 +163,23 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          {inspections.length === 0 && !alert?.variant?.includes("success") ? (
+          {inspections.length === 0 ? (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No inspection requests to display.
-              </p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">No inspection requests to display.</p>
             </div>
           ) : (
             <InspectionRegistrationTable inspections={inspections} />
           )}
 
-          <Pagination
-            currentPage={page}
-            hasNextPage={hasNextPage}
-            onPageChange={setPage}
-          />
+          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
         </ComponentCard>
 
         <InspectionRegistrationModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleSubmit}
-          successMsg={alert?.variant === "success" ? alert.message : null}
-          errorMsg={alert?.variant === "error" ? alert.message : null}
+          successMsg={successMsg}
+          errorMsg={modalErrorMsg}
         />
       </div>
     </>
