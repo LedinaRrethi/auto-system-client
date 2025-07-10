@@ -19,43 +19,61 @@ export default function UserApprovalPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
+  const [modalAction, setModalAction] = useState<
+    "approve" | "reject" | "deactivate" | null
+  >(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const [alert, setAlert] = useState<{ variant: "success" | "error"; title: string; message: string } | null>(null);
+  const [alert, setAlert] = useState<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
 
-const loadUsers = useCallback(async () => {
-  try {
-    const res = await fetchUsers({
-      page,
-      pageSize,
-      search: submittedSearch,
-      sortField: "CreatedOn",
-      sortOrder: "desc",
-    });
-    setUsers(res.items);
-    setHasNextPage(res.hasNextPage);
-  } catch (err) {
-    console.error("Error fetching users:", err);
-    setAlert({
-      variant: "error",
-      title: "Error",
-      message: "Failed to load users.",
-    });
-  }
-}, [page, pageSize, submittedSearch]); 
+  const loadUsers = useCallback(async () => {
+    try {
+      const res = await fetchUsers({
+        page,
+        pageSize,
+        search: submittedSearch,
+        sortField: "CreatedOn",
+        sortOrder: "desc",
+      });
+      setUsers(res.items);
+      setHasNextPage(res.hasNextPage);
 
-useEffect(() => {
-  loadUsers();
-}, [loadUsers]);
+      if (res.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Users",
+          message: res.message || "No users found.",
+        });
+      } else {
+        setAlert(null);
+      }
+    } catch (err) {
+      console.error("Error fetching users:", err);
+      setAlert({
+        variant: "error",
+        title: "Error",
+        message: "Failed to load users.",
+      });
+    }
+  }, [page, pageSize, submittedSearch]);
 
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   useEffect(() => {
     const timeout = setTimeout(() => setAlert(null), 3000);
     return () => clearTimeout(timeout);
   }, [alert]);
 
-  const openModal = (user: User, action: "approve" | "reject" | "deactivate") => {
+  const openModal = (
+    user: User,
+    action: "approve" | "reject" | "deactivate"
+  ) => {
     setSelectedUser(user);
     setModalAction(action);
     setModalOpen(true);
@@ -68,8 +86,10 @@ useEffect(() => {
 
     try {
       await updateUserStatus(selectedUser.id, newStatus);
-      setUsers(prev =>
-        prev.map(u => (u.id === selectedUser.id ? { ...u, status: newStatus } : u))
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === selectedUser.id ? { ...u, status: newStatus } : u
+        )
       );
       setAlert({
         variant: "success",
@@ -98,12 +118,19 @@ useEffect(() => {
 
   return (
     <>
-      <PageMeta title="User Approval | AutoSystem" description="Manage and approve system users" />
+      <PageMeta
+        title="User Approval | AutoSystem"
+        description="Manage and approve system users"
+      />
       <PageBreadcrumb pageTitle="User Approval" />
 
       <div className="space-y-4">
         {alert && (
-          <Alert variant={alert.variant} title={alert.title} message={alert.message} />
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
         )}
 
         <ComponentCard
@@ -125,7 +152,15 @@ useEffect(() => {
             </div>
           </div>
 
-          <UserApprovalTable users={users} onAction={openModal} />
+          {users.length === 0 ? (
+            <div className="flex justify-center items-center py-10">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                No users to display.
+              </p>
+            </div>
+          ) : (
+            <UserApprovalTable users={users} onAction={openModal} />
+          )}
 
           <UserApprovalModal
             isOpen={modalOpen}
@@ -139,7 +174,11 @@ useEffect(() => {
             }}
           />
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
       </div>
     </>
