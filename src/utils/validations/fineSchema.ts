@@ -4,14 +4,12 @@ const nameRegex = /^[a-zA-ZëËçÇáàéèäöüÖÜÄË\s'-]+$/;
 
 export const fineSchema = z
   .object({
-    plateNumber: z
-      .string()
-      .min(5, "Plate number must have at least 5 characters")
-      .max(10, "Plate number cannot exceed 10 characters")
-      .regex(
-        /^[\p{L}\p{N}\- ]+$/u,
-        "Plate number must contain only letters, numbers, spaces, or hyphens"
-      ),
+      plateNumber: z
+    .string()
+    .transform((val) => val.toUpperCase())
+    .refine((val) => /^[A-Z]{2}\d{3}[A-Z]{2}$/.test(val), {
+      message: "Plate number must be in format AA123AA (2 letters, 3 numbers, 2 letters)",
+    }),
 
     fineAmount: z
       .number({ invalid_type_error: "Fine amount must be a number" })
