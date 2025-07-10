@@ -1,14 +1,11 @@
+import { useCallback, useEffect, useState } from "react";
 import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { HiSearch } from "react-icons/hi";
-import { useCallback, useEffect, useState } from "react";
-import {
-  getAllVehicleRequests,
-  updateRequestStatus,
-} from "../../../services/vehicleAdminService";
+import { getAllVehicleRequests, updateRequestStatus } from "../../../services/vehicleAdminService";
 import { VehicleRequestList } from "../../../types/Vehicle/VehicleRequestList";
 import VehicleRequestApprovalTable from "../components/VehicleRequestApprovalTable";
 import VehicleRequestApprovalModal from "../components/VehicleRequestApprovalModal";
@@ -23,11 +20,8 @@ export default function VehicleRequestApprovalPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(
-    null
-  );
-  const [selectedVehicle, setSelectedVehicle] =
-    useState<VehicleRequestList | null>(null);
+  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(null);
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleRequestList | null>(null);
   const [comment, setComment] = useState("");
 
   const [alert, setAlert] = useState<{
@@ -48,15 +42,6 @@ export default function VehicleRequestApprovalPage() {
       setVehicles(res.items);
       setHasNextPage(res.hasNextPage);
 
-      if (res.items.length === 0) {
-        setAlert({
-          variant: "info",
-          title: "No Requests",
-          message: res.message || "You have no vehicle requests.",
-        });
-      } else {
-        setAlert(null);
-      }
     } catch (err) {
       console.error("Error fetching vehicle requests:", err);
       setAlert({
@@ -72,14 +57,12 @@ export default function VehicleRequestApprovalPage() {
   }, [loadRequests]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setAlert(null), 3000);
+    if (!alert) return;
+    const timeout = setTimeout(() => setAlert(null), 5000);
     return () => clearTimeout(timeout);
   }, [alert]);
 
-  const openModal = (
-    vehicle: VehicleRequestList,
-    action: "approve" | "reject"
-  ) => {
+  const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
     setSelectedVehicle(vehicle);
     setModalAction(action);
     setComment("");
@@ -97,10 +80,7 @@ export default function VehicleRequestApprovalPage() {
     if (!selectedVehicle || !modalAction) return;
 
     try {
-      const newStatus =
-        modalAction === "approve"
-          ? VehicleStatus.Approved
-          : VehicleStatus.Rejected;
+      const newStatus = modalAction === "approve" ? VehicleStatus.Approved : VehicleStatus.Rejected;
 
       await updateRequestStatus(selectedVehicle.idpK_ChangeRequest, {
         newStatus,
@@ -110,10 +90,20 @@ export default function VehicleRequestApprovalPage() {
       setAlert({
         variant: "success",
         title: "Success",
-        message: `Vehicle request ${modalAction}ed successfully.`,
+        message: `Vehicle request ${modalAction}d successfully.`,
       });
 
       await loadRequests();
+
+      if (vehicles.length === 1) {
+        setTimeout(() => {
+          setAlert({
+            variant: "info",
+            title: "No Requests",
+            message: "You have no vehicle requests.",
+          });
+        }, 5000); 
+      }
     } catch {
       setAlert({
         variant: "error",
@@ -162,7 +152,7 @@ export default function VehicleRequestApprovalPage() {
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
               <input
                 type="text"
-                placeholder="Search by plate ,request type , ..."
+                placeholder="Search by plate, request type, ..."
                 autoComplete="off"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}

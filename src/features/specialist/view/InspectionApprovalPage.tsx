@@ -20,8 +20,6 @@ export default function InspectionPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-  const [successMsg, setSuccessMsg] = useState("");
-  const [errorMsg, setErrorMsg] = useState("");
 
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
@@ -33,14 +31,9 @@ export default function InspectionPage() {
   const [action, setAction] = useState<"approve" | "reject">("approve");
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [selectedInspection, setSelectedInspection] = useState<InspectionRequestList | null>(null);
 
-  const [selectedInspection, setSelectedInspection] =
-    useState<InspectionRequestList | null>(null);
-
-  const onAction = (
-    inspection: InspectionRequestList,
-    action: "approve" | "reject"
-  ) => {
+  const onAction = (inspection: InspectionRequestList, action: "approve" | "reject") => {
     setSelectedInspection(inspection);
     setAction(action);
     setModalOpen(true);
@@ -69,12 +62,20 @@ export default function InspectionPage() {
         documents,
       });
 
-      setSuccessMsg(`Inspection ${action}d successfully.`);
+      setAlert({
+        variant: "success",
+        title: "Success",
+        message: `Inspection ${action}d successfully.`,
+      });
 
       await fetchInspections();
       setSubmittedSearch(searchTerm);
     } catch {
-      setErrorMsg("Failed to update inspection.");
+      setAlert({
+        variant: "error",
+        title: "Error",
+        message: "Failed to update inspection.",
+      });
     } finally {
       setLoading(false);
       setModalOpen(false);
@@ -108,14 +109,18 @@ export default function InspectionPage() {
         setAlert({
           variant: "info",
           title: "No Requests",
-          message: res.message || "You have no vehicle requests.",
+          message: res.message || "You have no inspection requests.",
         });
       } else {
         setAlert(null);
       }
     } catch {
       console.error("Error fetching inspections");
-      setErrorMsg("Failed to load inspections.");
+      setAlert({
+        variant: "error",
+        title: "Error",
+        message: "Failed to load inspections.",
+      });
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -124,19 +129,18 @@ export default function InspectionPage() {
   }, [fetchInspections]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setSuccessMsg("");
-      setErrorMsg("");
-    }, 3000);
-    return () => clearTimeout(timeout);
-  }, [successMsg, errorMsg]);
-
-   useEffect(() => {
     if (searchTerm === "") {
       setSubmittedSearch("");
       setPage(1);
     }
   }, [searchTerm]);
+
+  // Auto-clear alerts after 3 seconds
+  useEffect(() => {
+    if (!alert) return;
+    const timeout = setTimeout(() => setAlert(null), 3000);
+    return () => clearTimeout(timeout);
+  }, [alert]);
 
   return (
     <>
@@ -147,11 +151,6 @@ export default function InspectionPage() {
       <PageBreadcrumb pageTitle="Inspection Approval" />
 
       <div className="space-y-4">
-        {successMsg && (
-          <Alert variant="success" title="Success" message={successMsg} />
-        )}
-        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
-
         {alert && (
           <Alert
             variant={alert.variant}
@@ -180,7 +179,7 @@ export default function InspectionPage() {
                       setPage(1);
                     }
                   }}
-                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800  dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
                 />
               </div>
             </div>
