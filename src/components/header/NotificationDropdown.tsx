@@ -43,7 +43,7 @@ export default function NotificationDropdown() {
     console.log("Notification received via SignalR:", notification);
     setTimeout(() => {
     fetchNotifications();
-  }, 500);
+  }, 1000);
   });
 
   const handleNotificationClick = async (notification: Notificationn) => {
