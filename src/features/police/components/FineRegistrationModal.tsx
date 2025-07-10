@@ -141,17 +141,6 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
           </div>
 
           <div>
-            <Label>Last Name</Label>
-            <Input {...register("lastName")} 
-            disabled={isDisabled}
-            className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
-            error={!!errors.lastName}
-            hint={errors.lastName?.message}
-            autoComplete="off" 
-            />
-          </div>
-
-          <div>
             <Label>Father Name</Label>
             <Input {...register("fatherName")} 
             disabled={isDisabled}
@@ -159,6 +148,17 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
             error={!!errors.fatherName}
             hint={errors.fatherName?.message}
             autoComplete="off"
+            />
+          </div>
+
+           <div>
+            <Label>Last Name</Label>
+            <Input {...register("lastName")} 
+            disabled={isDisabled}
+            className={isDisabled ? "bg-gray-300 text-gray-900" : ""} 
+            error={!!errors.lastName}
+            hint={errors.lastName?.message}
+            autoComplete="off" 
             />
           </div>
 
