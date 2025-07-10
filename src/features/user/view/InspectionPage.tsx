@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import InspectionRegistrationTable from "../components/InspectionRegistrationTable";
 import InspectionRegistrationModal from "../components/InspectionRegistrationModal";
@@ -59,7 +59,7 @@ export default function InspectionPage() {
     loadMetaData();
   }, []);
 
-  const fetchInspections = async () => {
+  const fetchInspections = useCallback(async () =>{
     try {
       const res = await getMyInspectionRequests({
         page,
@@ -75,11 +75,11 @@ export default function InspectionPage() {
         message: "Failed to load inspections.",
       });
     }
-  };
+  },[page,pageSize,submittedSearch])
 
   useEffect(() => {
     fetchInspections();
-  }, [page, pageSize, submittedSearch]);
+  }, [fetchInspections]);
 
   const handleAddClick = () => {
     setIsModalOpen(true);
