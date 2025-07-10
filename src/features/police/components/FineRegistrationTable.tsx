@@ -27,7 +27,13 @@ interface Props {
   plateOptions: string[];
   setPlateOptions: (options: string[]) => void;
   onOpenFilterModal: () => void;
+  setAlert: React.Dispatch<React.SetStateAction<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>>;
 }
+
 
 export default function FineRegistrationTable({
   onAdd,
@@ -41,6 +47,7 @@ export default function FineRegistrationTable({
   setHasNextPage,
   setPlateOptions,
   onOpenFilterModal,
+  setAlert
 }: Props) {
   const [fines, setFines] = useState<FineResponse[]>([]);
 
@@ -61,6 +68,13 @@ export default function FineRegistrationTable({
         setFines(data.items);
         setHasNextPage(data.hasNextPage);
 
+        if (data.items.length === 0) {
+          setAlert({
+            variant: "info",
+            title: "No Fines",
+            message: data.message || "You have no fines.",
+          });}
+
         const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
           (plate): plate is string => typeof plate === "string"
         );
@@ -72,7 +86,7 @@ export default function FineRegistrationTable({
     };
 
     fetchFines();
-  }, [filters, submittedSearch, page, pageSize, setHasNextPage, setPlateOptions]);
+  }, [filters, submittedSearch, page, pageSize, setHasNextPage, setPlateOptions, setAlert]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -111,6 +125,7 @@ export default function FineRegistrationTable({
         </div>
       </div>
 
+ {fines.length > 0 ? (
       <div className="max-w-full overflow-x-auto">
         <Table className="w-full min-w-[1000px]">
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
@@ -162,7 +177,13 @@ export default function FineRegistrationTable({
             ))}
           </TableBody>
         </Table>
-      </div>
+      </div> ) : (
+        <div className="flex justify-center items-center py-10">
+          <p className="text-lg text-gray-500 dark:text-gray-400">
+            No fines found.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

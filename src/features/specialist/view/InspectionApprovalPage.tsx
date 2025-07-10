@@ -20,10 +20,14 @@ export default function InspectionPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-
-  const [infoMsg, setInfoMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
+
+  const [alert, setAlert] = useState<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [action, setAction] = useState<"approve" | "reject">("approve");
@@ -67,7 +71,7 @@ export default function InspectionPage() {
 
       setSuccessMsg(`Inspection ${action}d successfully.`);
 
-      await fetchInspections(); 
+      await fetchInspections();
       setSubmittedSearch(searchTerm);
     } catch {
       setErrorMsg("Failed to update inspection.");
@@ -91,26 +95,33 @@ export default function InspectionPage() {
     });
 
   const fetchInspections = useCallback(async () => {
-  try {
-    const res = await fetchMyInspections({
-      page,
-      pageSize,
-      search: submittedSearch,
-    });
-    setInspections(res.items);
-    setHasNextPage(res.hasNextPage);
-    setInfoMsg(res.items.length === 0 ? "You have no requests." : "");
-  } catch {
-    console.error("Error fetching inspections");
-    setErrorMsg("Failed to load inspections.");
-  }
-}, [page, pageSize, submittedSearch]);
+    try {
+      const res = await fetchMyInspections({
+        page,
+        pageSize,
+        search: submittedSearch,
+      });
+      setInspections(res.items);
+      setHasNextPage(res.hasNextPage);
 
+      if (res.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Requests",
+          message: res.message || "You have no vehicle requests.",
+        });
+      } else {
+        setAlert(null);
+      }
+    } catch {
+      console.error("Error fetching inspections");
+      setErrorMsg("Failed to load inspections.");
+    }
+  }, [page, pageSize, submittedSearch]);
 
-useEffect(() => {
-  fetchInspections();
-}, [fetchInspections]);
-
+  useEffect(() => {
+    fetchInspections();
+  }, [fetchInspections]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -119,6 +130,13 @@ useEffect(() => {
     }, 3000);
     return () => clearTimeout(timeout);
   }, [successMsg, errorMsg]);
+
+   useEffect(() => {
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
 
   return (
     <>
@@ -134,8 +152,12 @@ useEffect(() => {
         )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
 
-        {infoMsg && (
-          <Alert variant="info" title="Info" message={infoMsg}></Alert>
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
         )}
 
         <ComponentCard
@@ -164,10 +186,18 @@ useEffect(() => {
             </div>
           </div>
 
-          <InspectionApprovalTable
-            inspections={inspections}
-            onAction={onAction}
-          />
+          {inspections.length === 0 ? (
+            <div className="flex justify-center items-center py-10">
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                No inspection requests.
+              </p>
+            </div>
+          ) : (
+            <InspectionApprovalTable
+              inspections={inspections}
+              onAction={onAction}
+            />
+          )}
 
           <InspectionApprovalModal
             isOpen={modalOpen}

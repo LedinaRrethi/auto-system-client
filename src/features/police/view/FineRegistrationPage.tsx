@@ -24,7 +24,7 @@ export default function FineRegistrationPage() {
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
   const [alert, setAlert] = useState<{
-    variant: "success" | "error";
+    variant: "success" | "info" | "error";
     title: string;
     message: string;
   } | null>(null);
@@ -98,6 +98,7 @@ export default function FineRegistrationPage() {
           title="Fine registration"
           desc="Here you can add fines, search and filter."
         >
+          
           <FineRegistrationTable
             onAdd={handleAddClick}
             filters={filters}
@@ -113,6 +114,7 @@ export default function FineRegistrationPage() {
             plateOptions={plateOptions}
             setPlateOptions={setPlateOptions}
             onOpenFilterModal={() => setIsFilterModalOpen(true)}
+            setAlert={setAlert} 
           />
         </ComponentCard>
       </div>

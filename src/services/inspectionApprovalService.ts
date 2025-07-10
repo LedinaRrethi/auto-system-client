@@ -2,13 +2,8 @@ import { InspectionRequestList } from "../types/InspectionApproval/InspectionLis
 import { PaginationQuery } from "../types/PaginationQuery";
 import api from "./api";
 import { InspectionApproval } from "../types/InspectionApproval/InspectionApproval";
+import { PaginatedResponse } from "../types/PaginatedResponse";
 
-interface PaginatedResponse<T> {
-  items: T[];
-  page: number;
-  pageSize: number;
-  hasNextPage: boolean;
-}
 
 export const fetchMyInspections = async (
   query: PaginationQuery

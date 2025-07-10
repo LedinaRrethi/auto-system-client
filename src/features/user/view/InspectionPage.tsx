@@ -34,6 +34,12 @@ export default function InspectionPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
 
+  const [alert, setAlert] = useState<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
+
   useEffect(() => {
     const loadMetaData = async () => {
       try {
@@ -62,6 +68,15 @@ export default function InspectionPage() {
         setInspections(res.items);
         setHasNextPage(res.hasNextPage);
 
+        if (res.items.length === 0) {
+          setAlert({
+            variant: "info",
+            title: "No Requests",
+            message: res.message || "You have done no inspection requests.",
+          });
+        } else {
+          setAlert(null);
+        }
       } catch {
         setErrorMsg("Failed to load inspections.");
       }
@@ -124,13 +139,13 @@ export default function InspectionPage() {
     return () => clearTimeout(timeout);
   }, [successMsg, errorMsg]);
 
-   //remove that later TODO
+  //remove that later TODO
   useEffect(() => {
-  if (searchTerm === "") {
-    setSubmittedSearch("");
-    setPage(1);
-  }
-}, [searchTerm]);
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
 
   return (
     <>
@@ -145,6 +160,14 @@ export default function InspectionPage() {
           <Alert variant="success" title="Success" message={successMsg} />
         )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="Inspections"
@@ -179,18 +202,10 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          {/* <InspectionRegistrationTable inspections={inspections} /> */}
-
-          {inspections.length === 0 && !searchTerm ? (
+          {vehicles.length === 0 ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
-                You have no inspections.
-              </p>
-            </div>
-          ) : inspections.length === 0 && searchTerm ? (
-            <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No inspections found.
+                No inspection to display.
               </p>
             </div>
           ) : (
