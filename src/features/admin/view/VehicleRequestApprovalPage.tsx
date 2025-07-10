@@ -41,7 +41,15 @@ export default function VehicleRequestApprovalPage() {
       });
       setVehicles(res.items);
       setHasNextPage(res.hasNextPage);
-
+      if (res.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Requests",
+          message: res.message || "You have no vehicle requests.",
+        });
+      } else {
+        setAlert(null);
+      }
     } catch (err) {
       console.error("Error fetching vehicle requests:", err);
       setAlert({
@@ -94,16 +102,6 @@ export default function VehicleRequestApprovalPage() {
       });
 
       await loadRequests();
-
-      if (vehicles.length === 1) {
-        setTimeout(() => {
-          setAlert({
-            variant: "info",
-            title: "No Requests",
-            message: "You have no vehicle requests.",
-          });
-        }, 5000); 
-      }
     } catch {
       setAlert({
         variant: "error",
@@ -135,13 +133,7 @@ export default function VehicleRequestApprovalPage() {
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 
       <div className="space-y-4">
-        {alert && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        )}
+        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
 
         <ComponentCard
           title="Vehicle Approval"
@@ -164,15 +156,10 @@ export default function VehicleRequestApprovalPage() {
 
           {vehicles.length === 0 ? (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No vehicles to display.
-              </p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">No vehicles to display.</p>
             </div>
           ) : (
-            <VehicleRequestApprovalTable
-              vehicles={vehicles}
-              onAction={openModal}
-            />
+            <VehicleRequestApprovalTable vehicles={vehicles} onAction={openModal} />
           )}
 
           <VehicleRequestApprovalModal
@@ -190,11 +177,7 @@ export default function VehicleRequestApprovalPage() {
             requestType={selectedVehicle?.requestType}
           />
 
-          <Pagination
-            currentPage={page}
-            hasNextPage={hasNextPage}
-            onPageChange={setPage}
-          />
+          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
         </ComponentCard>
       </div>
     </>

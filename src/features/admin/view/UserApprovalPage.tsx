@@ -19,9 +19,7 @@ export default function UserApprovalPage() {
   const [submittedSearch, setSubmittedSearch] = useState("");
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<
-    "approve" | "reject" | "deactivate" | null
-  >(null);
+  const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const [alert, setAlert] = useState<{
@@ -70,10 +68,7 @@ export default function UserApprovalPage() {
     return () => clearTimeout(timeout);
   }, [alert]);
 
-  const openModal = (
-    user: User,
-    action: "approve" | "reject" | "deactivate"
-  ) => {
+  const openModal = (user: User, action: "approve" | "reject" | "deactivate") => {
     setSelectedUser(user);
     setModalAction(action);
     setModalOpen(true);
@@ -86,11 +81,7 @@ export default function UserApprovalPage() {
 
     try {
       await updateUserStatus(selectedUser.id, newStatus);
-      setUsers((prev) =>
-        prev.map((u) =>
-          u.id === selectedUser.id ? { ...u, status: newStatus } : u
-        )
-      );
+      setUsers((prev) => prev.map((u) => (u.id === selectedUser.id ? { ...u, status: newStatus } : u)));
       setAlert({
         variant: "success",
         title: "Success",
@@ -125,20 +116,11 @@ export default function UserApprovalPage() {
 
   return (
     <>
-      <PageMeta
-        title="User Approval | AutoSystem"
-        description="Manage and approve system users"
-      />
+      <PageMeta title="User Approval | AutoSystem" description="Manage and approve system users" />
       <PageBreadcrumb pageTitle="User Approval" />
 
       <div className="space-y-4">
-        {alert && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        )}
+        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
 
         <ComponentCard
           title="User Approval"
@@ -161,9 +143,7 @@ export default function UserApprovalPage() {
 
           {users.length === 0 ? (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No users to display.
-              </p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">No users to display.</p>
             </div>
           ) : (
             <UserApprovalTable users={users} onAction={openModal} />
@@ -181,11 +161,7 @@ export default function UserApprovalPage() {
             }}
           />
 
-          <Pagination
-            currentPage={page}
-            hasNextPage={hasNextPage}
-            onPageChange={setPage}
-          />
+          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
         </ComponentCard>
       </div>
     </>

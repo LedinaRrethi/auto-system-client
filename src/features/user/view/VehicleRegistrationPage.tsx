@@ -58,14 +58,14 @@ export default function VehicleRegistrationPage() {
       if (response.items.length === 0) {
         setAlert({
           variant: "info",
-          title: "No Requests",
-          message: response.message || "You have no vehicle requests.",
+          title: "No Vehicles",
+          message: response.message || "You have no vehicles.",
         });
       } else {
         setAlert(null);
       }
     } catch {
-      setErrorMsg("Failed to load vehicle requests.");
+      setErrorMsg("Failed to load vehicles.");
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -206,19 +206,11 @@ export default function VehicleRegistrationPage() {
       <PageBreadcrumb pageTitle="My Vehicles" />
 
       <div className="space-y-6">
-        {successMsg && (
-          <Alert variant="success" title="Success" message={successMsg} />
-        )}
+        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        {alert && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        )}
+        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
 
         <ComponentCard
           title="Vehicles"
@@ -252,23 +244,13 @@ export default function VehicleRegistrationPage() {
 
           {vehicles.length === 0 ? (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No vehicles to display.
-              </p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">No vehicles to display.</p>
             </div>
           ) : (
-            <VehicleRegistrationTable
-              vehicles={vehicles}
-              onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
-            />
+            <VehicleRegistrationTable vehicles={vehicles} onEdit={handleEditClick} onDelete={handleDeleteClick} />
           )}
 
-          <Pagination
-            currentPage={page}
-            hasNextPage={hasNextPage}
-            onPageChange={setPage}
-          />
+          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
         </ComponentCard>
 
         <VehicleRegistrationModal
