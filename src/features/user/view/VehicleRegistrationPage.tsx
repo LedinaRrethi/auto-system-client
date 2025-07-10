@@ -30,6 +30,12 @@ export default function VehicleRegistrationPage() {
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  const [alert, setAlert] = useState<{
+    variant: "success" | "info" | "error";
+    title: string;
+    message: string;
+  } | null>(null);
+
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
   const [hasNextPage, setHasNextPage] = useState(false);
@@ -49,6 +55,15 @@ export default function VehicleRegistrationPage() {
       });
       setVehicles(response.items);
       setHasNextPage(response.hasNextPage);
+      if (response.items.length === 0) {
+        setAlert({
+          variant: "info",
+          title: "No Requests",
+          message: response.message || "You have no vehicle requests.",
+        });
+      } else {
+        setAlert(null);
+      }
     } catch {
       setErrorMsg("Failed to load vehicle requests.");
     }
@@ -174,15 +189,13 @@ export default function VehicleRegistrationPage() {
     setModalErrorMsg(null);
   };
 
-
   //remove that later TODO
   useEffect(() => {
-  if (searchTerm === "") {
-    setSubmittedSearch("");
-    setPage(1);
-  }
-}, [searchTerm]);
-
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
 
   return (
     <>
@@ -198,6 +211,14 @@ export default function VehicleRegistrationPage() {
         )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
+
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="Vehicles"
@@ -229,16 +250,10 @@ export default function VehicleRegistrationPage() {
             </Button>
           </div>
 
-          {vehicles.length === 0 && !searchTerm ? (
+          {vehicles.length === 0 ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
-                You have no vehicles.
-              </p>
-            </div>
-          ) : vehicles.length === 0 && searchTerm ? (
-            <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No vehicles found.
+                No vehicles to display.
               </p>
             </div>
           ) : (
