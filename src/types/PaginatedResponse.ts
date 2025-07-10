@@ -3,4 +3,5 @@ export interface PaginatedResponse<T> {
   page: number;
   pageSize: number;
   hasNextPage: boolean;
+  message?: string;
 }
