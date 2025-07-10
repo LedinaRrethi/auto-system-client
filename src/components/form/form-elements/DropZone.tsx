@@ -1,5 +1,5 @@
 import { useDropzone } from "react-dropzone";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { HiTrash } from "react-icons/hi";
 
 interface DropzoneComponentProps {
@@ -7,21 +7,61 @@ interface DropzoneComponentProps {
   setFiles: React.Dispatch<React.SetStateAction<File[]>>;
 }
 
+const MAX_TOTAL_SIZE_MB = 5;
+const MAX_TOTAL_SIZE_BYTES = MAX_TOTAL_SIZE_MB * 1024 * 1024;
 
 const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ files, setFiles }) => {
-  const onDrop = useCallback(
-  (acceptedFiles: File[]) => {
-    setFiles((prev) => [...prev, ...acceptedFiles]);
-  },
-  [setFiles]
-);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      let errorMsg = "";
+      const validFiles: File[] = [];
+
+      const existingFileNames = files.map(f => f.name.toLowerCase());
+      const existingTotalSize = files.reduce((acc, file) => acc + file.size, 0);
+
+      let newTotalSize = existingTotalSize;
+
+      for (const file of acceptedFiles) {
+        const fileNameLower = file.name.toLowerCase();
+        const isPdfMimeType = file.type === "application/pdf";
+        const isPdfExtension = fileNameLower.endsWith(".pdf");
+
+        if (!isPdfMimeType || !isPdfExtension) {
+          errorMsg = "Only PDF files are allowed.";
+          break;
+        }
+
+        if (existingFileNames.includes(fileNameLower) || validFiles.some(f => f.name.toLowerCase() === fileNameLower)) {
+          errorMsg = `A file named "${file.name}" already exists.`;
+          break;
+        }
+
+        newTotalSize += file.size;
+
+        if (newTotalSize > MAX_TOTAL_SIZE_BYTES) {
+          errorMsg = `Total file size exceeds ${MAX_TOTAL_SIZE_MB} MB.`;
+          break;
+        }
+
+        validFiles.push(file);
+      }
+
+      if (errorMsg) {
+        setErrorMessage(errorMsg);
+        return;
+      }
+
+      setFiles(prev => [...prev, ...validFiles]);
+      setErrorMessage(null);
+    },
+    [files, setFiles]
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: {
-      "application/pdf": [],
-    },
+    accept: { "application/pdf": [] },
     multiple: true,
   });
 
@@ -34,6 +74,7 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ files, setFiles }
     const newFiles = [...files];
     newFiles.splice(index, 1);
     setFiles(newFiles);
+    setErrorMessage(null);
   };
 
   return (
@@ -52,10 +93,14 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ files, setFiles }
             {isDragActive ? "Drop PDF files here..." : "Drag & drop PDF files or click to browse"}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Only PDF documents are allowed. You can upload multiple files.
+            Only PDF documents. Total maximum size: {MAX_TOTAL_SIZE_MB} MB.
           </p>
         </div>
       </div>
+
+      {errorMessage && (
+        <div className="mt-3 text-sm text-red-600 dark:text-red-400">{errorMessage}</div>
+      )}
 
       {files.length > 0 && (
         <ul className="mt-4 space-y-2 text-sm text-gray-700 dark:text-gray-200">
@@ -86,4 +131,3 @@ const DropzoneComponent: React.FC<DropzoneComponentProps> = ({ files, setFiles }
 };
 
 export default DropzoneComponent;
-
