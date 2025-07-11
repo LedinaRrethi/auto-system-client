@@ -16,7 +16,7 @@ interface Props {
   isOpen: boolean;
   errorMessage?: string | null;
   onClose: () => void;
-  onSubmit: (data: VehicleInput, mode: "add" | "edit") => void;
+  onSubmit: (data: VehicleInput, mode: "add" | "edit") => Promise<boolean>;
   initialValues?: VehicleInput;
   mode: "add" | "edit";
   onClearError?: () => void;
@@ -64,15 +64,10 @@ export default function VehicleRegistrationModal({
   }, [initialValues, isOpen, reset]);
 
   const submitHandler = async (data: VehicleInput) => {
-    try {
-      onSubmit(data, mode);
-
-      if (mode === "add") {
-        reset();
-      }
-    } catch (error) {
-      console.error("Modal - Submit error:", error);
-    }
+   const result = await onSubmit(data, mode);  
+  if (result && mode === "add") {
+    reset();  
+  }
   };
 
   useEffect(() => {

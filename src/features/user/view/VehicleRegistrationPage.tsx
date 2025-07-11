@@ -133,7 +133,7 @@ export default function VehicleRegistrationPage() {
     }
   };
 
-  const handleSubmit = async (data: VehicleInput, mode: "add" | "edit") => {
+  const handleSubmit = async (data: VehicleInput, mode: "add" | "edit"): Promise<boolean> => {
     try {
       if (mode === "add") {
         await registerVehicle(data);
@@ -142,7 +142,7 @@ export default function VehicleRegistrationPage() {
       } else {
         if (!vehicleIdToEdit) {
           setModalErrorMsg("Missing vehicle ID for update.");
-          return;
+          return false;
         }
 
         await updateVehicle(vehicleIdToEdit, {
@@ -160,6 +160,8 @@ export default function VehicleRegistrationPage() {
       setIsModalOpen(false);
       setVehicleIdToEdit(null);
       setModalErrorMsg(null);
+      return true;
+
     } catch (error: unknown) {
       const err = error as {
         response?: { data?: { error?: string; message?: string } };
@@ -173,6 +175,7 @@ export default function VehicleRegistrationPage() {
         "Something went wrong. Please try again.";
 
       setModalErrorMsg(message);
+      return false;
     }
   };
 
