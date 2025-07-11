@@ -23,10 +23,17 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [unreadCount, setUnreadCount] = useState(0);
 
   const fetchNotifications = useCallback(async () => {
-    const unseen = await getUnseenNotifications();
-    const count = await countUnseenNotifications();
-    setNotifications(unseen.slice(0, 6));
-    setUnreadCount(count);
+    const token = sessionStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const unseen = await getUnseenNotifications();
+      const count = await countUnseenNotifications();
+      setNotifications(unseen.slice(0, 6));
+      setUnreadCount(count);
+    } catch (error) {
+      console.error("Failed to fetch notifications", error);
+    }
   }, []);
 
   const markAsReadLocally = (id: string) => {
