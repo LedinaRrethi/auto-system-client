@@ -28,7 +28,9 @@ export default function InspectionApprovalModal({
   setComment,
 }: Props) {
   const [files, setFiles] = useState<File[]>([]);
-  const [errors, setErrors] = useState<{ comment?: string; files?: string }>({});
+  const [errors, setErrors] = useState<{ comment?: string; files?: string }>(
+    {}
+  );
 
   const isApprove = action === "approve";
   const btnText = isApprove ? "Yes, Approve" : "Yes, Reject";
@@ -83,7 +85,10 @@ export default function InspectionApprovalModal({
             rows={4}
             placeholder="Comment..."
             value={comment}
-            onChange={setComment}
+            onChange={(value) => {
+              setComment(value);
+              setErrors((prev) => ({ ...prev, comment: undefined }));
+            }}
           />
           {errors.comment && (
             <p className="text-xs text-red-500 mt-1">{errors.comment}</p>
@@ -92,7 +97,13 @@ export default function InspectionApprovalModal({
 
         <div>
           <Label>Attach PDF Documents</Label>
-          <DropzoneComponent files={files} setFiles={setFiles} />
+          <DropzoneComponent
+            files={files}
+            setFiles={(newFiles) => {
+              setFiles(newFiles);
+              setErrors((prev) => ({ ...prev, files: undefined }));
+            }}
+          />
           {errors.files && (
             <p className="text-xs text-red-500 mt-1">{errors.files}</p>
           )}
