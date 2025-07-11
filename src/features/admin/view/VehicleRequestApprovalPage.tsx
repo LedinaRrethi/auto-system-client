@@ -24,6 +24,10 @@ export default function VehicleRequestApprovalPage() {
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleRequestList | null>(null);
   const [comment, setComment] = useState("");
 
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [infoMsg, setInfoMsg] = useState<string | null>(null);
+
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
     title: string;
@@ -41,6 +45,7 @@ export default function VehicleRequestApprovalPage() {
       });
       setVehicles(res.items);
       setHasNextPage(res.hasNextPage);
+
       if (res.items.length === 0) {
         setAlert({
           variant: "info",
@@ -50,13 +55,8 @@ export default function VehicleRequestApprovalPage() {
       } else {
         setAlert(null);
       }
-    } catch (err) {
-      console.error("Error fetching vehicle requests:", err);
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to load vehicle requests.",
-      });
+    } catch  {
+      setErrorMsg("Failed to load vehicle requests.");
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -65,10 +65,20 @@ export default function VehicleRequestApprovalPage() {
   }, [loadRequests]);
 
   useEffect(() => {
-    if (!alert) return;
-    const timeout = setTimeout(() => setAlert(null), 5000);
+    if (searchTerm === "") {
+      setSubmittedSearch("");
+      setPage(1);
+    }
+  }, [searchTerm]);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSuccessMsg(null);
+      setErrorMsg(null);
+      setInfoMsg(null);
+    }, 3000);
     return () => clearTimeout(timeout);
-  }, [alert]);
+  }, [successMsg, errorMsg, infoMsg]);
 
   const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
     setSelectedVehicle(vehicle);
@@ -95,19 +105,12 @@ export default function VehicleRequestApprovalPage() {
         approvalComment: comment,
       });
 
-      setAlert({
-        variant: "success",
-        title: "Success",
-        message: `Vehicle request ${modalAction}d successfully.`,
-      });
+      setSuccessMsg(`Vehicle request ${modalAction}d successfully.`);
 
       await loadRequests();
+      setSubmittedSearch(searchTerm);
     } catch {
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: `Failed to ${modalAction} the request.`,
-      });
+      setErrorMsg(`Failed to ${modalAction} the request.`);
     } finally {
       setModalOpen(false);
       setSelectedVehicle(null);
@@ -115,13 +118,6 @@ export default function VehicleRequestApprovalPage() {
       setComment("");
     }
   };
-
-  useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
-      setPage(1);
-    }
-  }, [searchTerm]);
 
   return (
     <>
@@ -133,6 +129,10 @@ export default function VehicleRequestApprovalPage() {
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 
       <div className="space-y-4">
+        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+        {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
+
         {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
 
         <ComponentCard
