@@ -8,6 +8,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
+let isRefreshing = false;
+
 // Vendos automatikisht token ne cdo kerkese
 api.interceptors.request.use((config) => {
   const token = getToken();
@@ -31,14 +33,25 @@ api.interceptors.response.use(
     const isRefreshRequest = originalRequest.url?.includes("/Auth/refresh-token");
 
     if (error.response?.status === 401 && !originalRequest._retry && !isLoginRequest && !isRefreshRequest) {
+      if (isRefreshing) {
+        return Promise.reject(error); 
+      }
+      
+      isRefreshing = true;
       originalRequest._retry = true;
+
       try {
         const res = await api.post("/Auth/refresh-token", {}, { withCredentials: true });
         const newToken = res.data.token;
         saveToken(newToken);
+
+        api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        isRefreshing = false;  
         return api(originalRequest);
       } catch (refreshError) {
+        isRefreshing = false;  
         removeToken();
         window.location.href = "/signin";
         return Promise.reject(refreshError);
