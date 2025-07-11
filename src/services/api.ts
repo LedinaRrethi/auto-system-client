@@ -22,6 +22,11 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+
+     if (!originalRequest || !error.response) {
+      return Promise.reject(error);
+    }
+
     const isLoginRequest = originalRequest.url?.includes("/Auth/login");
     const isRefreshRequest = originalRequest.url?.includes("/Auth/refresh-token");
 
@@ -41,7 +46,7 @@ api.interceptors.response.use(
     }
 
     // Nese refresh ose login kthen 401 , behet direkt logout
-    if (error.response?.status === 401 && (isLoginRequest || isRefreshRequest)) {
+    if (error.response?.status === 401 && isRefreshRequest) {
       removeToken();
       window.location.href = "/signin";
     }
