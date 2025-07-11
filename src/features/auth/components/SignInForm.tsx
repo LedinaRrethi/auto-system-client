@@ -104,6 +104,7 @@ export default function SignInForm() {
                   type="email"
                   placeholder="info@gmail.com"
                   {...register("email")}
+                  autoComplete="off"
                   onChange={handleFieldChange}
                 />
                 {errors.email && (
@@ -123,6 +124,7 @@ export default function SignInForm() {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     {...register("password")}
+                    autoComplete="off"
                     onChange={(e) => {
                       register("password").onChange(e);
                       handleFieldChange();

@@ -56,7 +56,9 @@ export default function SignUpForm() {
                 <Label>
                   First Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("firstName")} placeholder="Enter your first name" />
+                <Input {...register("firstName")}
+                autoComplete="off"
+                placeholder="Enter your first name" />
                 {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
               </div>
 
@@ -64,7 +66,9 @@ export default function SignUpForm() {
                 <Label>
                   Father Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("fatherName")} placeholder="Enter your father name" />
+                <Input {...register("fatherName")} 
+                autoComplete="off"
+                placeholder="Enter your father name" />
                 {errors.fatherName && <p className="text-sm text-red-500">{errors.fatherName.message}</p>}
               </div>
             </div>
@@ -74,7 +78,9 @@ export default function SignUpForm() {
                 <Label>
                   Last Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("lastName")} placeholder="Enter your last name" />
+                <Input {...register("lastName")} 
+                autoComplete="off"
+                placeholder="Enter your last name" />
                 {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
               </div>
 
@@ -104,7 +110,9 @@ export default function SignUpForm() {
               <Label>
                 Personal Id<span className="text-error-500">*</span>
               </Label>
-              <Input {...register("personalId")} placeholder="Enter your national ID number" />
+              <Input {...register("personalId")} 
+              autoComplete="off"
+              placeholder="Enter your national ID number" />
               {errors.personalId && <p className="text-sm text-red-500">{errors.personalId.message}</p>}
             </div>
 
@@ -141,7 +149,9 @@ export default function SignUpForm() {
                 <Label>
                   Specialist Number<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("specialistNumber")} placeholder="Enter specialist number" />
+                <Input {...register("specialistNumber")} 
+                autoComplete="off"
+                placeholder="Enter specialist number" />
                 {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
               </div>
             )}
@@ -172,7 +182,9 @@ export default function SignUpForm() {
               <Label>
                 Email<span className="text-error-500">*</span>
               </Label>
-              <Input {...register("email")} type="email" placeholder="example@domain.com" />
+              <Input {...register("email")} 
+              autoComplete="off"
+              type="email" placeholder="example@domain.com" />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
