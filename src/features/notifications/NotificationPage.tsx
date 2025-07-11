@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Bell, CheckCircle, FileText, AlertTriangle, Mail, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ComponentCard from "../../components/common/ComponentCard";
@@ -28,7 +28,7 @@ export default function NotificationPage() {
 
   const { markAsReadLocally, markAllAsReadLocally } = useNotificationContext();
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const data = showOnlyUnread ? await getUnseenNotifications() : await getAllNotifications();
@@ -38,11 +38,11 @@ export default function NotificationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [showOnlyUnread]);
 
   useEffect(() => {
     fetchData();
-  }, [showOnlyUnread]);
+  }, [fetchData]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
