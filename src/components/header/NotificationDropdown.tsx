@@ -15,7 +15,6 @@ export default function NotificationDropdown() {
   const navigate = useNavigate();
 
   const { unreadCount, notifications, fetchNotifications, markAsReadLocally } = useNotificationContext();
-
   const token = sessionStorage.getItem("authToken");
 
   useNotificationHub(token, () => {
@@ -24,14 +23,21 @@ export default function NotificationDropdown() {
     }, 1000);
   });
 
+  function toggleDropdown() {
+    setIsOpen(prev => !prev);
+  }
+
+  function closeDropdown() {
+    setIsOpen(false);
+  }
+
   const handleNotificationClick = async (notification: Notificationn) => {
     try {
       if (!notification.isSeen) {
         await markOneAsSeen(notification.idpK_Notification);
         markAsReadLocally(notification.idpK_Notification);
       }
-
-      setIsOpen(false);
+      closeDropdown();
       navigate(`/notifications/${notification.idpK_Notification}`);
     } catch (error) {
       console.error("Failed to mark notification as seen", error);
@@ -39,7 +45,7 @@ export default function NotificationDropdown() {
   };
 
   const handleViewAll = () => {
-    setIsOpen(false);
+    closeDropdown();
     navigate("/notifications");
   };
 
@@ -59,8 +65,8 @@ export default function NotificationDropdown() {
   return (
     <div className="relative">
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative flex items-center justify-center h-11 w-11 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-white transition"
+        onClick={toggleDropdown}
+        className="relative flex items-center justify-center h-11 w-11 rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700 dark:hover:text-white transition dropdown-toggle"
       >
         <Bell size={20} />
         {unreadCount > 0 && (
@@ -72,7 +78,7 @@ export default function NotificationDropdown() {
 
       <Dropdown
         isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
+        onClose={closeDropdown}
         className="absolute right-0 mt-3 w-80 sm:w-96 flex flex-col rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 p-3 shadow-xl z-50"
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
@@ -85,7 +91,7 @@ export default function NotificationDropdown() {
             )}
           </h5>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={closeDropdown}
             className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-white p-1 rounded-full"
           >
             <X size={16} />
