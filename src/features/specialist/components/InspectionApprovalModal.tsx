@@ -81,7 +81,7 @@ export default function InspectionApprovalModal({
           <Label>Comment</Label>
           <TextArea
             rows={4}
-            placeholder="Optional comment..."
+            placeholder="Comment..."
             value={comment}
             onChange={setComment}
           />
