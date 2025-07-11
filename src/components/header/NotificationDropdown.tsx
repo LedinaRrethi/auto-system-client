@@ -8,7 +8,7 @@ import { Notificationn, NotificationnType } from "../../types/Notification/Notif
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { useNotificationHub } from "../../hooks/useNotificationHub";
-import { useNotificationContext } from "../../context/NotificationContext";
+import { useNotificationContext } from "../../context/NotificationContextHelper";
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);

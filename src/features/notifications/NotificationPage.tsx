@@ -14,8 +14,9 @@ import {
   markOneAsSeen,
 } from "../../services/notificationService";
 import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
+import { useNotificationContext } from "../../context/NotificationContextHelper";
 
-import { useNotificationContext } from "../../context/NotificationContext";
+
 
 export default function NotificationPage() {
   const [notifications, setNotifications] = useState<Notificationn[]>([]);

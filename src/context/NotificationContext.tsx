@@ -1,22 +1,8 @@
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { useEffect, useState, ReactNode, useCallback } from "react";
 import { countUnseenNotifications, getUnseenNotifications } from "../services/notificationService";
 import { Notificationn } from "../types/Notification/Notificationn";
+import { NotificationContext } from "./NotificationContextHelper";
 
-interface NotificationContextType {
-  unreadCount: number;
-  notifications: Notificationn[];
-  fetchNotifications: () => Promise<void>;
-  markAsReadLocally: (notificationId: string) => void;
-  markAllAsReadLocally: () => void;
-}
-
-const NotificationContext = createContext<NotificationContextType | undefined>(undefined);
-
-export const useNotificationContext = () => {
-  const context = useContext(NotificationContext);
-  if (!context) throw new Error("useNotificationContext must be used within NotificationProvider");
-  return context;
-};
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notificationn[]>([]);
