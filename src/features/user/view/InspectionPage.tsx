@@ -28,7 +28,7 @@ export default function InspectionPage() {
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(1);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");

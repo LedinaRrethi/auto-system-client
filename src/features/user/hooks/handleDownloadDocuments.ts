@@ -1,11 +1,31 @@
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { fetchInspectionDocument } from "../../../services/inspectionService";
+import { InspectionDocument } from "../../../types/InspectionDocument";
 
 export const handleDownloadDocuments = async (
-  documents: { documentName: string; fileBase64: string }[]
+  documents: InspectionDocument[]
 ) => {
-  if (documents.length === 1) {
-    const doc = documents[0];
+  const documentsWithContent: { documentName: string; fileBase64: string }[] = [];
+
+  for (const doc of documents) {
+    try {
+     const { fileBase64 } = await fetchInspectionDocument(doc.idpK_InspectionDoc);
+
+
+      documentsWithContent.push({
+        documentName: doc.documentName,
+        fileBase64,
+      });
+    } catch (error) {
+      console.error("Failed to fetch fileBase64 for document:", doc.documentName, error);
+    }
+  }
+
+  if (documentsWithContent.length === 0) return;
+
+  if (documentsWithContent.length === 1) {
+    const doc = documentsWithContent[0];
     const byteString = atob(doc.fileBase64);
     const byteArray = new Uint8Array(byteString.length);
     for (let i = 0; i < byteString.length; i++) {
@@ -13,13 +33,11 @@ export const handleDownloadDocuments = async (
     }
     const blob = new Blob([byteArray], { type: "application/pdf" });
     saveAs(blob, doc.documentName);
-  } else if (documents.length > 1) {
+  } else {
     const zip = new JSZip();
-    documents.forEach((doc) => {
-      const base64Content = doc.fileBase64;
-      zip.file(doc.documentName, base64Content, { base64: true });
+    documentsWithContent.forEach((doc) => {
+      zip.file(doc.documentName, doc.fileBase64, { base64: true });
     });
-
     const zipBlob = await zip.generateAsync({ type: "blob" });
     saveAs(zipBlob, "inspection-documents.zip");
   }

@@ -93,6 +93,7 @@ export default function InspectionApprovalPage() {
     try {
       const documents = await Promise.all(
         files.map(async (file) => ({
+          idpK_InspectionDoc: "",
           idfK_InspectionRequest: selectedInspection.idpK_InspectionRequest,
           documentName: file.name,
           fileBase64: await fileToBase64(file),

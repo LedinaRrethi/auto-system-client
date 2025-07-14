@@ -1,3 +1,5 @@
+import { InspectionDocument } from "../InspectionDocument";
+
 export interface MyInspectionsRequest {
   idpk_InspectionRequest: string;
   plateNumber: string;
@@ -5,11 +7,5 @@ export interface MyInspectionsRequest {
   directorateName: string;
   status: string;
   comment?: string;
-  documents: InspectionDocDTO[];
-}
-
-export interface InspectionDocDTO {
-  idpk_InspectionDoc: string;
-  documentName: string;
-  fileBase64: string;
+  documents: InspectionDocument[];
 }

@@ -1,3 +1,4 @@
+import { InspectionDocumentFile } from "../types/Inspection/InspectionDocumentFile";
 import { InspectionRequestCreateDTO } from "../types/Inspection/InspectionRequestCreate";
 import { MyInspectionsRequest } from "../types/Inspection/MyInspectionsRequest";
 import { MyVehiclePlate } from "../types/MyVehiclePlate";
@@ -21,4 +22,14 @@ export const getMyInspectionRequests = async (
 export const fetchMyVehiclePlates = async (): Promise<MyVehiclePlate[]> => {
   const response = await api.get("/Inspection/my-vehicles");
   return response.data;
+};
+
+
+export const fetchInspectionDocument = async (
+  id: string
+): Promise<InspectionDocumentFile> => {
+  const res = await api.get<InspectionDocumentFile>(
+    `/InspectionRequest/document/${id}`
+  );
+  return res.data;
 };

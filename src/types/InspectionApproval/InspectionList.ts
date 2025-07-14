@@ -1,9 +1,4 @@
-export interface InspectionDocument {
-  idpk_InspectionDoc: string;
-  idfk_InspectionRequest: string;
-  documentName: string;
-  fileBase64: string;
-}
+import { InspectionDocument } from "../InspectionDocument";
 
 export interface InspectionRequestList {
   idpK_Inspection: string;
