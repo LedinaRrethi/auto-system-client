@@ -1,19 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
-import ComponentCard from "../../../components/common/ComponentCard";
 import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
+import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { HiSearch } from "react-icons/hi";
+
 import { InspectionRequestList } from "../../../types/InspectionApproval/InspectionList";
 import {
   approveInspection,
   fetchMyInspections,
 } from "../../../services/inspectionApprovalService";
+
 import InspectionApprovalTable from "../components/InspectionApprovalTable";
 import InspectionApprovalModal from "../components/InspectionApprovalModal";
 
-export default function InspectionPage() {
+export default function InspectionApprovalPage() {
   const [inspections, setInspections] = useState<InspectionRequestList[]>([]);
   const [page, setPage] = useState(1);
   const [pageSize] = useState(5);
@@ -21,11 +23,9 @@ export default function InspectionPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
 
-  const [alert, setAlert] = useState<{
-    variant: "success" | "info" | "error";
-    title: string;
-    message: string;
-  } | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [infoMsg, setInfoMsg] = useState<string | null>(null);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [action, setAction] = useState<"approve" | "reject">("approve");
@@ -33,63 +33,12 @@ export default function InspectionPage() {
   const [loading, setLoading] = useState(false);
   const [selectedInspection, setSelectedInspection] = useState<InspectionRequestList | null>(null);
 
-  const onAction = (inspection: InspectionRequestList, action: "approve" | "reject") => {
-    setSelectedInspection(inspection);
-    setAction(action);
-    setModalOpen(true);
-  };
-
-  const handleConfirm = async (comment: string, files: File[]) => {
-    if (!selectedInspection) return;
-
-    setLoading(true);
-    try {
-      const documents = await Promise.all(
-        files.map(async (file) => {
-          const base64 = await fileToBase64(file);
-          return {
-            idfK_InspectionRequest: selectedInspection.idpK_InspectionRequest,
-            documentName: file.name,
-            fileBase64: base64,
-          };
-        })
-      );
-
-      await approveInspection({
-        idpK_Inspection: selectedInspection.idpK_Inspection,
-        isPassed: action === "approve",
-        comment,
-        documents,
-      });
-
-      setAlert({
-        variant: "success",
-        title: "Success",
-        message: `Inspection ${action}d successfully.`,
-      });
-
-      await fetchInspections();
-      setSubmittedSearch(searchTerm);
-    } catch {
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to update inspection.",
-      });
-    } finally {
-      setLoading(false);
-      setModalOpen(false);
-      setComment("");
-    }
-  };
-
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
-        const fullBase64 = reader.result?.toString() || "";
-        const pureBase64 = fullBase64.split(",")[1];
-        resolve(pureBase64);
+        const base64 = reader.result?.toString()?.split(",")[1] || "";
+        resolve(base64);
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);
@@ -97,30 +46,17 @@ export default function InspectionPage() {
 
   const fetchInspections = useCallback(async () => {
     try {
-      const res = await fetchMyInspections({
-        page,
-        pageSize,
-        search: submittedSearch,
-      });
+      const res = await fetchMyInspections({ page, pageSize, search: submittedSearch });
       setInspections(res.items);
       setHasNextPage(res.hasNextPage);
 
       if (res.items.length === 0) {
-        setAlert({
-          variant: "info",
-          title: "No Requests",
-          message: res.message || "You have no inspection requests.",
-        });
+        setInfoMsg(res.message || "You have no inspection requests.");
       } else {
-        setAlert(null);
+        setInfoMsg(null);
       }
     } catch {
-      console.error("Error fetching inspections");
-      setAlert({
-        variant: "error",
-        title: "Error",
-        message: "Failed to load inspections.",
-      });
+      setErrorMsg("Failed to load inspections.");
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -135,53 +71,81 @@ export default function InspectionPage() {
     }
   }, [searchTerm]);
 
-  // Auto-clear alerts after 3 seconds
   useEffect(() => {
-    if (!alert) return;
-    const timeout = setTimeout(() => setAlert(null), 3000);
+    const timeout = setTimeout(() => {
+      setSuccessMsg(null);
+      setErrorMsg(null);
+      setInfoMsg(null);
+    }, 3000);
     return () => clearTimeout(timeout);
-  }, [alert]);
+  }, [successMsg, errorMsg, infoMsg]);
+
+  const onAction = (inspection: InspectionRequestList, action: "approve" | "reject") => {
+    setSelectedInspection(inspection);
+    setAction(action);
+    setModalOpen(true);
+  };
+
+  const handleConfirm = async (comment: string, files: File[]) => {
+    if (!selectedInspection) return;
+
+    setLoading(true);
+    try {
+      const documents = await Promise.all(
+        files.map(async (file) => ({
+          idfK_InspectionRequest: selectedInspection.idpK_InspectionRequest,
+          documentName: file.name,
+          fileBase64: await fileToBase64(file),
+        }))
+      );
+
+      await approveInspection({
+        idpK_Inspection: selectedInspection.idpK_Inspection,
+        isPassed: action === "approve",
+        comment,
+        documents,
+      });
+
+      setSuccessMsg(`Inspection ${action}d successfully.`);
+      await fetchInspections();
+      setSubmittedSearch(searchTerm);
+    } catch {
+      setErrorMsg("Failed to update inspection.");
+    } finally {
+      setLoading(false);
+      setModalOpen(false);
+      setComment("");
+    }
+  };
 
   return (
     <>
-      <PageMeta
-        title="Vehicle Inspections | AutoSystem"
-        description="Manage and schedule vehicle inspections."
-      />
+      <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." />
       <PageBreadcrumb pageTitle="Inspection Approval" />
 
-      <div className="space-y-4">
-        {alert && (
-          <Alert
-            variant={alert.variant}
-            title={alert.title}
-            message={alert.message}
-          />
-        )}
+      <div className="space-y-6">
+        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
+        {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        <ComponentCard
-          title="Inspections"
-          desc="Here you can view and manage your vehicle inspections."
-        >
+        <ComponentCard title="Inspections" desc="Here you can view and manage your vehicle inspections.">
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex gap-4 items-center w-full sm:w-auto flex-wrap">
-              <div className="relative w-full sm:w-80">
-                <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
-                <input
-                  type="text"
-                  placeholder="Search ..."
-                  value={searchTerm}
-                  autoComplete="off"
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      setSubmittedSearch(searchTerm);
-                      setPage(1);
-                    }
-                  }}
-                  className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
-              </div>
+            <div className="relative w-full sm:w-80">
+              <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
+              <input
+                type="text"
+                placeholder="Search ..."
+                value={searchTerm}
+                autoComplete="off"
+                onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    setSubmittedSearch(searchTerm);
+                    setPage(1);
+                  }
+                }}
+                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
+              />
             </div>
           </div>
 
@@ -189,12 +153,12 @@ export default function InspectionPage() {
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
                 No inspection requests.
-              </p>
+                </p>
             </div>
           ) : (
-            <InspectionApprovalTable
-              inspections={inspections}
-              onAction={onAction}
+            <InspectionApprovalTable 
+            inspections={inspections} 
+            onAction={onAction} 
             />
           )}
 
@@ -208,11 +172,12 @@ export default function InspectionPage() {
             loading={loading}
           />
 
-          <Pagination
-            currentPage={page}
-            hasNextPage={hasNextPage}
-            onPageChange={setPage}
+          <Pagination 
+          currentPage={page} 
+          hasNextPage={hasNextPage} 
+          onPageChange={setPage} 
           />
+
         </ComponentCard>
       </div>
     </>
