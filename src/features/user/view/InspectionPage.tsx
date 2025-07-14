@@ -20,6 +20,12 @@ import { Directorate } from "../../../types/Directorate";
 import { HiPlus, HiSearch } from "react-icons/hi";
 import Button from "../../../components/ui/button/Button";
 
+const LoadingSpinner = () => (
+  <div className="flex justify-center items-center py-10">
+    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-blue-600"></div>
+  </div>
+);
+
 export default function InspectionPage() {
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,6 +43,8 @@ export default function InspectionPage() {
   const [, setDirectorates] = useState<Directorate[]>([]);
   const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
 
+  const [isLoading, setIsLoading] = useState(true);
+
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
     title: string;
@@ -44,6 +52,7 @@ export default function InspectionPage() {
   } | null>(null);
 
   const fetchInspections = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await getMyInspectionRequests({
         page,
@@ -63,6 +72,8 @@ export default function InspectionPage() {
       }
     } catch {
       setErrorMsg("Failed to load inspection requests.");
+    } finally {
+      setIsLoading(false);
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -163,7 +174,9 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          {inspections.length === 0 ? (
+          {isLoading ? (
+            <LoadingSpinner />
+          ) : inspections.length === 0 ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">No inspection requests to display.</p>
             </div>
