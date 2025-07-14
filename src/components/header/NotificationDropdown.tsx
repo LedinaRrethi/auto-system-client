@@ -3,7 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Bell, CheckCircle, AlertTriangle, X } from "lucide-react";
 
 import { markOneAsSeen } from "../../services/notificationService";
-import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
+import {
+  Notificationn,
+  NotificationnType,
+} from "../../types/Notification/Notificationn";
 
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
@@ -14,7 +17,8 @@ export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  const { unreadCount, notifications, fetchNotifications, markAsReadLocally } = useNotificationContext();
+  const { unreadCount, notifications, fetchNotifications, markAsReadLocally } =
+    useNotificationContext();
   const token = sessionStorage.getItem("authToken");
 
   useNotificationHub(token, () => {
@@ -24,7 +28,7 @@ export default function NotificationDropdown() {
   });
 
   function toggleDropdown() {
-    setIsOpen(prev => !prev);
+    setIsOpen((prev) => !prev);
   }
 
   function closeDropdown() {
@@ -79,7 +83,8 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 mt-3 w-80 sm:w-96 flex flex-col rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 p-3 shadow-xl z-50"
+        className="absolute right-0 sm:right-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 p-3 shadow-xl z-50 
+max-sm:right-[-200px] max-sm:w-[280px]"
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-sm font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
@@ -100,25 +105,31 @@ export default function NotificationDropdown() {
 
         <ul className="flex flex-col overflow-y-auto max-h-80 custom-scrollbar">
           {notifications.length === 0 ? (
-            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">No new notifications</div>
+            <div className="p-4 text-center text-gray-500 dark:text-gray-400 text-sm">
+              No new notifications
+            </div>
           ) : (
             notifications.map((notification) => {
-              const { icon: Icon, color } = getNotificationIcon(notification.type);
+              const { icon: Icon, color } = getNotificationIcon(
+                notification.type
+              );
               return (
                 <DropdownItem
                   key={notification.idpK_Notification}
                   onItemClick={() => handleNotificationClick(notification)}
                   className="flex gap-3 items-start rounded-lg p-3 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  <span className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}>
+                  <span
+                    className={`flex items-center justify-center w-8 h-8 rounded-full ${color}`}
+                  >
                     <Icon size={14} className="text-white" />
                   </span>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate max-w-[200px]">
+                    <p className="text-sm font-medium text-gray-800 dark:text-white truncate">
                       {notification.title || "Notification"}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[200px]">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                       {notification.message || "No message"}
                     </p>
                   </div>
