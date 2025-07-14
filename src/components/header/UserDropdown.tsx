@@ -2,9 +2,20 @@ import { useState } from "react";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { logout } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+
+  const { user } = useAuth();
+
+  const fullName = user?.FullName;
+
+  const firstName = user?.FullName?.split(" ")[0];
+
+  const lastName = user?.FullName?.split(" ")[1];
+
+  const email = user?.email;
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -23,12 +34,17 @@ export default function UserDropdown() {
   }
   return (
     <div className="relative">
-      <button onClick={toggleDropdown} className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400">
-        <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
-          <img src="/images/user/owner.jpg" alt="User" />
-        </span>
+      <button
+        onClick={toggleDropdown}
+        className="flex items-center text-gray-700 dropdown-toggle dark:text-gray-400"
+      >
 
-        <span className="block mr-1 font-medium text-theme-sm">User</span>
+        <div className="relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+          <span className="font-medium text-gray-600 dark:text-gray-300">
+            {(firstName?.[0]?.toUpperCase() || "") + (lastName?.[0]?.toUpperCase() || "")}
+          </span>
+        </div>
+
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -55,8 +71,8 @@ export default function UserDropdown() {
         className="absolute right-0 mt-[17px] flex w-[260px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark"
       >
         <div>
-          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">User name</span>
-          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">randomuser@pimjo.com</span>
+          <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">{fullName}</span>
+          <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">{email}</span>
         </div>
 
         <ul className="flex flex-col gap-1 pt-2 border-b border-gray-200 dark:border-gray-800">

@@ -16,6 +16,7 @@ import UnauthorizedPage from "../pages/OtherPage/UnauthorizedPage";
 import Home from "../features/Dashboard/Home";
 import NotificationPage from "../features/notifications/NotificationPage";
 import SpecificNotificationPage from "../features/notifications/SpecificNotificationPage";
+import UserProfiles from "../features/shared/view/UserProfiles";
 
 const AppRoutes = () => {
   return (
@@ -43,6 +44,7 @@ const AppRoutes = () => {
       <Route element={<AppLayout />}>
         <Route element={<ProtectedRoute allowedRoles={["Admin", "Police", "Specialist", "Individ"]} />}>
           <Route index element={<Home />} />
+          <Route path="/profile" element={<UserProfiles/>}></Route>
           <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/notifications/:id" element={<SpecificNotificationPage />} />
         </Route>
