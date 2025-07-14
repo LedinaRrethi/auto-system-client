@@ -66,8 +66,8 @@ export default function InspectionRegistrationTable({ inspections }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-            {inspections.map((item) => (
-              <TableRow key={item.idpk_InspectionRequest}>
+            {inspections.map((item , index) => (
+              <TableRow key={item.idpk_InspectionRequest ?? index}>
                 <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
                   {item.plateNumber}
                 </TableCell>
