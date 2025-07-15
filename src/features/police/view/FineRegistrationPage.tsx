@@ -23,7 +23,7 @@ export default function FineRegistrationPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-  const [alert, setAlert] = useState<{
+    const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
     title: string;
     message: string;
@@ -37,15 +37,17 @@ export default function FineRegistrationPage() {
     try {
       await createFine(data);
       setModalOpen(false);
+       setTimeout(() => {
       setAlert({
         variant: "success",
         title: "Fine Registered",
         message: "The fine has been successfully submitted.",
       });
+    }, 100);
 
       setSubmittedSearch((prev) => prev + " ");
 
-      setTimeout(() => setAlert(null), 3000);
+      setTimeout(() => setAlert(null), 4000);
 
       return true;
     } catch (err) {
@@ -55,7 +57,7 @@ export default function FineRegistrationPage() {
         title: "Submission Failed",
         message: "Could not submit the fine. Please try again.",
       });
-      setTimeout(() => setAlert(null), 3000);
+      setTimeout(() => setAlert(null), 4000);
 
       return false;
     }
