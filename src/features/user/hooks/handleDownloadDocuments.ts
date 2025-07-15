@@ -10,13 +10,16 @@ export const handleDownloadDocuments = async (
 
   for (const doc of documents) {
     try {
-     const { fileBase64 } = await fetchInspectionDocument(doc.idpK_InspectionDoc);
 
-
-      documentsWithContent.push({
+      if (doc.idpK_InspectionDoc) {
+  const { fileBase64 } = await fetchInspectionDocument(doc.idpK_InspectionDoc);
+     documentsWithContent.push({
         documentName: doc.documentName,
         fileBase64,
       });
+
+}
+
     } catch (error) {
       console.error("Failed to fetch fileBase64 for document:", doc.documentName, error);
     }
