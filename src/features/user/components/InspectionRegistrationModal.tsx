@@ -150,12 +150,19 @@ export default function InspectionRegistrationModal({
 
     setLocalError(null);
     onSubmit(payload);
+    
+  };
+
+  useEffect(() => {
+  if (successMsg) {
     reset({
       vehicleId: "",
       directoryId: "",
       requestedDate: undefined,
     });
-  };
+  }
+}, [successMsg, reset]);
+
 
   const handleModalClose = () => {
     reset({
