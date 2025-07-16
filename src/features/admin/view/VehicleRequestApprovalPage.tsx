@@ -18,11 +18,11 @@ export default function VehicleRequestApprovalPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-
+  
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(null);
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleRequestList | null>(null);
-  const [comment, setComment] = useState("");
+   const [comment, setComment] = useState("");
 
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -33,8 +33,6 @@ export default function VehicleRequestApprovalPage() {
     title: string;
     message: string;
   } | null>(null);
-
-  const [pendingRefreshAfterSuccess, setPendingRefreshAfterSuccess] = useState(false);
 
   const loadRequests = useCallback(async () => {
     try {
@@ -77,25 +75,18 @@ export default function VehicleRequestApprovalPage() {
   }, [searchTerm]);
 
   useEffect(() => {
-    const timeout = setTimeout(async () => {
+    const timeout = setTimeout(() => {
       setSuccessMsg(null);
       setErrorMsg(null);
       setInfoMsg(null);
-
-      if (pendingRefreshAfterSuccess) {
-        await loadRequests();
-        setSubmittedSearch(searchTerm);
-        setPendingRefreshAfterSuccess(false);
-      }
     }, 3000);
 
     return () => clearTimeout(timeout);
-  }, [successMsg, errorMsg, infoMsg, pendingRefreshAfterSuccess, loadRequests, searchTerm]);
+  }, [successMsg, errorMsg, infoMsg]);
 
   const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
     setSelectedVehicle(vehicle);
     setModalAction(action);
-    setComment("");
     setModalOpen(true);
   };
 
@@ -119,7 +110,12 @@ export default function VehicleRequestApprovalPage() {
       });
 
       setSuccessMsg(`Vehicle request ${modalAction}d successfully.`);
-      setPendingRefreshAfterSuccess(true); 
+      
+      setTimeout(async () => {
+        await loadRequests();
+        setSubmittedSearch(searchTerm);
+      }, 3000);
+      
     } catch {
       setErrorMsg(`Failed to ${modalAction} the request.`);
     } finally {
