@@ -83,19 +83,30 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
       }
   });
 
-  useEffect(() => {
-  if (plateNumber.trim().length === 7 && /^[A-Z]{2}\d{3}[A-Z]{2}$/i.test(plateNumber)) {
+useEffect(() => {
+  const trimmed = plateNumber.trim();
+  const isValid = trimmed.length === 7 && /^[A-Z]{2}\d{3}[A-Z]{2}$/i.test(trimmed);
+
+  if (isValid) {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
 
     debounceTimeout.current = window.setTimeout(() => {
       handlePlateCheck();
     }, 100);
+  } else {
+    setIsDisabled(false);
+    setValue("firstName", "");
+    setValue("lastName", "");
+    setValue("fatherName", "");
+    setValue("phoneNumber", "");
+    setValue("personalId", "");
   }
 
   return () => {
     if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
   };
-}, [plateNumber, handlePlateCheck]);
+}, [plateNumber, handlePlateCheck , setValue]);
+
 
 
   return (
