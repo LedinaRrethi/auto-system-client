@@ -34,6 +34,8 @@ export default function VehicleRequestApprovalPage() {
     message: string;
   } | null>(null);
 
+  const [pendingRefreshAfterSuccess, setPendingRefreshAfterSuccess] = useState(false);
+
   const loadRequests = useCallback(async () => {
     try {
       const res = await getAllVehicleRequests({
@@ -55,8 +57,11 @@ export default function VehicleRequestApprovalPage() {
       } else {
         setAlert(null);
       }
-    } catch  {
+
+      return res.items.length;
+    } catch {
       setErrorMsg("Failed to load vehicle requests.");
+      return null;
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -72,13 +77,20 @@ export default function VehicleRequestApprovalPage() {
   }, [searchTerm]);
 
   useEffect(() => {
-    const timeout = setTimeout(() => {
+    const timeout = setTimeout(async () => {
       setSuccessMsg(null);
       setErrorMsg(null);
       setInfoMsg(null);
+
+      if (pendingRefreshAfterSuccess) {
+        await loadRequests();
+        setSubmittedSearch(searchTerm);
+        setPendingRefreshAfterSuccess(false);
+      }
     }, 3000);
+
     return () => clearTimeout(timeout);
-  }, [successMsg, errorMsg, infoMsg]);
+  }, [successMsg, errorMsg, infoMsg, pendingRefreshAfterSuccess, loadRequests, searchTerm]);
 
   const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
     setSelectedVehicle(vehicle);
@@ -98,7 +110,8 @@ export default function VehicleRequestApprovalPage() {
     if (!selectedVehicle || !modalAction) return;
 
     try {
-      const newStatus = modalAction === "approve" ? VehicleStatus.Approved : VehicleStatus.Rejected;
+      const newStatus =
+        modalAction === "approve" ? VehicleStatus.Approved : VehicleStatus.Rejected;
 
       await updateRequestStatus(selectedVehicle.idpK_ChangeRequest, {
         newStatus,
@@ -106,9 +119,7 @@ export default function VehicleRequestApprovalPage() {
       });
 
       setSuccessMsg(`Vehicle request ${modalAction}d successfully.`);
-
-      await loadRequests();
-      setSubmittedSearch(searchTerm);
+      setPendingRefreshAfterSuccess(true); 
     } catch {
       setErrorMsg(`Failed to ${modalAction} the request.`);
     } finally {
@@ -132,7 +143,6 @@ export default function VehicleRequestApprovalPage() {
         {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
-
         {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
 
         <ComponentCard
