@@ -7,6 +7,8 @@ import Button from "../../../components/ui/button/Button";
 import { Modal } from "../../../components/ui/modal";
 import { fineSchema, FineCreateFormInput } from "../../../utils/validations/fineSchema";
 import { fetchVehicleOwnerDetails } from "../../../services/fineService";
+import { useEffect, useRef , useCallback} from "react";
+
 
 interface Props {
   isOpen: boolean;
@@ -38,8 +40,11 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
 
   const [isDisabled, setIsDisabled] = useState(false);
   const plateNumber = watch("plateNumber");
+
+  const debounceTimeout = useRef<number | null>(null);
+
  
-  const handlePlateCheck = async () => {
+  const handlePlateCheck = useCallback(async () => {
     if (!plateNumber.trim()) return;
 
       const data = await fetchVehicleOwnerDetails(plateNumber.trim());
@@ -60,7 +65,7 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
         setValue("personalId", "");
       }
     
-  };
+  },[plateNumber,setValue]);
 
   const handlePlateKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
@@ -77,6 +82,21 @@ export default function FineRegistrationModal({ isOpen, onClose, onSubmit }: Pro
         onClose();
       }
   });
+
+  useEffect(() => {
+  if (plateNumber.trim().length === 7 && /^[A-Z]{2}\d{3}[A-Z]{2}$/i.test(plateNumber)) {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+
+    debounceTimeout.current = window.setTimeout(() => {
+      handlePlateCheck();
+    }, 100);
+  }
+
+  return () => {
+    if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+  };
+}, [plateNumber, handlePlateCheck]);
+
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
