@@ -8,10 +8,10 @@ export const vehicleSchema = z.object({
       message: "Plate number must be in format AA123AA (2 letters, 3 numbers, 2 letters)",
     }),
     
-  chassisNumber: z
-    .string()
-    .length(17, "Chassis number must be exactly 17 characters")
-    .regex(/^[A-Z0-9]+$/, "Chassis number must contain only uppercase letters and numbers"),
+ chassisNumber: z
+  .string()
+  .length(17, "Chassis number must be exactly 17 characters")
+  .regex(/^[A-Za-z0-9]+$/, "Chassis number must contain only letters and numbers"),
 
   color: z
     .string()
