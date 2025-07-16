@@ -107,9 +107,13 @@ export default function InspectionApprovalPage() {
         documents,
       });
 
-      setSuccessMsg(`Inspection ${action}d successfully.`);
-      await fetchInspections();
-      setSubmittedSearch(searchTerm);
+      setSuccessMsg(`Inspection ${action}ed successfully.`);
+
+        setTimeout(async () => {
+        await fetchInspections();
+        setSubmittedSearch(searchTerm);
+      }, 3000);
+
     } catch {
       setErrorMsg("Failed to update inspection.");
     } finally {

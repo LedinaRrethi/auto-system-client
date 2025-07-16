@@ -109,7 +109,7 @@ export default function VehicleRequestApprovalPage() {
         approvalComment: comment,
       });
 
-      setSuccessMsg(`Vehicle request ${modalAction}d successfully.`);
+      setSuccessMsg(`Vehicle request ${modalAction}ed successfully.`);
       
       setTimeout(async () => {
         await loadRequests();
