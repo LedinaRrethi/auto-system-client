@@ -48,11 +48,39 @@ export default function FineFilterModal({
       toDate: formatDate(toDate),
     };
 
+    const noFiltersSet =
+    !appliedFilter.plateNumber &&
+    !appliedFilter.fromDate &&
+    !appliedFilter.toDate;
+
+  const filtersUnchanged =
+    appliedFilter.plateNumber === (initialFilter.plateNumber ?? "") &&
+    appliedFilter.fromDate === (initialFilter.fromDate ?? undefined) &&
+    appliedFilter.toDate === (initialFilter.toDate ?? undefined);
+
+  if (noFiltersSet || filtersUnchanged) {
+    onClose(); 
+    return;
+  }
+
     onApply(appliedFilter);
     onClose();
   };
 
   const handleClear = () => {
+
+    const noFiltersSet =
+    !localFilter.plateNumber &&
+    !localFilter.fromDate &&
+    !localFilter.toDate &&
+    !fromDate &&
+    !toDate;
+
+  if (noFiltersSet) {
+    onClose(); 
+    return;
+  }
+
     const clearedFilter: FineFilter = {
       plateNumber: "",
       fromDate: undefined,
