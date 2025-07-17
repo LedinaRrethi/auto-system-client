@@ -3,12 +3,14 @@ import * as signalR from "@microsoft/signalr";
 import { Notification } from "../types/Notification";
 import { jwtDecode } from "jwt-decode";
 
+const API_URL = import.meta.env.VITE_API_URL_SIGNALR;
+
 export const useNotificationHub = (token: string | null, onNotification: (data: Notification) => void) => {
   useEffect(() => {
     if (!token) return; 
 
     const connection = new signalR.HubConnectionBuilder()
-      .withUrl("http://localhost:5169/Notify", {
+      .withUrl(API_URL, {
         accessTokenFactory: () => token
       })
       .withAutomaticReconnect()
