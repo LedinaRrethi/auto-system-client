@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { SignIn, SignUp } from "../features/auth";
 import ProtectedRoute from "./ProtectedRoute";
-import PublicRoute from "./PublicRoute"; // Import the new one
+import PublicRoute from "./PublicRoute";
 import AppLayout from "../components/layout/AppLayout";
 
 import VehicleRegistrationPage from "../features/user/view/VehicleRegistrationPage";
@@ -20,58 +20,58 @@ import UserProfiles from "../features/shared/view/UserProfiles";
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/signin" replace />} />
+      <Routes>
+        <Route path="/" element={<Navigate to="/signin" replace />} />
 
-      <Route
-        path="/signin"
-        element={
-          <PublicRoute>
-            <SignIn />
-          </PublicRoute>
-        }
-      />
-      <Route
-        path="/signup"
-        element={
-          <PublicRoute>
-            <SignUp />
-          </PublicRoute>
-        }
-      />
-      <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route
+          path="/signin"
+          element={
+            <PublicRoute>
+              <SignIn />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
+        />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
-      <Route element={<AppLayout />}>
-        <Route element={<ProtectedRoute allowedRoles={["Admin", "Police", "Specialist", "Individ"]} />}>
+        <Route element={<AppLayout />}>
+         <Route element={<ProtectedRoute allowedRoles={["Admin", "Police", "Specialist", "Individ"]} />}>
           <Route index element={<Home />} />
           <Route path="/profile" element={<UserProfiles/>}></Route>
           <Route path="/notifications" element={<NotificationPage />} />
           <Route path="/notifications/:id" element={<SpecificNotificationPage />} />
-        </Route>
+          </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={["Individ"]} />}>
-          <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
-          <Route path="/my-fines" element={<FinePage />} />
-          <Route path="/my-inspections" element={<InspectionPage />} />
-        </Route>
+          <Route element={<ProtectedRoute allowedRoles={["Individ"]} />}>
+           <Route path="/vehicle-registration" element={<VehicleRegistrationPage />} />
+            <Route path="/my-fines" element={<FinePage />} />
+            <Route path="/my-inspections" element={<InspectionPage />} />
+          </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={["Police"]} />}>
-          <Route path="/fine-registration" element={<FineRegistrationPage />} />
-        </Route>
+          <Route element={<ProtectedRoute allowedRoles={["Police"]} />}>
+            <Route path="/fine-registration" element={<FineRegistrationPage />} />
+          </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={["Specialist"]} />}>
+          <Route element={<ProtectedRoute allowedRoles={["Specialist"]} />}>
           <Route path="/inspection-approval" element={<InspectionApprovalPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
+            <Route path="/user-approval" element={<UserApprovalPage />} />
+            <Route path="/vehicle-request-approval" element={<VehicleRequestApprovalPage />} />
+          </Route>
         </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={["Admin"]} />}>
-          <Route path="/user-approval" element={<UserApprovalPage />} />
-          <Route path="/vehicle-request-approval" element={<VehicleRequestApprovalPage />} />
-        </Route>
-      </Route>
-
-      {/* Fallback Route */}
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+        {/* Fallback Route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
   );
 };
 
