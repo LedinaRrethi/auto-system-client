@@ -1,15 +1,15 @@
 import GridShape from "../../components/common/GridShape";
 import { Link } from "react-router-dom";
-import PageMeta from "../../components/common/PageMeta";
+//import PageMeta from "../../components/common/PageMeta";
 import { Shield, ShieldX, Lock } from "lucide-react";
 
 export default function Unauthorized() {
   return (
     <>
-      <PageMeta
+      {/* <PageMeta
         title="Unauthorized Access | AutoSystem - Vehicle Management System"
         description="Unauthorized access page for AutoSystem - You don't have permission to access this resource"
-      />
+      /> */}
       <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
         <GridShape />
         <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">

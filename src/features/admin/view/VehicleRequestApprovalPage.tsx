@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import PageMeta from "../../../components/common/PageMeta";
+//import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
@@ -128,10 +128,10 @@ export default function VehicleRequestApprovalPage() {
 
   return (
     <>
-      <PageMeta
+      {/* <PageMeta
         title="Vehicle Approval | AutoSystem"
         description="Manage and monitor vehicle approvals in the AutoSystem."
-      />
+      /> */}
 
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 

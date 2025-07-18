@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import PageMeta from "../../../components/common/PageMeta";
+//import PageMeta from "../../../components/common/PageMeta";
 import FineRegistrationTable from "../components/FineRegistrationTable";
 import FineRegistrationModal from "../components/FineRegistrationModal";
 import FineFilterModal from "../components/FineFilterModal";
@@ -86,7 +86,7 @@ export default function FineRegistrationPage() {
 
   return (
     <>
-      <PageMeta title="Fine Registration | AutoSystem" description="Manage and monitor fines." />
+      {/* <PageMeta title="Fine Registration | AutoSystem" description="Manage and monitor fines." /> */}
       <PageBreadcrumb pageTitle="Fine Registration" />
 
       <div className="space-y-6">

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import PageMeta from "../../../components/common/PageMeta";
+//import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
@@ -125,7 +125,7 @@ export default function InspectionApprovalPage() {
 
   return (
     <>
-      <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." />
+      {/* <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." /> */}
       <PageBreadcrumb pageTitle="Inspection Approval" />
 
       <div className="space-y-6">

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import ComponentCard from "../../components/common/ComponentCard";
-import PageMeta from "../../components/common/PageMeta";
+//import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import { getAllNotifications, markOneAsSeen } from "../../services/notificationService";
 import { Notificationn, NotificationnType } from "../../types/Notification/Notificationn";
@@ -87,7 +87,7 @@ export default function SpecificNotificationPage() {
 
   return (
     <>
-      <PageMeta title="Notification Details | AutoSystem" description="Detailed view of your notification." />
+      {/* <PageMeta title="Notification Details | AutoSystem" description="Detailed view of your notification." /> */}
       <PageBreadcrumb pageTitle="Notification Details" />
 
       <div className="space-y-6">

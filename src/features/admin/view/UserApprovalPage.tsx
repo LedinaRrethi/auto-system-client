@@ -1,4 +1,4 @@
-import PageMeta from "../../../components/common/PageMeta";
+//import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
@@ -116,7 +116,7 @@ export default function UserApprovalPage() {
 
   return (
     <>
-      <PageMeta title="User Approval | AutoSystem" description="Manage and approve system users" />
+      {/* <PageMeta title="User Approval | AutoSystem" description="Manage and approve system users" /> */}
       <PageBreadcrumb pageTitle="User Approval" />
 
       <div className="space-y-4">

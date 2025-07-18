@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import PageMeta from "../../../components/common/PageMeta";
+// import PageMeta from "../../../components/common/PageMeta";
 import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { VehicleInput } from "../../../utils/validations/vehicleSchema";
@@ -202,10 +202,10 @@ export default function VehicleRegistrationPage() {
 
   return (
     <>
-      <PageMeta
+      {/* <PageMeta
         title="Vehicle Management | AutoSystem"
         description="View, register, update, or delete your vehicles and track their approval status."
-      />
+      /> */}
       <PageBreadcrumb pageTitle="My Vehicles" />
 
       <div className="space-y-6">

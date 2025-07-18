@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Bell, CheckCircle, FileText, AlertTriangle, Mail, Eye } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ComponentCard from "../../components/common/ComponentCard";
-import PageMeta from "../../components/common/PageMeta";
+//import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import Alert from "../../components/ui/alert/Alert";
 import Button from "../../components/ui/button/Button";
@@ -102,7 +102,7 @@ export default function NotificationPage() {
 
   return (
     <>
-      <PageMeta title="Notifications | AutoSystem" description="Manage and view your notifications." />
+      {/* <PageMeta title="Notifications | AutoSystem" description="Manage and view your notifications." /> */}
       <PageBreadcrumb pageTitle="Notifications" />
 
       <div className="space-y-6">

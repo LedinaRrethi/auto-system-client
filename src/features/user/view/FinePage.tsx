@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import PageMeta from "../../../components/common/PageMeta";
+// import PageMeta from "../../../components/common/PageMeta";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import FineTable from "../components/FineTable";
 import Pagination from "../../../components/ui/pagination/Pagination";
@@ -48,7 +48,7 @@ export default function FineRegistrationPage() {
 
   return (
     <>
-      <PageMeta title="My fines | AutoSystem" description="Manage and monitor fines." />
+      {/* <PageMeta title="My fines | AutoSystem" description="Manage and monitor fines." /> */}
       <PageBreadcrumb pageTitle="My Fines" />
 
       <div className="space-y-6">

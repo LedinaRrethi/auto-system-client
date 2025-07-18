@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import InspectionRegistrationTable from "../components/InspectionRegistrationTable";
 import InspectionRegistrationModal from "../components/InspectionRegistrationModal";
-import PageMeta from "../../../components/common/PageMeta";
+// import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
@@ -137,7 +137,7 @@ export default function InspectionPage() {
 
   return (
     <>
-      <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." />
+      {/* <PageMeta title="Vehicle Inspections | AutoSystem" description="Manage and schedule vehicle inspections." /> */}
       <PageBreadcrumb pageTitle="My Inspections" />
 
       <div className="space-y-6">
