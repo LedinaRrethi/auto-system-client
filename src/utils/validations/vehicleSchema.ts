@@ -1,17 +1,21 @@
 import { z } from "zod";
 
 export const vehicleSchema = z.object({
-   plateNumber: z
+  plateNumber: z
     .string()
     .transform((val) => val.toUpperCase())
     .refine((val) => /^[A-Z]{2}\d{3}[A-Z]{2}$/.test(val), {
-      message: "Plate number must be in format AA123AA (2 letters, 3 numbers, 2 letters)",
+      message:
+        "Plate number must be in format AA123AA (2 letters, 3 numbers, 2 letters)",
     }),
-    
- chassisNumber: z
-  .string()
-  .length(17, "Chassis number must be exactly 17 characters")
-  .regex(/^[A-Za-z0-9]+$/, "Chassis number must contain only letters and numbers"),
+
+  chassisNumber: z
+    .string()
+    .length(17, "Chassis number must be exactly 17 characters")
+    .regex(
+      /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z0-9]{17}$/,
+      "Chassis number must be alphanumeric and contain both letters and numbers"
+    ),
 
   color: z
     .string()
