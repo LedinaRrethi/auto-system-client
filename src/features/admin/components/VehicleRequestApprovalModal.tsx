@@ -33,19 +33,54 @@ export default function VehicleApprovalModal({
     : "Reject Vehicle Request";
   const buttonText = isApprove ? "Yes, Approve" : "Yes, Reject";
 
+  const getActionText = () => {
+    if (isApprove) {
+      switch (requestType) {
+        case "Register":
+          return "Are you sure you want to approve this vehicle registration request?";
+        case "Update":
+          return "Are you sure you want to approve the vehicle update request?";
+        case "Delete":
+          return "Are you sure you want to approve the vehicle deletion request?";
+        default:
+          return "Are you sure you want to approve this vehicle request?";
+      }
+    } else {
+      switch (requestType) {
+        case "Register":
+          return "Are you sure you want to reject this vehicle registration request?";
+        case "Update":
+          return "Are you sure you want to reject the vehicle update request?";
+        case "Delete":
+          return "Are you sure you want to reject the vehicle deletion request?";
+        default:
+          return "Are you sure you want to reject this vehicle request?";
+      }
+    }
+  };
+
+  const getWarningText = () => {
+    if (isApprove) {
+      switch (requestType) {
+        case "Register":
+          return "Once approved, the vehicle will be registered.";
+        case "Update":
+          return "Once approved, the vehicle details will be updated.";
+        case "Delete":
+          return "Once approved, the vehicle will be removed from the system.";
+        default:
+          return "Once approved, the request will be activated.";
+      }
+    } else {
+      return "Be careful! This action cannot be undone.";
+    }
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={modalTitle}>
       <div className="text-sm text-gray-700 dark:text-gray-300 mb-5 leading-relaxed">
-        <p className="font-semibold text-base pt-3">
-          {isApprove
-            ? "Are you sure you want to approve this vehicle request?"
-            : "Are you sure you want to reject this vehicle request?"}
-        </p>
-        <p className="mt-1">
-          {isApprove
-            ? "Be careful! Once approved, the request will be activated."
-            : "Be careful! This action cannot be undone."}
-        </p>
+        <p className="font-semibold text-base pt-3">{getActionText()}</p>
+        <p className="mt-1">{getWarningText()}</p>
       </div>
 
       <div className="space-y-5">
