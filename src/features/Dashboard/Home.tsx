@@ -178,14 +178,14 @@ export default function DashboardPage() {
 
     if (role === "Specialist" && specialistData) {
       const totalInspections =
-        (specialistData.inspections.Approved ?? 0) +
-        (specialistData.inspections.Pending ?? 0) +
-        (specialistData.inspections.Rejected ?? 0);
+        //(specialistData.inspections.Approved ?? 0) +
+        (specialistData.inspections.Pending ?? 0) 
+        //(specialistData.inspections.Rejected ?? 0);
       return [
         <MetricCard
           key="spec-inspections"
           icon={CheckCircle}
-          title="Total Inspections"
+          title="Pending Inspections"
           value={totalInspections}
           description={`Approved: ${specialistData.inspections.Approved ?? 0}, Pending: ${specialistData.inspections.Pending ?? 0}, Rejected: ${specialistData.inspections.Rejected ?? 0}`}
           to="/inspection-approval"
