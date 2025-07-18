@@ -123,9 +123,9 @@ export default function DashboardPage() {
         (adminData.totalUsers.Pending ?? 0) +
         (adminData.totalUsers.Rejected ?? 0);
       const totalVehicles =
-        (adminData.totalVehicleRequests.Approved ?? 0) +
-        (adminData.totalVehicleRequests.Pending ?? 0) +
-        (adminData.totalVehicleRequests.Rejected ?? 0);
+        //(adminData.totalVehicleRequests.Approved ?? 0) +
+        (adminData.totalVehicleRequests.Pending ?? 0) 
+        //(adminData.totalVehicleRequests.Rejected ?? 0);
       return [
         <MetricCard
           key="admin-users"
