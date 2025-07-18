@@ -22,7 +22,10 @@ export const signUpSchema = z
       .max(50, "Last name cannot exceed 50 characters")
       .regex(nameRegex, "Only letters allowed"),
 
-    email: z.string().email("Invalid email format"),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Please enter a valid email address (e.g., name@gmail.com)."),
 
     password: z
       .string()

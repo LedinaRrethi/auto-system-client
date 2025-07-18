@@ -102,7 +102,7 @@ export default function SignInForm() {
                 </Label>
                 <Input
                   type="email"
-                  placeholder="info@gmail.com"
+                  placeholder="name@gmail.com"
                   {...register("email")}
                   autoComplete="off"
                   onChange={handleFieldChange}

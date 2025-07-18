@@ -184,7 +184,7 @@ export default function SignUpForm() {
               </Label>
               <Input {...register("email")} 
               autoComplete="off"
-              type="email" placeholder="example@domain.com" />
+              type="email" placeholder="name@domain.com" />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
