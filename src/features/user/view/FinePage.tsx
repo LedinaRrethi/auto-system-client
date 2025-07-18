@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 // import PageMeta from "../../../components/common/PageMeta";
@@ -25,8 +25,30 @@ export default function FineRegistrationPage() {
     message: string;
   } | null>(null);
 
+    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setSubmittedSearch(searchTerm);
+      setPage(1); 
+    }, 600); 
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm]);
+
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+       if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
       setSubmittedSearch(searchTerm);
       setPage(1);
     }
@@ -38,13 +60,6 @@ export default function FineRegistrationPage() {
     setPage(1);
     setIsFilterModalOpen(false);
   };
-
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setSubmittedSearch("");
-      setPage(1);
-    }
-  }, [searchTerm]);
 
   return (
     <>

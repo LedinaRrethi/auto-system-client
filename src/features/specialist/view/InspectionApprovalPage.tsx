@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 //import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
@@ -30,8 +30,28 @@ export default function InspectionApprovalPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [action, setAction] = useState<"approve" | "reject">("approve");
   const [comment, setComment] = useState("");
-  const [loading, setLoading] = useState(false);
+
+  const [loading, setIsLoading] = useState(false);
   const [selectedInspection, setSelectedInspection] = useState<InspectionRequestList | null>(null);
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setSubmittedSearch(searchTerm);
+      setPage(1); 
+    }, 600); 
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm]);
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -45,6 +65,7 @@ export default function InspectionApprovalPage() {
     });
 
   const fetchInspections = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await fetchMyInspections({ page, pageSize, search: submittedSearch });
       setInspections(res.items);
@@ -57,6 +78,8 @@ export default function InspectionApprovalPage() {
       }
     } catch {
       setErrorMsg("Failed to load inspections.");
+    } finally {
+      setIsLoading(false);
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -64,12 +87,6 @@ export default function InspectionApprovalPage() {
     fetchInspections();
   }, [fetchInspections]);
 
-  useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
-      setPage(1);
-    }
-  }, [searchTerm]);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -89,7 +106,7 @@ export default function InspectionApprovalPage() {
   const handleConfirm = async (comment: string, files: File[]) => {
     if (!selectedInspection) return;
 
-    setLoading(true);
+    setIsLoading(true);
     try {
       const documents = await Promise.all(
         files.map(async (file) => ({
@@ -117,9 +134,19 @@ export default function InspectionApprovalPage() {
     } catch {
       setErrorMsg("Failed to update inspection.");
     } finally {
-      setLoading(false);
+      setIsLoading(false);
       setModalOpen(false);
       setComment("");
+    }
+  };
+
+   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      setSubmittedSearch(searchTerm);
+      setPage(1);
     }
   };
 
@@ -143,18 +170,14 @@ export default function InspectionApprovalPage() {
                 value={searchTerm}
                 autoComplete="off"
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setSubmittedSearch(searchTerm);
-                    setPage(1);
-                  }
-                }}
+                onKeyDown={handleSearchKeyDown}
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
               />
             </div>
           </div>
 
-          {inspections.length === 0 ? (
+           <div className={`transition-all duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
+          {inspections.length === 0 && !loading ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">
                 No inspection requests.
@@ -165,6 +188,16 @@ export default function InspectionApprovalPage() {
             inspections={inspections} 
             onAction={onAction} 
             />
+          )}
+          </div>
+
+           {loading && inspections.length === 0 && (
+            <div className="flex justify-center items-center py-10">
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Loading inspection requests...</p>
+              </div>
+            </div>
           )}
 
           <InspectionApprovalModal

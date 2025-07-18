@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 //import PageMeta from "../../../components/common/PageMeta";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import ComponentCard from "../../../components/common/ComponentCard";
@@ -34,7 +34,11 @@ export default function VehicleRequestApprovalPage() {
     message: string;
   } | null>(null);
 
+   const [isLoading, setIsLoading] = useState(false);
+   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const loadRequests = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await getAllVehicleRequests({
         page,
@@ -60,6 +64,8 @@ export default function VehicleRequestApprovalPage() {
     } catch {
       setErrorMsg("Failed to load vehicle requests.");
       return null;
+    } finally {
+      setIsLoading(false);
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -68,11 +74,22 @@ export default function VehicleRequestApprovalPage() {
   }, [loadRequests]);
 
   useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
-      setPage(1);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
+
+    debounceRef.current = setTimeout(() => {
+      setSubmittedSearch(searchTerm);
+      setPage(1); 
+    }, 600); 
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, [searchTerm]);
+
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -92,6 +109,9 @@ export default function VehicleRequestApprovalPage() {
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
       setSubmittedSearch(searchTerm);
       setPage(1);
     }
@@ -128,10 +148,7 @@ export default function VehicleRequestApprovalPage() {
 
   return (
     <>
-      {/* <PageMeta
-        title="Vehicle Approval | AutoSystem"
-        description="Manage and monitor vehicle approvals in the AutoSystem."
-      /> */}
+      {/* <PageMeta title="Vehicle Approval | AutoSystem" description="Manage and monitor vehicle approvals in the AutoSystem."/> */}
 
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 
@@ -160,13 +177,27 @@ export default function VehicleRequestApprovalPage() {
             </div>
           </div>
 
-          {vehicles.length === 0 ? (
+         
+          <div className={`transition-all duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+            
+          {vehicles.length === 0 && !isLoading ? (
             <div className="flex justify-center items-center py-10">
               <p className="text-lg text-gray-500 dark:text-gray-400">No vehicles to display.</p>
             </div>
           ) : (
             <VehicleRequestApprovalTable vehicles={vehicles} onAction={openModal} />
           )}
+          </div>
+
+          {isLoading && vehicles.length === 0 && (
+            <div className="flex justify-center items-center py-10">
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Loading vehicle requests...</p>
+              </div>
+            </div>
+          )}
+
 
           <VehicleRequestApprovalModal
             isOpen={modalOpen}

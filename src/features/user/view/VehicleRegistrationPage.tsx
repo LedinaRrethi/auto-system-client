@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 // import PageMeta from "../../../components/common/PageMeta";
@@ -46,7 +46,12 @@ export default function VehicleRegistrationPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const loadVehicles = useCallback(async () => {
+    setIsLoading(true);
     try {
       const response: PaginatedResponse<Vehicle> = await fetchVehicles({
         page,
@@ -66,12 +71,31 @@ export default function VehicleRegistrationPage() {
       }
     } catch {
       setErrorMsg("Failed to load vehicles.");
+    } finally {
+      setIsLoading(false);
     }
   }, [page, pageSize, submittedSearch]);
 
   useEffect(() => {
     loadVehicles();
   }, [loadVehicles]);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setSubmittedSearch(searchTerm);
+      setPage(1);
+    }, 600);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm]);
 
   const handleAddClick = () => {
     setEditData(null);
@@ -133,7 +157,10 @@ export default function VehicleRegistrationPage() {
     }
   };
 
-  const handleSubmit = async (data: VehicleInput, mode: "add" | "edit"): Promise<boolean> => {
+  const handleSubmit = async (
+    data: VehicleInput,
+    mode: "add" | "edit"
+  ): Promise<boolean> => {
     try {
       if (mode === "add") {
         await registerVehicle(data);
@@ -161,7 +188,6 @@ export default function VehicleRegistrationPage() {
       setVehicleIdToEdit(null);
       setModalErrorMsg(null);
       return true;
-
     } catch (error: unknown) {
       const err = error as {
         response?: { data?: { error?: string; message?: string } };
@@ -192,13 +218,15 @@ export default function VehicleRegistrationPage() {
     setModalErrorMsg(null);
   };
 
-  //remove that later TODO
-  useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      setSubmittedSearch(searchTerm);
       setPage(1);
     }
-  }, [searchTerm]);
+  };
 
   return (
     <>
@@ -209,11 +237,19 @@ export default function VehicleRegistrationPage() {
       <PageBreadcrumb pageTitle="My Vehicles" />
 
       <div className="space-y-6">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="Vehicles"
@@ -227,12 +263,7 @@ export default function VehicleRegistrationPage() {
                 placeholder="Search by plate number"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    setSubmittedSearch(searchTerm);
-                    setPage(1);
-                  }
-                }}
+                onKeyDown={handleSearchKeyDown}
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
               />
             </div>
@@ -245,15 +276,36 @@ export default function VehicleRegistrationPage() {
             </Button>
           </div>
 
-          {vehicles.length === 0 ? (
+          <div className={`transition-all duration-300 ${isLoading ? "opacity-50" : "opacity-100"}`}>
+            {vehicles.length === 0 && !isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  No vehicles to display.
+                </p>
+              </div>
+            ) : (
+              <VehicleRegistrationTable
+                vehicles={vehicles}
+                onEdit={handleEditClick}
+                onDelete={handleDeleteClick}
+              />
+            )}
+          </div>
+
+           {isLoading && vehicles.length === 0 && (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">No vehicles to display.</p>
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Loading vehicles...</p>
+              </div>
             </div>
-          ) : (
-            <VehicleRegistrationTable vehicles={vehicles} onEdit={handleEditClick} onDelete={handleDeleteClick} />
           )}
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
 
         <VehicleRegistrationModal

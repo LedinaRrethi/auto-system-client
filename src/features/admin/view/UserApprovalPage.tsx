@@ -8,7 +8,7 @@ import { User } from "../../../types/User";
 import { fetchUsers, updateUserStatus } from "../../../services/adminApi";
 import UserApprovalTable from "../components/UserApprovalTable";
 import UserApprovalModal from "../components/UserApprovalModal";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 
 export default function UserApprovalPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -17,6 +17,8 @@ export default function UserApprovalPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
+  
+  const [isLoading, setIsLoading] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
@@ -28,7 +30,10 @@ export default function UserApprovalPage() {
     message: string;
   } | null>(null);
 
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const loadUsers = useCallback(async () => {
+    setIsLoading(true);
     try {
       const res = await fetchUsers({
         page,
@@ -56,6 +61,8 @@ export default function UserApprovalPage() {
         title: "Error",
         message: "Failed to load users.",
       });
+    } finally {
+      setIsLoading(false);
     }
   }, [page, pageSize, submittedSearch]);
 
@@ -67,6 +74,23 @@ export default function UserApprovalPage() {
     const timeout = setTimeout(() => setAlert(null), 3000);
     return () => clearTimeout(timeout);
   }, [alert]);
+
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
+    }
+
+    debounceRef.current = setTimeout(() => {
+      setSubmittedSearch(searchTerm);
+      setPage(1); 
+    }, 600); 
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
+  }, [searchTerm]);
 
   const openModal = (user: User, action: "approve" | "reject" | "deactivate") => {
     setSelectedUser(user);
@@ -102,17 +126,13 @@ export default function UserApprovalPage() {
 
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
       setSubmittedSearch(searchTerm);
       setPage(1);
     }
   };
-
-  useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
-      setPage(1);
-    }
-  }, [searchTerm]);
 
   return (
     <>
@@ -137,16 +157,27 @@ export default function UserApprovalPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-              />
+            />
             </div>
           </div>
 
-          {users.length === 0 ? (
+          <div className={`transition-all duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+            {users.length === 0 && !isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <p className="text-lg text-gray-500 dark:text-gray-400">No users to display.</p>
+              </div>
+            ) : (
+              <UserApprovalTable users={users} onAction={openModal} />
+            )}
+          </div>
+
+          {isLoading && users.length === 0 && (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">No users to display.</p>
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                <p className="text-lg text-gray-500 dark:text-gray-400">Loading users...</p>
+              </div>
             </div>
-          ) : (
-            <UserApprovalTable users={users} onAction={openModal} />
           )}
 
           <UserApprovalModal

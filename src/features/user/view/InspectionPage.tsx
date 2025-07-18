@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import InspectionRegistrationTable from "../components/InspectionRegistrationTable";
 import InspectionRegistrationModal from "../components/InspectionRegistrationModal";
@@ -20,12 +20,6 @@ import { Directorate } from "../../../types/Directorate";
 import { HiPlus, HiSearch } from "react-icons/hi";
 import Button from "../../../components/ui/button/Button";
 
-const LoadingSpinner = () => (
-  <div className="flex justify-center items-center py-10">
-    <div className="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-blue-600"></div>
-  </div>
-);
-
 export default function InspectionPage() {
   const [inspections, setInspections] = useState<MyInspectionsRequest[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,7 +37,9 @@ export default function InspectionPage() {
   const [, setDirectorates] = useState<Directorate[]>([]);
   const [modalErrorMsg, setModalErrorMsg] = useState<string | null>(null);
 
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
@@ -80,7 +76,10 @@ export default function InspectionPage() {
   useEffect(() => {
     const loadMeta = async () => {
       try {
-        const [veh, dirs] = await Promise.all([fetchMyVehiclePlates(), getDirectorates()]);
+        const [veh, dirs] = await Promise.all([
+          fetchMyVehiclePlates(),
+          getDirectorates(),
+        ]);
         setVehicles(veh);
         setDirectorates(dirs);
       } catch {
@@ -129,10 +128,23 @@ export default function InspectionPage() {
   }, [successMsg, errorMsg, infoMsg]);
 
   useEffect(() => {
-    if (searchTerm === "") {
-      setSubmittedSearch("");
-      setPage(1);
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current);
     }
+
+    debounceRef.current = setTimeout(() => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+      setSubmittedSearch(searchTerm);
+      setPage(1);
+    }, 600);
+
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+    };
   }, [searchTerm]);
 
   return (
@@ -141,13 +153,24 @@ export default function InspectionPage() {
       <PageBreadcrumb pageTitle="My Inspections" />
 
       <div className="space-y-6">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
-        <ComponentCard title="Inspections" desc="Here you can view and manage your vehicle inspections.">
+        <ComponentCard
+          title="Inspections"
+          desc="Here you can view and manage your vehicle inspections."
+        >
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full sm:w-80">
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
@@ -174,17 +197,39 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          {isLoading ? (
-            <LoadingSpinner />
-          ) : inspections.length === 0 ? (
+          <div
+            className={`transition-all duration-300 ${
+              isLoading ? "opacity-50" : "opacity-100"
+            }`}
+          >
+   
+            {inspections.length === 0 && !isLoading ? (
+              <div className="flex justify-center items-center py-10">
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  No inspection requests to display.
+                </p>
+              </div>
+            ) : (
+              <InspectionRegistrationTable inspections={inspections} />
+            )}
+          </div>
+
+          {isLoading && inspections.length === 0 && (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">No inspection requests to display.</p>
+              <div className="flex items-center gap-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  Loading inspections...
+                </p>
+              </div>
             </div>
-          ) : (
-            <InspectionRegistrationTable inspections={inspections} />
           )}
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
 
         <InspectionRegistrationModal
