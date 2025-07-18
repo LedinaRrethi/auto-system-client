@@ -42,8 +42,7 @@ export const fineSchema = z
     personalId: z
       .string()
       .min(1, "Personal ID is required")
-      .max(20, "Personal ID cannot exceed 20 characters")
-      .regex(/^[A-Za-z0-9]+$/, "Only letters and numbers are allowed"),
+      .regex(/^[A-Za-z]{1}[0-9]{8}[A-Za-z]{1}$/, "Personal ID must be 1 letter, 8 digits, 1 letter (e.g. A12345678Z)"),
   })
   .superRefine((data, ctx) => {
     const hasAutoFilledFields =
