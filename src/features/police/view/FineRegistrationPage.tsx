@@ -23,11 +23,14 @@ export default function FineRegistrationPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-    const [alert, setAlert] = useState<{
+  const [alert, setAlert] = useState<{
     variant: "success" | "info" | "error";
     title: string;
     message: string;
   } | null>(null);
+
+  const [fineFormError, setFineFormError] = useState<string | null>(null);
+  const clearFineFormError = () => setFineFormError(null);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -39,41 +42,44 @@ export default function FineRegistrationPage() {
     try {
       await createFine(data);
       setModalOpen(false);
-       setTimeout(() => {
       setAlert({
         variant: "success",
         title: "Fine Registered",
         message: "The fine has been successfully submitted.",
       });
-    }, 100);
-
+      setTimeout(() => setAlert(null), 4000);
       setSubmittedSearch((prev) => prev + " ");
-
-      setTimeout(() => setAlert(null), 4000);
-
       return true;
-    } catch (err) {
-      console.error("Error creating fine:", err);
-      setAlert({
-        variant: "error",
-        title: "Submission Failed",
-        message: "Could not submit the fine. Please try again.",
-      });
-      setTimeout(() => setAlert(null), 4000);
+    } catch (err: unknown) {
+      let message = "Could not submit the fine. Please try again.";
 
+      if (typeof err === "object" && err !== null && "message" in err) {
+        const typedErr = err as {
+          response?: { data?: { error?: string; message?: string } };
+          message?: string;
+        };
+
+        message =
+          typedErr.response?.data?.error ||
+          typedErr.response?.data?.message ||
+          typedErr.message ||
+          message;
+      }
+
+      setFineFormError(message);
       return false;
     }
   };
 
-   useEffect(() => {
+  useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
     }
 
     debounceRef.current = setTimeout(() => {
       setSubmittedSearch(searchTerm);
-      setPage(1); 
-    }, 600); 
+      setPage(1);
+    }, 600);
 
     return () => {
       if (debounceRef.current) {
@@ -82,12 +88,11 @@ export default function FineRegistrationPage() {
     };
   }, [searchTerm]);
 
-
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
+        clearTimeout(debounceRef.current);
+      }
       setSubmittedSearch(searchTerm);
       setPage(1);
     }
@@ -115,11 +120,18 @@ export default function FineRegistrationPage() {
       <div className="space-y-6">
         {alert && (
           <div className="mb-4">
-            <Alert variant={alert.variant} title={alert.title} message={alert.message} />
+            <Alert
+              variant={alert.variant}
+              title={alert.title}
+              message={alert.message}
+            />
           </div>
         )}
 
-        <ComponentCard title="Fine registration" desc="Here you can add fines, search and filter.">
+        <ComponentCard
+          title="Fine registration"
+          desc="Here you can add fines, search and filter."
+        >
           <FineRegistrationTable
             onAdd={handleAddClick}
             filters={filters}
@@ -147,9 +159,19 @@ export default function FineRegistrationPage() {
         initialFilter={filters}
       />
 
-      <FineRegistrationModal isOpen={modalOpen} onClose={() => setModalOpen(false)} onSubmit={handleModalSubmit} />
+      <FineRegistrationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        formErrorMessage={fineFormError}
+        onClearFormError={clearFineFormError}
+        onSubmit={handleModalSubmit}
+      />
 
-      <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+      <Pagination
+        currentPage={page}
+        hasNextPage={hasNextPage}
+        onPageChange={setPage}
+      />
     </>
   );
 }
