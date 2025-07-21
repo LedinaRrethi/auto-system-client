@@ -1,91 +1,31 @@
-import { useEffect, useState } from "react";
-import { HiPlus, HiSearch, HiFilter } from "react-icons/hi";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "../../../components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHeader,
+  TableRow,
+} from "../../../components/ui/table";
 import Button from "../../../components/ui/button/Button";
-import { getAllFines } from "../../../services/fineService";
+import { HiPlus, HiSearch, HiFilter } from "react-icons/hi";
 import { FineResponse } from "../../../types/Fine/FineResponse";
-import { FineFilter } from "../../../types/Fine/FineFilter";
 
 interface Props {
+  fines: FineResponse[];
   onAdd: () => void;
-  filters: FineFilter;
-  onFilterChange: (f: FineFilter) => void;
-  page: number;
-  setPage: (p: number) => void;
-  pageSize: number;
   searchTerm: string;
-  submittedSearch: string;
   onSearchChange: (val: string) => void;
   onSearchSubmit: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  setHasNextPage: (b: boolean) => void;
-  plateOptions: string[];
-  setPlateOptions: (options: string[]) => void;
   onOpenFilterModal: () => void;
-  setAlert: React.Dispatch<
-    React.SetStateAction<{
-      variant: "success" | "info" | "error";
-      title: string;
-      message: string;
-    } | null>
-  >;
 }
 
 export default function FineRegistrationTable({
+  fines,
   onAdd,
-  filters,
-  page,
-  pageSize,
   searchTerm,
-  submittedSearch,
   onSearchChange,
   onSearchSubmit,
-  setHasNextPage,
-  setPlateOptions,
   onOpenFilterModal,
-  setAlert,
 }: Props) {
-  const [fines, setFines] = useState<FineResponse[]>([]);
-
-  useEffect(() => {
-    const fetchFines = async () => {
-      try {
-        const data = await getAllFines({
-          page,
-          pageSize,
-          search: submittedSearch,
-          sortField: "CreatedOn",
-          sortOrder: "desc",
-          fromDate: filters.fromDate,
-          toDate: filters.toDate,
-          plateNumber: filters.plateNumber,
-        });
-
-        setFines(data.items);
-        setHasNextPage(data.hasNextPage);
-
-        if (data.items.length === 0) {
-          setAlert({
-            variant: "info",
-            title: "No Fines",
-            message: "No fines found.",
-          });
-        } else {
-          setAlert(null);
-        }
-
-        const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
-          (plate): plate is string => typeof plate === "string"
-        );
-        setPlateOptions(uniquePlates);
-      } catch {
-        setFines([]);
-        setHasNextPage(false);
-      }
-    };
-
-    fetchFines();
-  }, [filters, submittedSearch, page, pageSize, setHasNextPage, setPlateOptions, setAlert]);
-
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -123,7 +63,7 @@ export default function FineRegistrationTable({
         </div>
       </div>
 
-      {fines.length > 0 ? (
+       {fines.length > 0 ? (
         <div className="max-w-full overflow-x-auto">
           <Table className="w-full min-w-[1000px]">
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">

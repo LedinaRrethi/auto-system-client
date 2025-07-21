@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ComponentCard from "../../../components/common/ComponentCard";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-//import PageMeta from "../../../components/common/PageMeta";
 import FineRegistrationTable from "../components/FineRegistrationTable";
 import FineRegistrationModal from "../components/FineRegistrationModal";
 import FineFilterModal from "../components/FineFilterModal";
 import { FineFilter } from "../../../types/Fine/FineFilter";
 import { FineCreate } from "../../../types/Fine/FineCreate";
-import { createFine } from "../../../services/fineService";
+import { FineResponse } from "../../../types/Fine/FineResponse";
+import { createFine, getAllFines } from "../../../services/fineService";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import Alert from "../../../components/ui/alert/Alert";
+import { PaginatedResponse } from "../../../types/PaginatedResponse";
 
 export default function FineRegistrationPage() {
   const [filters, setFilters] = useState<FineFilter>({});
@@ -18,21 +19,56 @@ export default function FineRegistrationPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-  const [plateOptions, setPlateOptions] = useState<string[]>([]);
+  const [, setPlateOptions] = useState<string[]>([]);
+  const [fines, setFines] = useState<FineResponse[]>([]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
 
-  const [alert, setAlert] = useState<{
-    variant: "success" | "info" | "error";
-    title: string;
-    message: string;
-  } | null>(null);
-
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [infoMsg, setInfoMsg] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [fineFormError, setFineFormError] = useState<string | null>(null);
   const clearFineFormError = () => setFineFormError(null);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const fetchFines = useCallback(async () => {
+    try {
+      const data: PaginatedResponse<FineResponse> = await getAllFines({
+        page,
+        pageSize,
+        search: submittedSearch,
+        sortField: "CreatedOn",
+        sortOrder: "desc",
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+        plateNumber: filters.plateNumber,
+      });
+
+      setFines(data.items);
+      setHasNextPage(data.hasNextPage);
+
+      const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
+        (plate): plate is string => typeof plate === "string"
+      );
+      setPlateOptions(uniquePlates);
+
+      if (data.items.length === 0) {
+        setInfoMsg("No fines found.");
+      } else {
+        setInfoMsg(null);
+      }
+    } catch {
+      setFines([]);
+      setHasNextPage(false);
+      setErrorMsg("Failed to fetch fines.");
+    }
+  }, [filters, submittedSearch, page, pageSize]);
+
+  useEffect(() => {
+    fetchFines();
+  }, [fetchFines]);
 
   const handleAddClick = () => {
     setModalOpen(true);
@@ -41,13 +77,7 @@ export default function FineRegistrationPage() {
   const handleModalSubmit = async (data: FineCreate): Promise<boolean> => {
     try {
       await createFine(data);
-      setModalOpen(false);
-      setAlert({
-        variant: "success",
-        title: "Fine Registered",
-        message: "The fine has been successfully submitted.",
-      });
-      setTimeout(() => setAlert(null), 4000);
+      setSuccessMsg("The fine has been successfully submitted.");
       setSubmittedSearch((prev) => prev + " ");
       return true;
     } catch (err: unknown) {
@@ -66,7 +96,7 @@ export default function FineRegistrationPage() {
           message;
       }
 
-      setFineFormError(message);
+      setFineFormError(message); 
       return false;
     }
   };
@@ -112,42 +142,38 @@ export default function FineRegistrationPage() {
     }
   }, [searchTerm]);
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSuccessMsg(null);
+      setInfoMsg(null);
+      setErrorMsg(null);
+    }, 4000);
+
+    return () => clearTimeout(timeout);
+  }, [successMsg, infoMsg, errorMsg]);
+
   return (
     <>
-      {/* <PageMeta title="Fine Registration | AutoSystem" description="Manage and monitor fines." /> */}
       <PageBreadcrumb pageTitle="Fine Registration" />
 
       <div className="space-y-6">
-        {alert && (
-          <div className="mb-4">
-            <Alert
-              variant={alert.variant}
-              title={alert.title}
-              message={alert.message}
-            />
-          </div>
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
         )}
+        {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
+        {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
 
         <ComponentCard
           title="Fine registration"
           desc="Here you can add fines, search and filter."
         >
           <FineRegistrationTable
+            fines={fines}
             onAdd={handleAddClick}
-            filters={filters}
-            onFilterChange={setFilters}
-            page={page}
-            setPage={setPage}
-            pageSize={pageSize}
             searchTerm={searchTerm}
-            submittedSearch={submittedSearch}
             onSearchChange={setSearchTerm}
             onSearchSubmit={handleSearchKeyDown}
-            setHasNextPage={setHasNextPage}
-            plateOptions={plateOptions}
-            setPlateOptions={setPlateOptions}
             onOpenFilterModal={() => setIsFilterModalOpen(true)}
-            setAlert={setAlert}
           />
         </ComponentCard>
       </div>
@@ -161,7 +187,10 @@ export default function FineRegistrationPage() {
 
       <FineRegistrationModal
         isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          clearFineFormError();
+        }}
         formErrorMessage={fineFormError}
         onClearFormError={clearFineFormError}
         onSubmit={handleModalSubmit}
