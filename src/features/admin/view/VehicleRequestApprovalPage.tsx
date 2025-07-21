@@ -5,7 +5,10 @@ import ComponentCard from "../../../components/common/ComponentCard";
 import Alert from "../../../components/ui/alert/Alert";
 import Pagination from "../../../components/ui/pagination/Pagination";
 import { HiSearch } from "react-icons/hi";
-import { getAllVehicleRequests, updateRequestStatus } from "../../../services/vehicleAdminService";
+import {
+  getAllVehicleRequests,
+  updateRequestStatus,
+} from "../../../services/vehicleAdminService";
 import { VehicleRequestList } from "../../../types/Vehicle/VehicleRequestList";
 import VehicleRequestApprovalTable from "../components/VehicleRequestApprovalTable";
 import VehicleRequestApprovalModal from "../components/VehicleRequestApprovalModal";
@@ -18,11 +21,14 @@ export default function VehicleRequestApprovalPage() {
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-  
+
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(null);
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleRequestList | null>(null);
-   const [comment, setComment] = useState("");
+  const [modalAction, setModalAction] = useState<"approve" | "reject" | null>(
+    null
+  );
+  const [selectedVehicle, setSelectedVehicle] =
+    useState<VehicleRequestList | null>(null);
+  const [comment, setComment] = useState("");
 
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -101,7 +107,10 @@ export default function VehicleRequestApprovalPage() {
     return () => clearTimeout(timeout);
   }, [successMsg, errorMsg, infoMsg]);
 
-  const openModal = (vehicle: VehicleRequestList, action: "approve" | "reject") => {
+  const openModal = (
+    vehicle: VehicleRequestList,
+    action: "approve" | "reject"
+  ) => {
     setSelectedVehicle(vehicle);
     setModalAction(action);
     setModalOpen(true);
@@ -122,20 +131,28 @@ export default function VehicleRequestApprovalPage() {
 
     try {
       const newStatus =
-        modalAction === "approve" ? VehicleStatus.Approved : VehicleStatus.Rejected;
+        modalAction === "approve"
+          ? VehicleStatus.Approved
+          : VehicleStatus.Rejected;
 
       await updateRequestStatus(selectedVehicle.idpK_ChangeRequest, {
         newStatus,
         approvalComment: comment,
       });
 
-      setSuccessMsg(`Vehicle request ${modalAction}ed successfully.`);
-      
+      const verb =
+        modalAction === "approve"
+          ? "approved"
+          : modalAction === "reject"
+          ? "rejected"
+          : modalAction + "ed";
+
+      setSuccessMsg(`Vehicle request ${verb} successfully.`);
+     
       setTimeout(async () => {
         await loadRequests();
         setSubmittedSearch(searchTerm);
       }, 3000);
-      
     } catch {
       setErrorMsg(`Failed to ${modalAction} the request.`);
     } finally {
@@ -153,10 +170,18 @@ export default function VehicleRequestApprovalPage() {
       <PageBreadcrumb pageTitle="Vehicle Approval" />
 
       <div className="space-y-4">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="Vehicle Approval"
@@ -182,10 +207,15 @@ export default function VehicleRequestApprovalPage() {
             
           {vehicles.length === 0 && !isLoading ? (
             <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">No vehicles to display.</p>
+              <p className="text-lg text-gray-500 dark:text-gray-400">
+                No vehicles to display.
+              </p>
             </div>
           ) : (
-            <VehicleRequestApprovalTable vehicles={vehicles} onAction={openModal} />
+            <VehicleRequestApprovalTable
+              vehicles={vehicles}
+              onAction={openModal}
+            />
           )}
           </div>
 
@@ -214,7 +244,11 @@ export default function VehicleRequestApprovalPage() {
             requestType={selectedVehicle?.requestType}
           />
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
       </div>
     </>
