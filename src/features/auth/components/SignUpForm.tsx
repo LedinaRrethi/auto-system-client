@@ -6,7 +6,6 @@ import Input from "../../../components/form/input/InputField";
 import DatePicker from "../../../components/form/date-picker";
 import Select from "../../../components/form/Select";
 import { EyeCloseIcon, EyeIcon } from "../../../assets/icons";
-
 import { useSignUpForm } from "../hooks/useSignUpForm";
 import TermsModal from "./TermsModal";
 import { useState } from "react";
@@ -45,7 +44,12 @@ export default function SignUpForm() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} autoComplete="off" spellCheck="false" noValidate>
+
+          {/* fake inputs , trick browser to not autofill input fieldss */}
+          <input type="text" name="fake_user" autoComplete="username" style={{ display: "none" }} />
+          <input type="password" name="fake_pass" autoComplete="current-password" style={{ display: "none" }} />
+
           <div className="space-y-5">
             <div className="pt-2 pb-2 text-lg font-semibold text-gray-700 uppercase tracking-wide dark:text-white">
               PERSONAL INFORMATION
@@ -56,9 +60,14 @@ export default function SignUpForm() {
                 <Label>
                   First Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("firstName")}
-                autoComplete="off"
-                placeholder="Enter your first name" />
+                <Input
+                  {...register("firstName")}
+                  autoComplete="off"
+                  inputMode="none"
+                  readOnly
+                  onFocus={(e) => e.target.readOnly = false}
+                  placeholder="Enter your first name"
+                />
                 {errors.firstName && <p className="text-sm text-red-500">{errors.firstName.message}</p>}
               </div>
 
@@ -66,9 +75,14 @@ export default function SignUpForm() {
                 <Label>
                   Father Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("fatherName")} 
-                autoComplete="off"
-                placeholder="Enter your father name" />
+                <Input
+                  {...register("fatherName")}
+                  autoComplete="off"
+                  inputMode="none"
+                  readOnly
+                  onFocus={(e) => e.target.readOnly = false}
+                  placeholder="Enter your father name"
+                />
                 {errors.fatherName && <p className="text-sm text-red-500">{errors.fatherName.message}</p>}
               </div>
             </div>
@@ -78,9 +92,14 @@ export default function SignUpForm() {
                 <Label>
                   Last Name<span className="text-error-500">*</span>
                 </Label>
-                <Input {...register("lastName")} 
-                autoComplete="off"
-                placeholder="Enter your last name" />
+                <Input
+                  {...register("lastName")}
+                  autoComplete="off"
+                  inputMode="none"
+                  readOnly
+                  onFocus={(e) => e.target.readOnly = false}
+                  placeholder="Enter your last name"
+                />
                 {errors.lastName && <p className="text-sm text-red-500">{errors.lastName.message}</p>}
               </div>
 
@@ -107,12 +126,17 @@ export default function SignUpForm() {
             </div>
 
             <div>
-              <Label>
+              <Label> 
                 Personal Id<span className="text-error-500">*</span>
               </Label>
-              <Input {...register("personalId")} 
-              autoComplete="off"
-              placeholder="Enter your national ID number" />
+              <Input
+                {...register("personalId")}
+                autoComplete="off"
+                inputMode="none"
+                readOnly
+                onFocus={(e) => e.target.readOnly = false}
+                placeholder="Enter your national ID number"
+              />
               {errors.personalId && <p className="text-sm text-red-500">{errors.personalId.message}</p>}
             </div>
 
@@ -145,46 +169,57 @@ export default function SignUpForm() {
             />
 
             {watch("role") === "Specialist" && (
-              <div>
-                <Label>
-                  Specialist Number<span className="text-error-500">*</span>
-                </Label>
-                <Input {...register("specialistNumber")} 
-                autoComplete="off"
-                placeholder="Enter specialist number" />
-                {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
-              </div>
-            )}
+              <>
+                <div>
+                  <Label> 
+                    Specialist Number<span className="text-error-500">*</span>
+                  </Label>
+                  <Input
+                    {...register("specialistNumber")}
+                    autoComplete="off"
+                    inputMode="none"
+                    readOnly
+                    onFocus={(e) => e.target.readOnly = false}
+                    placeholder="Enter specialist number"
+                  />
+                  {errors.specialistNumber && <p className="text-sm text-red-500">{errors.specialistNumber.message}</p>}
+                </div>
 
-            {watch("role") === "Specialist" && (
-              <Controller
-                name="directorate"
-                control={control}
-                rules={{ required: "Directorate is required" }}
-                render={({ field }) => (
-                  <div>
-                    <Label>
-                      Directorate<span className="text-error-500">*</span>
-                    </Label>
-                    <Select
-                      options={directorateOptions}
-                      placeholder="Select directorate"
-                      onChange={field.onChange}
-                      value={field.value}
-                    />
-                    {errors.directorate && <p className="text-sm text-red-500 mt-1">{errors.directorate.message}</p>}
-                  </div>
-                )}
-              />
+                <Controller
+                  name="directorate"
+                  control={control}
+                  rules={{ required: "Directorate is required" }}
+                  render={({ field }) => (
+                    <div>
+                      <Label>
+                        Directorate<span className="text-error-500">*</span>
+                      </Label>
+                      <Select
+                        options={directorateOptions}
+                        placeholder="Select directorate"
+                        onChange={field.onChange}
+                        value={field.value}
+                      />
+                      {errors.directorate && <p className="text-sm text-red-500 mt-1">{errors.directorate.message}</p>}
+                    </div>
+                  )}
+                />
+              </>
             )}
 
             <div>
               <Label>
                 Email<span className="text-error-500">*</span>
               </Label>
-              <Input {...register("email")} 
-              autoComplete="off"
-              type="email" placeholder="name@domain.com" />
+              <Input
+                {...register("email")}
+                type="email"
+                autoComplete="new-password"
+                inputMode="none"
+                readOnly
+                onFocus={(e) => e.target.readOnly = false}
+                placeholder="name@domain.com"
+              />
               {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
 
@@ -196,10 +231,14 @@ export default function SignUpForm() {
                 <Input
                   {...register("password")}
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  inputMode="none"
+                  readOnly
+                  onFocus={(e) => e.target.readOnly = false}
                   placeholder="Enter your password"
                 />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
+                <span 
+                  onClick={() => setShowPassword(!showPassword)} 
                   className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                 >
                   {showPassword ? (
@@ -220,10 +259,14 @@ export default function SignUpForm() {
                 <Input
                   {...register("confirmPassword")}
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  inputMode="none"
+                  readOnly
+                  onFocus={(e) => e.target.readOnly = false}
                   placeholder="Confirm your password"
                 />
-                <span
-                  onClick={() => setShowPassword(!showPassword)}
+                <span 
+                  onClick={() => setShowPassword(!showPassword)} 
                   className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
                 >
                   {showPassword ? (
@@ -240,8 +283,8 @@ export default function SignUpForm() {
               <input type="checkbox" {...register("acceptedTerms")} id="acceptedTerms" className="w-5 h-5" />
               <label htmlFor="acceptedTerms" className="text-sm text-gray-500">
                 By creating an account, you agree to the{" "}
-                <span
-                  onClick={() => setShowTerms(true)}
+                <span 
+                  onClick={() => setShowTerms(true)} 
                   className="text-brand-500 font-semibold hover:underline cursor-pointer"
                 >
                   Terms and Privacy Policy
@@ -252,8 +295,8 @@ export default function SignUpForm() {
             {errors.acceptedTerms && <p className="text-sm text-red-500">{errors.acceptedTerms.message}</p>}
 
             <div>
-              <button
-                type="submit"
+              <button 
+                type="submit" 
                 className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
               >
                 Sign Up
