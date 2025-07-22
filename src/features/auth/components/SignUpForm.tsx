@@ -155,7 +155,7 @@ export default function SignUpForm() {
                   </Label>
                   <Select
                     options={[
-                      { label: "Individ", value: "Individ" },
+                      { label: "Individual", value: "Individ" },
                       { label: "Police", value: "Police" },
                       { label: "Specialist", value: "Specialist" },
                     ]}
