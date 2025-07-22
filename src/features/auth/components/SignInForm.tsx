@@ -36,7 +36,7 @@ export default function SignInForm() {
   const onSubmit = async (data: SignInFormData) => {
     setIsSubmitting(true);
     try {
-      await login(data.email, data.password);
+      await login(data.email, data.loginPassword);
       window.location.href = "/";
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -124,9 +124,9 @@ export default function SignInForm() {
                   inputMode="none"
                   readOnly
                   onFocus={(e) => (e.target.readOnly = false)}
-                  {...register("password")}
+                  {...register("loginPassword")}
                   onChange={(e) => {
-                    register("password").onChange(e);
+                    register("loginPassword").onChange(e);
                     handleFieldChange();
                   }}
                 />
@@ -141,9 +141,9 @@ export default function SignInForm() {
                   )}
                 </span>
               </div>
-              {errors.password && (
+              {errors.loginPassword && (
                 <p className="mt-1 text-sm text-red-500">
-                  {errors.password.message}
+                  {errors.loginPassword.message}
                 </p>
               )}
             </div>

@@ -67,7 +67,7 @@ export function useSignUpForm() {
         lastName: data.lastName.trim(),
         birthDate: data.birthDate?.toISOString() ?? "",
         email: data.email,
-        password: data.password,
+        password: data.signupPassword,
         confirmPassword: data.confirmPassword,
         role: UserRole[data.role],
         specialistNumber: data.specialistNumber?.trim() || undefined,

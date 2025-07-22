@@ -229,7 +229,7 @@ export default function SignUpForm() {
               </Label>
               <div className="relative">
                 <Input
-                  {...register("password")}
+                  {...register("signupPassword")}
                   type={showPassword ? "text" : "password"}
                   autoComplete="new-password"
                   inputMode="none"
@@ -248,7 +248,7 @@ export default function SignUpForm() {
                   )}
                 </span>
               </div>
-              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {errors.signupPassword && <p className="text-sm text-red-500">{errors.signupPassword.message}</p>}
             </div>
 
             <div>
