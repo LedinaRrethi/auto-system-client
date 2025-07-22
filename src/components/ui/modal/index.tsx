@@ -43,7 +43,11 @@ export const Modal: React.FC<ModalProps> = ({
   return (
     <div 
       className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/30 backdrop-blur-lg p-2 sm:p-4"
-      onClick={onClose}
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
     >
       <div
         ref={modalRef}
