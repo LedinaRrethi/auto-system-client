@@ -124,6 +124,13 @@ export default function FineRegistrationModal({
     }
   }, [formErrorMessage, onClearFormError]);
 
+  useEffect(() => {
+    if (!isOpen) {
+      reset();
+      setIsDisabled(false);
+    }
+  }, [isOpen, reset]);
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Register Fine">
       <div className="w-full max-w-md mx-auto">
