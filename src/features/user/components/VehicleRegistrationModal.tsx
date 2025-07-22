@@ -64,10 +64,10 @@ export default function VehicleRegistrationModal({
   }, [initialValues, isOpen, reset]);
 
   const submitHandler = async (data: VehicleInput) => {
-   const result = await onSubmit(data, mode);  
-  if (result && mode === "add") {
-    reset();  
-  }
+    const result = await onSubmit(data, mode);
+    if (result && mode === "add") {
+      reset();
+    }
   };
 
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function VehicleRegistrationModal({
         )}
 
         <Form onSubmit={handleSubmit(submitHandler)} className="space-y-4">
-          <div >
+          <div>
             <Label>Plate Number *</Label>
             <Input
               {...register("plateNumber")}
@@ -130,6 +130,12 @@ export default function VehicleRegistrationModal({
               type="number"
               disabled={isDisabled}
               className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
+              onInput={(e) => {
+                const input = e.currentTarget;
+                if (input.value.length > 1 && input.value.startsWith("0")) {
+                  input.value = input.value.replace(/^0+/, "");
+                }
+              }}
               {...register("seatCount", { valueAsNumber: true })}
               error={!!errors.seatCount}
               hint={errors.seatCount?.message}
@@ -142,6 +148,12 @@ export default function VehicleRegistrationModal({
               type="number"
               disabled={isDisabled}
               className={isDisabled ? "bg-gray-300 text-gray-900" : ""}
+              onInput={(e) => {
+                const input = e.currentTarget;
+                if (input.value.length > 1 && input.value.startsWith("0")) {
+                  input.value = input.value.replace(/^0+/, ""); // heq 0 para numrit
+                }
+              }}
               {...register("doorCount", { valueAsNumber: true })}
               error={!!errors.doorCount}
               hint={errors.doorCount?.message}
