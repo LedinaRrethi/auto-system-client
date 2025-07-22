@@ -121,7 +121,7 @@ export default function DashboardPage() {
       const totalUsers =
         (adminData.totalUsers.Approved ?? 0) +
         (adminData.totalUsers.Pending ?? 0) +
-        (adminData.totalUsers.Rejected ?? 0);
+        (adminData.totalUsers.Rejected ?? 0) - 1;
       const totalVehicles =
         (adminData.totalVehicleRequests.Approved ?? 0) +
         (adminData.totalVehicleRequests.Pending ?? 0) +
@@ -132,7 +132,7 @@ export default function DashboardPage() {
           icon={Users}
           title="Total Users"
           value={totalUsers}
-          description={`Approved: ${adminData.totalUsers.Approved ?? 0}, Pending: ${adminData.totalUsers.Pending ?? 0}, Rejected: ${adminData.totalUsers.Rejected ?? 0}`}
+          description={`Approved: ${Math.max(0, (adminData.totalUsers.Approved ?? 0) - 1)}, Pending: ${adminData.totalUsers.Pending ?? 0}, Rejected: ${adminData.totalUsers.Rejected ?? 0}`}
           to="/user-approval"
         />,
 
