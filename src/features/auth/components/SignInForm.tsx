@@ -102,7 +102,11 @@ export default function SignInForm() {
                 readOnly
                 onFocus={(e) => (e.target.readOnly = false)}
                 {...register("email")}
-                onChange={handleFieldChange}
+                // onChange={handleFieldChange}
+                onChange={(e) => {
+                    register("email").onChange(e);
+                    handleFieldChange();
+                  }}
               />
               {errors.email && (
                 <p className="mt-1 text-sm text-red-500">
