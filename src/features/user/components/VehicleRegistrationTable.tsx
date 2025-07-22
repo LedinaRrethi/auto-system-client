@@ -66,7 +66,7 @@ export default function VehicleRegistrationTable({
                 isHeader
                 className="px-5 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Approval Comment
+                Comment
               </TableCell>
               <TableCell
                 isHeader
@@ -109,8 +109,8 @@ export default function VehicleRegistrationTable({
                     {vehicle.status}
                   </Badge>
                 </TableCell>
-                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white">
-                  {vehicle.approvalComment}
+                <TableCell className="px-5 py-4 text-sm text-gray-700 dark:text-white text-center">
+                  {vehicle.approvalComment?.trim() ? vehicle.approvalComment : "-"}
                 </TableCell>
 
                 <TableCell className="px-5 py-4 text-sm text-left">
