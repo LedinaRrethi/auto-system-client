@@ -46,7 +46,7 @@ export default function FineRegistrationTable({
           <Button
             startIcon={<HiFilter />}
             onClick={onOpenFilterModal}
-            className="!text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            className="!text-gray-700 min-w-[120px]  bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
             Filter
           </Button>
@@ -56,7 +56,7 @@ export default function FineRegistrationTable({
           <Button
             startIcon={<HiPlus />}
             onClick={onAdd}
-            className="bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
+            className="bg-blue-600 min-w-[120px] hover:bg-blue-700 text-white dark:bg-blue-500 dark:hover:bg-blue-600"
           >
             Add Fine
           </Button>

@@ -105,7 +105,7 @@ export default function FineTable({
           <Button
             startIcon={<HiFilter />}
             onClick={onOpenFilterModal}
-            className="!text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
+            className="!text-gray-700  min-w-[120px]  bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
           >
             Filter
           </Button>
