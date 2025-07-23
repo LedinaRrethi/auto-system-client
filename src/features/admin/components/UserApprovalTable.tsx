@@ -10,7 +10,7 @@ interface Props {
 
 export default function UserApprovalTable({ users, onAction }: Props) {
   return (
-    <div className="max-w-full overflow-x-auto">
+    <div className="max-w-full overflow-x-auto"  style={{ height: "calc(100vh - 450px)" }}>
       <Table className="w-full min-w-[1000px]">
         <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
           <TableRow>

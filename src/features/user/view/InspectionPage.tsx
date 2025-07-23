@@ -28,7 +28,7 @@ export default function InspectionPage() {
   const [infoMsg, setInfoMsg] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(8);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -197,33 +197,28 @@ export default function InspectionPage() {
             </Button>
           </div>
 
-          <div
-            className={`transition-all duration-300 ${
-              isLoading ? "opacity-50" : "opacity-100"
-            }`}
-          >
-   
+          <div className="relative min-h-[300px]">
             {inspections.length === 0 && !isLoading ? (
-              <div className="flex justify-center items-center py-10">
+              <div className="flex justify-center items-center h-full py-10">
                 <p className="text-lg text-gray-500 dark:text-gray-400">
-                  No inspection requests to display.
+                  No inspection to display.
                 </p>
               </div>
             ) : (
               <InspectionRegistrationTable inspections={inspections} />
             )}
-          </div>
 
-          {isLoading && inspections.length === 0 && (
-            <div className="flex justify-center items-center py-10">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
-                <p className="text-lg text-gray-500 dark:text-gray-400">
-                  Loading inspections...
-                </p>
+            {isLoading && (
+              <div className="absolute inset-0 flex justify-center items-center bg-white/50 dark:bg-gray-900/50 z-10">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                  <p className="text-lg text-gray-600 dark:text-white">
+                    Loading inspections...
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           <Pagination
             currentPage={page}

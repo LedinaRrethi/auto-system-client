@@ -17,7 +17,7 @@ interface Props {
 export default function InspectionRegistrationTable({ inspections }: Props) {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-      <div className="max-w-full overflow-x-auto">
+      <div className="max-w-full overflow-x-auto"  style={{ height: "calc(100vh - 450px)" }}>
         <Table className="w-full min-w-[1000px]">
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
             <TableRow>

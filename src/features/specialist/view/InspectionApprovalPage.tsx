@@ -18,7 +18,7 @@ import InspectionApprovalModal from "../components/InspectionApprovalModal";
 export default function InspectionApprovalPage() {
   const [inspections, setInspections] = useState<InspectionRequestList[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(8);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -32,7 +32,8 @@ export default function InspectionApprovalPage() {
   const [comment, setComment] = useState("");
 
   const [loading, setIsLoading] = useState(false);
-  const [selectedInspection, setSelectedInspection] = useState<InspectionRequestList | null>(null);
+  const [selectedInspection, setSelectedInspection] =
+    useState<InspectionRequestList | null>(null);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -43,8 +44,8 @@ export default function InspectionApprovalPage() {
 
     debounceRef.current = setTimeout(() => {
       setSubmittedSearch(searchTerm);
-      setPage(1); 
-    }, 600); 
+      setPage(1);
+    }, 600);
 
     return () => {
       if (debounceRef.current) {
@@ -67,7 +68,11 @@ export default function InspectionApprovalPage() {
   const fetchInspections = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await fetchMyInspections({ page, pageSize, search: submittedSearch });
+      const res = await fetchMyInspections({
+        page,
+        pageSize,
+        search: submittedSearch,
+      });
       setInspections(res.items);
       setHasNextPage(res.hasNextPage);
 
@@ -87,7 +92,6 @@ export default function InspectionApprovalPage() {
     fetchInspections();
   }, [fetchInspections]);
 
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSuccessMsg(null);
@@ -97,7 +101,10 @@ export default function InspectionApprovalPage() {
     return () => clearTimeout(timeout);
   }, [successMsg, errorMsg, infoMsg]);
 
-  const onAction = (inspection: InspectionRequestList, action: "approve" | "reject") => {
+  const onAction = (
+    inspection: InspectionRequestList,
+    action: "approve" | "reject"
+  ) => {
     setSelectedInspection(inspection);
     setAction(action);
     setModalOpen(true);
@@ -126,11 +133,10 @@ export default function InspectionApprovalPage() {
 
       setSuccessMsg(`Inspection ${action}ed successfully.`);
 
-        setTimeout(async () => {
+      setTimeout(async () => {
         await fetchInspections();
         setSubmittedSearch(searchTerm);
       }, 3000);
-
     } catch {
       setErrorMsg("Failed to update inspection.");
     } finally {
@@ -140,7 +146,7 @@ export default function InspectionApprovalPage() {
     }
   };
 
-   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       if (debounceRef.current) {
         clearTimeout(debounceRef.current);
@@ -156,11 +162,16 @@ export default function InspectionApprovalPage() {
       <PageBreadcrumb pageTitle="Inspection Approval" />
 
       <div className="space-y-6">
-        {successMsg && <Alert variant="success" title="Success" message={successMsg} />}
+        {successMsg && (
+          <Alert variant="success" title="Success" message={successMsg} />
+        )}
         {errorMsg && <Alert variant="error" title="Error" message={errorMsg} />}
         {infoMsg && <Alert variant="info" title="Info" message={infoMsg} />}
 
-        <ComponentCard title="Inspections" desc="Here you can view and manage your vehicle inspections.">
+        <ComponentCard
+          title="Inspections"
+          desc="Here you can view and manage your vehicle inspections."
+        >
           <div className="p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="relative w-full sm:w-80">
               <HiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg" />
@@ -176,29 +187,37 @@ export default function InspectionApprovalPage() {
             </div>
           </div>
 
-           <div className={`transition-all duration-300 ${loading ? 'opacity-50' : 'opacity-100'}`}>
-          {inspections.length === 0 && !loading ? (
-            <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No inspection requests.
-                </p>
+          <div className="relative min-h-[300px]">
+            <div
+              className={`transition-opacity duration-300 ${
+                loading ? "opacity-50" : "opacity-100"
+              }`}
+            >
+              {inspections.length === 0 && !loading ? (
+                <div className="flex justify-center items-center h-[300px]">
+                  <p className="text-lg text-gray-500 dark:text-gray-400">
+                    No inspection requests.
+                  </p>
+                </div>
+              ) : (
+                <InspectionApprovalTable
+                  inspections={inspections}
+                  onAction={onAction}
+                />
+              )}
             </div>
-          ) : (
-            <InspectionApprovalTable 
-            inspections={inspections} 
-            onAction={onAction} 
-            />
-          )}
-          </div>
 
-           {loading && inspections.length === 0 && (
-            <div className="flex justify-center items-center py-10">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
-                <p className="text-lg text-gray-500 dark:text-gray-400">Loading inspection requests...</p>
+            {loading && (
+              <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex justify-center items-center z-10">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                  <p className="text-lg text-gray-600 dark:text-white">
+                    Loading inspections...
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
+          </div>
 
           <InspectionApprovalModal
             isOpen={modalOpen}
@@ -210,12 +229,11 @@ export default function InspectionApprovalPage() {
             loading={loading}
           />
 
-          <Pagination 
-          currentPage={page} 
-          hasNextPage={hasNextPage} 
-          onPageChange={setPage} 
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
           />
-
         </ComponentCard>
       </div>
     </>

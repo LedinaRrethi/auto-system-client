@@ -17,7 +17,7 @@ import { VehicleStatus } from "../../../types/enums";
 export default function VehicleRequestApprovalPage() {
   const [vehicles, setVehicles] = useState<VehicleRequestList[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(6);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -40,8 +40,8 @@ export default function VehicleRequestApprovalPage() {
     message: string;
   } | null>(null);
 
-   const [isLoading, setIsLoading] = useState(false);
-   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadRequests = useCallback(async () => {
     setIsLoading(true);
@@ -86,8 +86,8 @@ export default function VehicleRequestApprovalPage() {
 
     debounceRef.current = setTimeout(() => {
       setSubmittedSearch(searchTerm);
-      setPage(1); 
-    }, 600); 
+      setPage(1);
+    }, 600);
 
     return () => {
       if (debounceRef.current) {
@@ -95,7 +95,6 @@ export default function VehicleRequestApprovalPage() {
       }
     };
   }, [searchTerm]);
-
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -148,7 +147,7 @@ export default function VehicleRequestApprovalPage() {
           : modalAction + "ed";
 
       setSuccessMsg(`Vehicle request ${verb} successfully.`);
-     
+
       setTimeout(async () => {
         await loadRequests();
         setSubmittedSearch(searchTerm);
@@ -202,32 +201,33 @@ export default function VehicleRequestApprovalPage() {
             </div>
           </div>
 
-         
-          <div className={`transition-all duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
-            
-          {vehicles.length === 0 && !isLoading ? (
-            <div className="flex justify-center items-center py-10">
-              <p className="text-lg text-gray-500 dark:text-gray-400">
-                No vehicles to display.
-              </p>
-            </div>
-          ) : (
-            <VehicleRequestApprovalTable
-              vehicles={vehicles}
-              onAction={openModal}
-            />
-          )}
-          </div>
-
-          {isLoading && vehicles.length === 0 && (
-            <div className="flex justify-center items-center py-10">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
-                <p className="text-lg text-gray-500 dark:text-gray-400">Loading vehicle requests...</p>
+          <div className="relative flex flex-col flex-grow min-h-[300px] overflow-hidden">
+            {vehicles.length === 0 && !isLoading ? (
+              <div className="flex justify-center items-center flex-grow py-10">
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  No vehicles to display.
+                </p>
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="flex-grow">
+                <VehicleRequestApprovalTable
+                  vehicles={vehicles}
+                  onAction={openModal}
+                />
+              </div>
+            )}
 
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex justify-center items-center z-10">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                  <p className="text-lg text-gray-600 dark:text-white">
+                    Loading vehicle requests...
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
 
           <VehicleRequestApprovalModal
             isOpen={modalOpen}

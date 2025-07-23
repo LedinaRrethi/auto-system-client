@@ -13,15 +13,17 @@ import { useCallback, useEffect, useState, useRef } from "react";
 export default function UserApprovalPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(6);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
-  
+
   const [isLoading, setIsLoading] = useState(false);
 
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalAction, setModalAction] = useState<"approve" | "reject" | "deactivate" | null>(null);
+  const [modalAction, setModalAction] = useState<
+    "approve" | "reject" | "deactivate" | null
+  >(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   const [alert, setAlert] = useState<{
@@ -82,8 +84,8 @@ export default function UserApprovalPage() {
 
     debounceRef.current = setTimeout(() => {
       setSubmittedSearch(searchTerm);
-      setPage(1); 
-    }, 600); 
+      setPage(1);
+    }, 600);
 
     return () => {
       if (debounceRef.current) {
@@ -92,7 +94,10 @@ export default function UserApprovalPage() {
     };
   }, [searchTerm]);
 
-  const openModal = (user: User, action: "approve" | "reject" | "deactivate") => {
+  const openModal = (
+    user: User,
+    action: "approve" | "reject" | "deactivate"
+  ) => {
     setSelectedUser(user);
     setModalAction(action);
     setModalOpen(true);
@@ -105,7 +110,11 @@ export default function UserApprovalPage() {
 
     try {
       await updateUserStatus(selectedUser.id, newStatus);
-      setUsers((prev) => prev.map((u) => (u.id === selectedUser.id ? { ...u, status: newStatus } : u)));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === selectedUser.id ? { ...u, status: newStatus } : u
+        )
+      );
       setAlert({
         variant: "success",
         title: "Success",
@@ -140,7 +149,13 @@ export default function UserApprovalPage() {
       <PageBreadcrumb pageTitle="User Approval" />
 
       <div className="space-y-4">
-        {alert && <Alert variant={alert.variant} title={alert.title} message={alert.message} />}
+        {alert && (
+          <Alert
+            variant={alert.variant}
+            title={alert.title}
+            message={alert.message}
+          />
+        )}
 
         <ComponentCard
           title="User Approval"
@@ -157,28 +172,34 @@ export default function UserApprovalPage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 onKeyDown={handleSearchKeyDown}
                 className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-10 pr-4 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-            />
+              />
             </div>
           </div>
 
-          <div className={`transition-all duration-300 ${isLoading ? 'opacity-50' : 'opacity-100'}`}>
+          <div className="relative flex flex-col flex-grow min-h-[300px] overflow-hidden">
             {users.length === 0 && !isLoading ? (
-              <div className="flex justify-center items-center py-10">
-                <p className="text-lg text-gray-500 dark:text-gray-400">No users to display.</p>
+              <div className="flex justify-center items-center flex-grow py-10">
+                <p className="text-lg text-gray-500 dark:text-gray-400">
+                  No users to display.
+                </p>
               </div>
             ) : (
-              <UserApprovalTable users={users} onAction={openModal} />
+              <div className="flex-grow">
+                <UserApprovalTable users={users} onAction={openModal} />
+              </div>
+            )}
+
+            {isLoading && (
+              <div className="absolute inset-0 bg-white/50 dark:bg-gray-900/50 flex justify-center items-center z-10">
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
+                  <p className="text-lg text-gray-600 dark:text-white">
+                    Loading users...
+                  </p>
+                </div>
+              </div>
             )}
           </div>
-
-          {isLoading && users.length === 0 && (
-            <div className="flex justify-center items-center py-10">
-              <div className="flex items-center gap-2">
-                <div className="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-brand-500"></div>
-                <p className="text-lg text-gray-500 dark:text-gray-400">Loading users...</p>
-              </div>
-            </div>
-          )}
 
           <UserApprovalModal
             isOpen={modalOpen}
@@ -192,7 +213,11 @@ export default function UserApprovalPage() {
             }}
           />
 
-          <Pagination currentPage={page} hasNextPage={hasNextPage} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
       </div>
     </>

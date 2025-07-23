@@ -15,7 +15,7 @@ import { PaginatedResponse } from "../../../types/PaginatedResponse";
 export default function FineRegistrationPage() {
   const [filters, setFilters] = useState<FineFilter>({});
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize] = useState(8);
   const [hasNextPage, setHasNextPage] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [submittedSearch, setSubmittedSearch] = useState("");
@@ -49,9 +49,9 @@ export default function FineRegistrationPage() {
       setFines(data.items);
       setHasNextPage(data.hasNextPage);
 
-      const uniquePlates = [...new Set(data.items.map((f) => f.plateNumber))].filter(
-        (plate): plate is string => typeof plate === "string"
-      );
+      const uniquePlates = [
+        ...new Set(data.items.map((f) => f.plateNumber)),
+      ].filter((plate): plate is string => typeof plate === "string");
       setPlateOptions(uniquePlates);
 
       if (data.items.length === 0) {
@@ -96,7 +96,7 @@ export default function FineRegistrationPage() {
           message;
       }
 
-      setFineFormError(message); 
+      setFineFormError(message);
       return false;
     }
   };
@@ -175,6 +175,12 @@ export default function FineRegistrationPage() {
             onSearchSubmit={handleSearchKeyDown}
             onOpenFilterModal={() => setIsFilterModalOpen(true)}
           />
+
+          <Pagination
+            currentPage={page}
+            hasNextPage={hasNextPage}
+            onPageChange={setPage}
+          />
         </ComponentCard>
       </div>
 
@@ -194,12 +200,6 @@ export default function FineRegistrationPage() {
         formErrorMessage={fineFormError}
         onClearFormError={clearFineFormError}
         onSubmit={handleModalSubmit}
-      />
-
-      <Pagination
-        currentPage={page}
-        hasNextPage={hasNextPage}
-        onPageChange={setPage}
       />
     </>
   );
