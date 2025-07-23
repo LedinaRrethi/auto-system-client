@@ -75,7 +75,7 @@ export default function NotificationDropdown() {
       <Dropdown
         isOpen={isOpen}
         onClose={closeDropdown}
-        className="absolute right-0 sm:right-0 sm:left-0 mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 p-3 shadow-xl z-50 
+        className="absolute right-0  mt-3 w-80 sm:w-96 max-w-[calc(100vw-2rem)] flex flex-col rounded-2xl border border-gray-200 bg-white dark:bg-gray-800 p-3 shadow-xl z-50 
         max-sm:right-[-200px] max-sm:w-[280px]"
       >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
