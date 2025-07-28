@@ -6,7 +6,7 @@ interface Props {
 }
 
 const ProtectedRoute = ({ allowedRoles }: Props) => {
-  const token = sessionStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken");
 
   if (!token) return <Navigate to="/signin" replace />;
 
@@ -14,9 +14,9 @@ const ProtectedRoute = ({ allowedRoles }: Props) => {
     // const decoded = jwtDecode<{ [key: string]: string }>(token);
     // const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
 
-    const userRole= sessionStorage.getItem("userRole");
+    const userRole = localStorage.getItem("userRole");
 
-   // sessionStorage.setItem("userRole", userRole);
+    // sessionStorage.setItem("userRole", userRole);
 
     if (!allowedRoles.includes(userRole as string)) {
       return <Navigate to="/unauthorized" replace />;

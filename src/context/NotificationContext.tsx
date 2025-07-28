@@ -3,7 +3,7 @@ import * as signalR from "@microsoft/signalr";
 import { jwtDecode } from "jwt-decode";
 import toast from "react-hot-toast";
 
-import { countUnseenNotifications, getUnseenNotifications} from "../services/notificationService";
+import { countUnseenNotifications, getUnseenNotifications } from "../services/notificationService";
 import { Notificationn } from "../types/Notification/Notificationn";
 import { NotificationContext } from "./NotificationContextHelper";
 
@@ -26,10 +26,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchNotifications = useCallback(async () => {
     try {
-      const [unseen, count] = await Promise.all([
-        getUnseenNotifications(),
-        countUnseenNotifications(),
-      ]);
+      const [unseen, count] = await Promise.all([getUnseenNotifications(), countUnseenNotifications()]);
       setNotifications(unseen.slice(0, 6));
       setUnreadCount(count);
     } catch (err) {
@@ -42,10 +39,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   }, [fetchNotifications]);
 
   useEffect(() => {
-    const token = sessionStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
     // nqse token nuk eshte apo eshte kriju nje lidhje , nuk krijoj lidhje tjt me signalR
-    if (!isTokenValid(token) || connectionRef.current) return; 
+    if (!isTokenValid(token) || connectionRef.current) return;
 
     //krijoj lidhje me SignalR duke perdor token per autorizim dhe WebSocket si transport
     const hub = new signalR.HubConnectionBuilder()
@@ -60,29 +57,32 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
     //kur vjen njoftim nga serveri
     hub.on("SendNotification", async (notification: Notificationn) => {
-
       //pres 2 sekonda dhe marr te dhenat nga db , per tu siguru qe ruajtja ka ndodh
       setTimeout(fetchNotifications, 2000);
 
-      toast.custom((t) => (
-        <div className="bg-orange-50 border border-orange-200 shadow-lg rounded-md p-4 mb-3 pr-6 max-w-sm w-full flex justify-between items-start">
-          <div className="flex flex-col">
-            <p className="font-semibold text-orange-800">{notification.title}</p>
-            <p className="text-sm text-orange-700 mt-1">{notification.message}</p>
+      toast.custom(
+        (t) => (
+          <div className="bg-orange-50 border border-orange-200 shadow-lg rounded-md p-4 mb-3 pr-6 max-w-sm w-full flex justify-between items-start">
+            <div className="flex flex-col">
+              <p className="font-semibold text-orange-800">{notification.title}</p>
+              <p className="text-sm text-orange-700 mt-1">{notification.message}</p>
+            </div>
+            <button onClick={() => toast.remove(t.id)} className="ml-4 text-orange-400 hover:text-orange-800">
+              ×
+            </button>
           </div>
-          <button onClick={() => toast.remove(t.id)} className="ml-4 text-orange-400 hover:text-orange-800">
-            ×
-          </button>
-        </div>
-      ), {
-        duration: 8000,
-        position: "bottom-right",
-        id: notification.idpK_Notification,
-      });
+        ),
+        {
+          duration: 8000,
+          position: "bottom-right",
+          id: notification.idpK_Notification,
+        }
+      );
     });
 
     //pasi lidhja eshte vendos,gjej userId nga token per te lidh userin me SignalR
-    hub.start()
+    hub
+      .start()
       .then(async () => {
         const decoded = jwtDecode<{ [key: string]: string }>(token!);
         const userId = decoded["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
@@ -97,7 +97,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       })
       .catch((err) => console.error("SignalR error:", err));
 
-      //mbyll lidhjen
+    //mbyll lidhjen
     return () => {
       hub.stop().catch(console.error);
       connectionRef.current = null;

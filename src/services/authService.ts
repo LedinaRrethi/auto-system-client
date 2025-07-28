@@ -4,15 +4,15 @@ import api from "./api";
 import { jwtDecode } from "jwt-decode";
 
 export function saveToken(token: string) {
-  sessionStorage.setItem("authToken", token);
+  localStorage.setItem("authToken", token);
 }
 
 export function getToken(): string | null {
-  return sessionStorage.getItem("authToken");
+  return localStorage.getItem("authToken");
 }
 
 export function removeToken() {
-  sessionStorage.removeItem("authToken");
+  localStorage.removeItem("authToken");
   // sessionStorage.clear();
 }
 
@@ -28,8 +28,8 @@ export async function login(email: string, password: string) {
 
     const decoded = jwtDecode<{ [key: string]: string }>(response.data.token);
     const userRole = decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
-    
-    sessionStorage.setItem("userRole", userRole);
+
+    localStorage.setItem("userRole", userRole);
     return response.data;
   } catch (error: unknown) {
     let message = "Login failed. Please try again.";

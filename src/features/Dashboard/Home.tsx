@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Users,
-  Car,
-  FileText,
-  Bell,
-  Shield,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-} from "lucide-react";
+import { Users, Car, FileText, Bell, Shield, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 import {
   getAdminDashboard,
   getPoliceDashboard,
@@ -57,9 +48,7 @@ const MetricCard = ({
       </div>
 
       {description && (
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-auto relative z-10 leading-relaxed">
-          {description}
-        </p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-auto relative z-10 leading-relaxed">{description}</p>
       )}
     </div>
   );
@@ -81,25 +70,21 @@ const LoadingCard = () => (
 export default function DashboardPage() {
   const [role, setRole] = useState<UserRole | null>(null);
   const [adminData, setAdminData] = useState<AdminDashboardData | null>(null);
-  const [policeData, setPoliceData] = useState<PoliceDashboardData | null>(
-    null
-  );
-  const [specialistData, setSpecialistData] =
-    useState<SpecialistDashboardData | null>(null);
+  const [policeData, setPoliceData] = useState<PoliceDashboardData | null>(null);
+  const [specialistData, setSpecialistData] = useState<SpecialistDashboardData | null>(null);
   const [userData, setUserData] = useState<UserDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadDashboard = async () => {
-      const storedRole = sessionStorage.getItem("userRole") as UserRole | null;
+      const storedRole = localStorage.getItem("userRole") as UserRole | null;
       setRole(storedRole);
       setLoading(true);
       try {
         if (storedRole === "Admin") setAdminData(await getAdminDashboard());
         if (storedRole === "Police") setPoliceData(await getPoliceDashboard());
-        if (storedRole === "Specialist")
-          setSpecialistData(await getSpecialistDashboard());
+        if (storedRole === "Specialist") setSpecialistData(await getSpecialistDashboard());
         if (storedRole === "Individ") setUserData(await getUserDashboard());
       } catch {
         setError("Failed to load dashboard data.");
@@ -121,7 +106,8 @@ export default function DashboardPage() {
       const totalUsers =
         (adminData.totalUsers.Approved ?? 0) +
         (adminData.totalUsers.Pending ?? 0) +
-        (adminData.totalUsers.Rejected ?? 0) - 1;
+        (adminData.totalUsers.Rejected ?? 0) -
+        1;
       const totalVehicles =
         (adminData.totalVehicleRequests.Approved ?? 0) +
         (adminData.totalVehicleRequests.Pending ?? 0) +
@@ -132,7 +118,9 @@ export default function DashboardPage() {
           icon={Users}
           title="Total Users"
           value={totalUsers}
-          description={`Approved: ${Math.max(0, (adminData.totalUsers.Approved ?? 0) - 1)}, Pending: ${adminData.totalUsers.Pending ?? 0}, Rejected: ${adminData.totalUsers.Rejected ?? 0}`}
+          description={`Approved: ${Math.max(0, (adminData.totalUsers.Approved ?? 0) - 1)}, Pending: ${
+            adminData.totalUsers.Pending ?? 0
+          }, Rejected: ${adminData.totalUsers.Rejected ?? 0}`}
           to="/user-approval"
         />,
 
@@ -141,7 +129,9 @@ export default function DashboardPage() {
           icon={Car}
           title="Vehicle Requests"
           value={totalVehicles}
-          description={`Approved: ${adminData.totalVehicleRequests.Approved ?? 0}, Pending: ${adminData.totalVehicleRequests.Pending ?? 0}, Rejected: ${adminData.totalVehicleRequests.Rejected ?? 0}`}
+          description={`Approved: ${adminData.totalVehicleRequests.Approved ?? 0}, Pending: ${
+            adminData.totalVehicleRequests.Pending ?? 0
+          }, Rejected: ${adminData.totalVehicleRequests.Rejected ?? 0}`}
           to="/vehicle-request-approval"
         />,
         // <MetricCard
@@ -179,15 +169,17 @@ export default function DashboardPage() {
     if (role === "Specialist" && specialistData) {
       const totalInspections =
         //(specialistData.inspections.Approved ?? 0) +
-        (specialistData.inspections.Pending ?? 0) 
-        //(specialistData.inspections.Rejected ?? 0);
+        specialistData.inspections.Pending ?? 0;
+      //(specialistData.inspections.Rejected ?? 0);
       return [
         <MetricCard
           key="spec-inspections"
           icon={CheckCircle}
           title="Pending Inspections"
           value={totalInspections}
-          description={`Approved: ${specialistData.inspections.Approved ?? 0}, Pending: ${specialistData.inspections.Pending ?? 0}, Rejected: ${specialistData.inspections.Rejected ?? 0}`}
+          description={`Approved: ${specialistData.inspections.Approved ?? 0}, Pending: ${
+            specialistData.inspections.Pending ?? 0
+          }, Rejected: ${specialistData.inspections.Rejected ?? 0}`}
           to="/inspection-approval"
         />,
         <MetricCard
@@ -224,7 +216,9 @@ export default function DashboardPage() {
           icon={Car}
           title="My Vehicles"
           value={totalVehicles}
-          description={`Approved: ${userData.myVehicleRequestsCount.Approved ?? 0}, Pending: ${userData.myVehicleRequestsCount.Pending ?? 0}, Rejected: ${userData.myVehicleRequestsCount.Rejected ?? 0}`}
+          description={`Approved: ${userData.myVehicleRequestsCount.Approved ?? 0}, Pending: ${
+            userData.myVehicleRequestsCount.Pending ?? 0
+          }, Rejected: ${userData.myVehicleRequestsCount.Rejected ?? 0}`}
           to="/vehicle-registration"
         />,
         <MetricCard
@@ -232,7 +226,9 @@ export default function DashboardPage() {
           icon={FileText}
           title="My Inspections"
           value={totalInspections}
-          description={`Approved: ${ userData.myInspectionRequestCount.Approved ?? 0}, Pending: ${userData.myInspectionRequestCount.Pending ?? 0}, Rejected: ${userData.myInspectionRequestCount.Rejected ?? 0}`}
+          description={`Approved: ${userData.myInspectionRequestCount.Approved ?? 0}, Pending: ${
+            userData.myInspectionRequestCount.Pending ?? 0
+          }, Rejected: ${userData.myInspectionRequestCount.Rejected ?? 0}`}
           to="/my-inspections"
         />,
         <MetricCard
@@ -254,9 +250,7 @@ export default function DashboardPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50/30 dark:from-gray-900 dark:to-gray-800 p-4">
         <div className="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-red-300 dark:border-red-700 text-center max-w-md w-full">
           <XCircle className="w-16 h-16 text-red-500 mb-4 mx-auto" />
-          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">
-            Error
-          </h2>
+          <h2 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-2">Error</h2>
           <p className="text-gray-600 dark:text-gray-300">{error}</p>
         </div>
       </div>
@@ -271,9 +265,7 @@ export default function DashboardPage() {
           <h1 className="text-3xl sm:text-3xl lg:text-4xl font-bold mb-2 sm:mb-4 text-gray-800 dark:text-white">
             Dashboard
           </h1>
-          <p className="text-base sm:text-md text-gray-600 dark:text-gray-300">
-            Welcome back! Here's your overview.
-          </p>
+          <p className="text-base sm:text-md text-gray-600 dark:text-gray-300">Welcome back! Here's your overview.</p>
         </div>
       </div>
 
